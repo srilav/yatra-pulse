@@ -24,6 +24,9 @@ A live festival travel board for **Mysuru Dasara 2026** (11–21 October), built
 | How each feature is built | https://srilav.github.io/yatra-pulse/resources/design-discussion.html |
 | Design guide | https://srilav.github.io/yatra-pulse/docs/design.html |
 | Video walkthrough | https://www.youtube.com/watch?v=VNpOtIx-vuU |
+| AWS test recording (16 Selenium scenarios on EKS) | https://srilav.github.io/yatra-pulse/deploy/aws/results/key-scenarios.mp4 |
+| Local test recording (same 16 scenarios) | https://srilav.github.io/yatra-pulse/deploy/local/results/key-scenarios.mp4 |
+| AWS test evidence (results, API checks, cluster snapshot, teardown report) | [deploy/aws/results/](deploy/aws/results/) |
 | Interview prep: design decisions, stories, Q&A | https://srilav.github.io/yatra-pulse/resources/interview-prep.html |
 | Session transcript (how it was built) | [resources/session-transcript.md](resources/session-transcript.md) |
 

@@ -94,6 +94,8 @@ PASS  Prometheus metrics through the edge
 8 passed, 0 failed
 ```
 
+**Watch the recording:** https://srilav.github.io/yatra-pulse/deploy/aws/results/key-scenarios.mp4 (captioned, one frame per scenario, all PASS).
+
 ### What we hit on AWS and fixed
 
 | Problem | Cause | Fix |
