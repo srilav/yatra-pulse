@@ -169,6 +169,19 @@ textarea { min-height: 96px; resize: vertical; }
 #aOut ol { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: .93rem; }
 #aOut .sugg { color: var(--muted); font-style: italic; }
 
+.checkbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.checkpills { display: flex; flex-wrap: wrap; gap: 6px; }
+.pill.bad { background: var(--chip); color: var(--kumkum); border: 1px solid var(--kumkum); }
+.pitems li.leg { grid-template-columns: 72px minmax(0, 1fr); font-size: .88rem; color: var(--muted); padding-block: 4px; }
+.legicon { justify-self: center; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: .8rem; background: var(--chip); color: var(--muted); }
+.leg[data-status="bad"] { color: var(--kumkum); }
+.leg[data-status="bad"] .legicon { background: var(--kumkum); color: var(--surface); }
+.leg[data-status="warn"] { color: var(--tba); }
+.leg[data-status="warn"] .legicon { background: var(--tba-soft); color: var(--tba); }
+.leg[data-status="ok"] .legicon { background: var(--live-soft); color: var(--live); }
+#toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 50; width: min(560px, calc(100% - 32px)); padding: 12px 16px; border-radius: 10px; background: var(--ink); color: var(--bg); font-size: .95rem; box-shadow: 0 8px 28px rgba(0,0,0,.25); border-left: 6px solid var(--live); }
+#toast[data-status="warn"] { border-left-color: var(--bulb); }
+#toast[data-status="bad"] { border-left-color: var(--kumkum); }
 .bookgrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 20px; align-items: start; }
 @media (max-width: 900px) { .bookgrid { grid-template-columns: minmax(0, 1fr); } }
 .steps { list-style: none; counter-reset: s; margin: 0; padding: 0; display: grid; gap: 14px; }
@@ -187,6 +200,7 @@ footer ul { margin: 0; padding-left: 18px; display: grid; gap: 2px; }
 </style>
 
 <div class="bulbs" aria-hidden="true"></div>
+<div id="toast" role="status" hidden></div>
 <div class="wrap">
   <header class="top">
     <div class="brand">
@@ -211,6 +225,8 @@ footer ul { margin: 0; padding-left: 18px; display: grid; gap: 2px; }
     <div class="sec-head">
       <h2 id="planH">My itinerary</h2>
       <div class="planctl">
+        <label for="pMode">Getting around by</label>
+        <select id="pMode"><option value="car">Car or taxi</option><option value="bike">Two-wheeler</option><option value="auto">Auto-rickshaw</option><option value="bus">Bus</option></select>
         <label for="pDay">Day trips and nightly events go on</label>
         <select id="pDay"></select>
         <button type="button" class="btn ghost" id="pCopy">Copy plan</button>
@@ -218,7 +234,7 @@ footer ul { margin: 0; padding-left: 18px; display: grid; gap: 2px; }
       </div>
     </div>
     <div class="plangrid">
-      <div class="panel"><div id="planList"></div><p class="msg" id="pMsg" role="status"></p><p class="callout" id="pWhere">Saved in this browser.</p></div>
+      <div class="panel"><div class="checkbar"><span class="eyebrow">Trip check</span><span id="pCheck" class="checkpills"></span></div><div id="planList"></div><p class="msg" id="pMsg" role="status"></p><p class="callout">Trip check estimates road distance and Dasara traffic, and adds time for parking and entry at crowded venues. Use the Route links for live traffic on the day.</p><p class="callout" id="pWhere">Saved in this browser.</p></div>
       <div class="panel ai" id="aiPanel">
         <h3>Plan with Claude</h3>
         <p class="meta">Claude drafts a day-by-day plan using only the events and day trips on this board, so every stop is real.</p>
@@ -317,6 +333,7 @@ footer ul { margin: 0; padding-left: 18px; display: grid; gap: 2px; }
     <div class="sec-head"><h2 id="bookH">How to book</h2><span class="eyebrow">Official tickets only · no agents</span></div>
     <div class="bookgrid">
       <ol class="steps">
+        <li><b>Check your itinerary first</b><span>Add the events to <b>My itinerary</b>. Trip check warns you about clashes at different venues and gaps too short to travel. "Book tickets" runs the same check before opening the official site.</span></li>
         <li><b>Open the official site</b><span>Go to <a href="https://mysoredasara.gov.in" target="_blank" rel="noopener noreferrer">mysoredasara.gov.in</a> and tap <b>Book Tickets</b>. TicketGenie is the only authorised seller.</span></li>
         <li><b>Pick a ticket and pay</b><span>Sign in, choose your seat and pay online. You get a booking confirmation by email or SMS.</span></li>
         <li><b>Collect the real ticket</b><span>Exchange the confirmation for your physical ticket or Gold Card at the <b>Spandhana Counter, Deputy Commissioner's Office, Mysuru</b>. Bring a government photo ID.</span></li>
@@ -364,27 +381,27 @@ const UTTANAHALLI = "Yuva Dasara ground, Uttanahalli";
 
 // cat: ritual | music | dj | show. tags drive "Picks for you". tba = time not announced.
 const EVENTS = [
-  { title: "Dasara inauguration", url: "https://www.siasat.com/mysuru-dasara-2026-from-october-11-jumbo-savari-on-october-21-3505227/", place: "Chamundeshwari Temple, Chamundi Hill", d: 11, s: "11:50", e: "12:45", cat: "ritual", tags: ["spiritual", "heritage"], note: "Opening puja to Goddess Chamundeshwari in Dhanur Lagna. Some reports say 11:00." },
-  { title: "Yuva Dasara opening night", url: "https://newskarnataka.com/karnataka/yuva-dasara-2026-prabhu-deva-sid-sriram-and-more-to-perform/29092026/", place: UTTANAHALLI, d: 13, s: "17:30", e: "22:30", cat: "music", tags: ["music"], note: "Prabhu Deva opens. Ajaneesh Loknath with Vasuki Vaibhav, Mangli, Sai Vignesh, Ananya Bhat and more. Headliners from 7:30 pm." },
-  { title: "Shankar-Ehsaan-Loy live", url: "https://newskarnataka.com/karnataka/yuva-dasara-2026-prabhu-deva-sid-sriram-and-more-to-perform/29092026/", place: UTTANAHALLI, d: 14, s: "17:30", e: "22:30", cat: "music", tags: ["music"], note: "Local artistes 5:30–7:30 pm, then the trio." },
-  { title: "Sid Sriram live", url: "https://newskarnataka.com/karnataka/yuva-dasara-2026-prabhu-deva-sid-sriram-and-more-to-perform/29092026/", place: UTTANAHALLI, d: 15, s: "17:30", e: "22:30", cat: "music", tags: ["music"], note: "One listing says 16 Oct. Recheck the day before." },
-  { title: "Sandalwood Nights", url: "https://newskarnataka.com/karnataka/yuva-dasara-2026-prabhu-deva-sid-sriram-and-more-to-perform/29092026/", place: UTTANAHALLI, d: 16, s: "17:30", e: "22:30", cat: "dj", tags: ["music"], note: "Shivarajkumar and Rachita Ram, with Vijay Prakash, Rajesh Krishnan, rapper Chandan Shetty and All Ok. The closest thing to a party night." },
-  { title: "Jasmine Sandlas closing night", url: "https://newskarnataka.com/karnataka/yuva-dasara-2026-prabhu-deva-sid-sriram-and-more-to-perform/29092026/", place: UTTANAHALLI, d: 17, s: "17:30", e: "22:30", cat: "dj", tags: ["music"], note: "Punjabi pop to close Yuva Dasara." },
-  { title: "Drone show", url: "https://newskarnataka.com/mysuru/mysuru-dasara-2026-gold-cards-and-tickets-go-online/22092026/", book: "https://mysoredasara.gov.in", place: "Torchlight Parade Grounds, Bannimantap", d: 17, s: "16:30", e: "21:00", cat: "show", tags: ["family", "music"], note: "Ticketed, free seating. Gates open 4:30 pm. Separate ticket each day." },
-  { title: "Drone show", url: "https://newskarnataka.com/mysuru/mysuru-dasara-2026-gold-cards-and-tickets-go-online/22092026/", book: "https://mysoredasara.gov.in", place: "Torchlight Parade Grounds, Bannimantap", d: 18, s: "16:30", e: "21:00", cat: "show", tags: ["family", "music"], note: "Second night. Gates open 4:30 pm." },
-  { title: "Surya Kiran air show", url: "https://www.inmysore.com/about-mysore/mysore-dasara-festival/mysore-dasara-events", place: "Venue TBA (usually Bannimantap)", d: 18, s: "00:00", e: "23:59", cat: "show", tags: ["family"], tba: true, note: "IAF aerobatic team, 18–20 Oct. Timings and passes not announced." },
-  { title: "Surya Kiran air show", url: "https://www.inmysore.com/about-mysore/mysore-dasara-festival/mysore-dasara-events", place: "Venue TBA (usually Bannimantap)", d: 19, s: "00:00", e: "23:59", cat: "show", tags: ["family"], tba: true, note: "Day 2 of 3." },
-  { title: "Durga Ashtami", url: "https://hindutone.com/festivals/mysore-dasara-2026-day-by-day-guide/", place: "Chamundi Hill and palace temples", d: 19, s: "00:00", e: "23:59", cat: "ritual", tags: ["spiritual"], tba: true, note: "Per the Mysuru panchanga. Jamboo Savari rehearsals often run around now." },
-  { title: "Surya Kiran air show", url: "https://www.inmysore.com/about-mysore/mysore-dasara-festival/mysore-dasara-events", place: "Venue TBA (usually Bannimantap)", d: 20, s: "00:00", e: "23:59", cat: "show", tags: ["family"], tba: true, note: "Final day." },
-  { title: "Maha Navami & Ayudha Puja", url: "https://hindutone.com/festivals/mysore-dasara-2026-day-by-day-guide/", place: "Mysore Palace and homes city-wide", d: 20, s: "14:06", e: "14:53", cat: "ritual", tags: ["spiritual", "heritage"], note: "Tools, vehicles and the royal arms are blessed. Vijay Muhurat 2:06–2:53 pm." },
-  { title: "Jamboo Savari", url: "https://www.siasat.com/mysuru-dasara-2026-from-october-11-jumbo-savari-on-october-21-3505227/", place: "Mysore Palace → Bannimantap, 4.8 km", d: 21, s: "16:10", e: "19:00", cat: "ritual", tags: ["spiritual", "heritage", "family"], book: "https://mysoredasara.gov.in", note: "Flowers offered to the goddess in the 750 kg Golden Howdah at 4:10–4:35 pm (Meena Lagna), then the procession. Ticket holders: enclosure gates 10 am–12:30 pm; roads near the palace close from 11 am." },
-  { title: "Torchlight parade", url: "https://www.inmysore.com/about-mysore/mysore-dasara-festival/mysore-dasara-events", place: "Bannimantap Parade Grounds", d: 21, s: "16:30", e: "21:00", cat: "show", tags: ["heritage", "family"], book: "https://mysoredasara.gov.in", note: "Ticketed, free seating. Gates 4:30–6:30 pm." },
+  { venue: "chamundi", title: "Dasara inauguration", url: "https://www.siasat.com/mysuru-dasara-2026-from-october-11-jumbo-savari-on-october-21-3505227/", place: "Chamundeshwari Temple, Chamundi Hill", d: 11, s: "11:50", e: "12:45", cat: "ritual", tags: ["spiritual", "heritage"], note: "Opening puja to Goddess Chamundeshwari in Dhanur Lagna. Some reports say 11:00." },
+  { venue: "uttanahalli", crowd: true, title: "Yuva Dasara opening night", url: "https://newskarnataka.com/karnataka/yuva-dasara-2026-prabhu-deva-sid-sriram-and-more-to-perform/29092026/", place: UTTANAHALLI, d: 13, s: "17:30", e: "22:30", cat: "music", tags: ["music"], note: "Prabhu Deva opens. Ajaneesh Loknath with Vasuki Vaibhav, Mangli, Sai Vignesh, Ananya Bhat and more. Headliners from 7:30 pm." },
+  { venue: "uttanahalli", crowd: true, title: "Shankar-Ehsaan-Loy live", url: "https://newskarnataka.com/karnataka/yuva-dasara-2026-prabhu-deva-sid-sriram-and-more-to-perform/29092026/", place: UTTANAHALLI, d: 14, s: "17:30", e: "22:30", cat: "music", tags: ["music"], note: "Local artistes 5:30–7:30 pm, then the trio." },
+  { venue: "uttanahalli", crowd: true, title: "Sid Sriram live", url: "https://newskarnataka.com/karnataka/yuva-dasara-2026-prabhu-deva-sid-sriram-and-more-to-perform/29092026/", place: UTTANAHALLI, d: 15, s: "17:30", e: "22:30", cat: "music", tags: ["music"], note: "One listing says 16 Oct. Recheck the day before." },
+  { venue: "uttanahalli", crowd: true, title: "Sandalwood Nights", url: "https://newskarnataka.com/karnataka/yuva-dasara-2026-prabhu-deva-sid-sriram-and-more-to-perform/29092026/", place: UTTANAHALLI, d: 16, s: "17:30", e: "22:30", cat: "dj", tags: ["music"], note: "Shivarajkumar and Rachita Ram, with Vijay Prakash, Rajesh Krishnan, rapper Chandan Shetty and All Ok. The closest thing to a party night." },
+  { venue: "uttanahalli", crowd: true, title: "Jasmine Sandlas closing night", url: "https://newskarnataka.com/karnataka/yuva-dasara-2026-prabhu-deva-sid-sriram-and-more-to-perform/29092026/", place: UTTANAHALLI, d: 17, s: "17:30", e: "22:30", cat: "dj", tags: ["music"], note: "Punjabi pop to close Yuva Dasara." },
+  { venue: "bannimantap", crowd: true, title: "Drone show", url: "https://newskarnataka.com/mysuru/mysuru-dasara-2026-gold-cards-and-tickets-go-online/22092026/", book: "https://mysoredasara.gov.in", place: "Torchlight Parade Grounds, Bannimantap", d: 17, s: "16:30", e: "21:00", cat: "show", tags: ["family", "music"], note: "Ticketed, free seating. Gates open 4:30 pm. Separate ticket each day." },
+  { venue: "bannimantap", crowd: true, title: "Drone show", url: "https://newskarnataka.com/mysuru/mysuru-dasara-2026-gold-cards-and-tickets-go-online/22092026/", book: "https://mysoredasara.gov.in", place: "Torchlight Parade Grounds, Bannimantap", d: 18, s: "16:30", e: "21:00", cat: "show", tags: ["family", "music"], note: "Second night. Gates open 4:30 pm." },
+  { venue: "bannimantap", crowd: true, title: "Surya Kiran air show", url: "https://www.inmysore.com/about-mysore/mysore-dasara-festival/mysore-dasara-events", place: "Venue TBA (usually Bannimantap)", d: 18, s: "00:00", e: "23:59", cat: "show", tags: ["family"], tba: true, note: "IAF aerobatic team, 18–20 Oct. Timings and passes not announced." },
+  { venue: "bannimantap", crowd: true, title: "Surya Kiran air show", url: "https://www.inmysore.com/about-mysore/mysore-dasara-festival/mysore-dasara-events", place: "Venue TBA (usually Bannimantap)", d: 19, s: "00:00", e: "23:59", cat: "show", tags: ["family"], tba: true, note: "Day 2 of 3." },
+  { venue: "chamundi", title: "Durga Ashtami", url: "https://hindutone.com/festivals/mysore-dasara-2026-day-by-day-guide/", place: "Chamundi Hill and palace temples", d: 19, s: "00:00", e: "23:59", cat: "ritual", tags: ["spiritual"], tba: true, note: "Per the Mysuru panchanga. Jamboo Savari rehearsals often run around now." },
+  { venue: "bannimantap", crowd: true, title: "Surya Kiran air show", url: "https://www.inmysore.com/about-mysore/mysore-dasara-festival/mysore-dasara-events", place: "Venue TBA (usually Bannimantap)", d: 20, s: "00:00", e: "23:59", cat: "show", tags: ["family"], tba: true, note: "Final day." },
+  { venue: "palace", title: "Maha Navami & Ayudha Puja", url: "https://hindutone.com/festivals/mysore-dasara-2026-day-by-day-guide/", place: "Mysore Palace and homes city-wide", d: 20, s: "14:06", e: "14:53", cat: "ritual", tags: ["spiritual", "heritage"], note: "Tools, vehicles and the royal arms are blessed. Vijay Muhurat 2:06–2:53 pm." },
+  { venue: "palace", crowd: true, arriveBy: "12:30", title: "Jamboo Savari", url: "https://www.siasat.com/mysuru-dasara-2026-from-october-11-jumbo-savari-on-october-21-3505227/", place: "Mysore Palace → Bannimantap, 4.8 km", d: 21, s: "16:10", e: "17:30", cat: "ritual", tags: ["spiritual", "heritage", "family"], book: "https://mysoredasara.gov.in", note: "Flowers offered to the goddess in the 750 kg Golden Howdah at 4:10–4:35 pm (Meena Lagna), then the procession. Ticket holders: enclosure gates 10 am–12:30 pm; roads near the palace close from 11 am." },
+  { venue: "bannimantap", crowd: true, arriveBy: "18:30", title: "Torchlight parade", url: "https://www.inmysore.com/about-mysore/mysore-dasara-festival/mysore-dasara-events", place: "Bannimantap Parade Grounds", d: 21, s: "16:30", e: "21:00", cat: "show", tags: ["heritage", "family"], book: "https://mysoredasara.gov.in", note: "Ticketed, free seating. Gates 4:30–6:30 pm." },
 ];
 
 const NIGHTLY = [
-  { title: "Palace illumination", url: "https://www.inmysore.com/about-mysore/mysore-dasara-festival/mysore-dasara-events", s: "19:00", e: "22:00", cat: "show", tags: ["family", "heritage"], place: "Mysore Palace", note: "About 100,000 bulbs." },
-  { title: "Classical music & dance", url: "https://hindutone.com/festivals/mysore-dasara-2026-day-by-day-guide/", s: "18:30", e: "21:30", cat: "music", tags: ["heritage", "spiritual"], place: "Palace stage", note: "Time approximate.", tba: true },
-  { title: "Dasara Exhibition", url: "https://hindutone.com/festivals/mysore-dasara-2026-day-by-day-guide/", s: "16:00", e: "22:00", cat: "show", tags: ["family"], place: "Exhibition grounds near the palace", note: "Hours approximate.", tba: true },
+  { venue: "palace", title: "Palace illumination", url: "https://www.inmysore.com/about-mysore/mysore-dasara-festival/mysore-dasara-events", s: "19:00", e: "22:00", cat: "show", tags: ["family", "heritage"], place: "Mysore Palace", note: "About 100,000 bulbs." },
+  { venue: "palace", title: "Classical music & dance", url: "https://hindutone.com/festivals/mysore-dasara-2026-day-by-day-guide/", s: "18:30", e: "21:30", cat: "music", tags: ["heritage", "spiritual"], place: "Palace stage", note: "Time approximate.", tba: true },
+  { venue: "exhibition", title: "Dasara Exhibition", url: "https://hindutone.com/festivals/mysore-dasara-2026-day-by-day-guide/", s: "16:00", e: "22:00", cat: "show", tags: ["family"], place: "Exhibition grounds near the palace", note: "Hours approximate.", tba: true },
 ];
 
 const DJ = [
@@ -394,15 +411,15 @@ const DJ = [
 ];
 
 const TRIPS = [
-  { name: "Chamundi Hill", url: "https://en.wikipedia.org/wiki/Chamundi_Hills", km: 13, tags: ["spiritual", "heritage"], why: "The goddess Dasara honours. Climb 1,000 steps past the giant Nandi." },
-  { name: "Srirangapatna", url: "https://en.wikipedia.org/wiki/Srirangapatna", km: 15, tags: ["spiritual", "heritage"], why: "Ranganathaswamy Temple. Dasara began here before moving to Mysuru." },
-  { name: "Nanjangud", url: "https://en.wikipedia.org/wiki/Nanjangud", km: 25, tags: ["spiritual"], why: "Srikanteshwara Temple, the Kashi of the south." },
-  { name: "Somanathapura", url: "https://en.wikipedia.org/wiki/Chennakesava_Temple,_Somanathapura", km: 35, tags: ["heritage"], why: "The finest star-shaped Hoysala temple." },
-  { name: "Talakadu", url: "https://en.wikipedia.org/wiki/Talakadu", km: 45, tags: ["spiritual", "heritage"], why: "Temples half-buried in sand, with a legend of a curse." },
-  { name: "Melukote", url: "https://en.wikipedia.org/wiki/Melukote", km: 50, tags: ["spiritual"], why: "Cheluvanarayana and Yoga Narasimha. A centre for Ramanuja's followers." },
-  { name: "Brindavan Gardens", url: "https://en.wikipedia.org/wiki/Brindavan_Gardens", km: 20, tags: ["family"], why: "Musical fountain at KRS dam in the evening." },
-  { name: "Shravanabelagola", url: "https://en.wikipedia.org/wiki/Shravanabelagola", km: 85, tags: ["spiritual", "heritage"], why: "The 57 ft statue of Gommateshwara (Bahubali)." },
-  { name: "Bylakuppe", url: "https://en.wikipedia.org/wiki/Bylakuppe", km: 85, tags: ["spiritual", "family"], why: "The Tibetan Golden Temple and monasteries." },
+  { name: "Chamundi Hill", at: [12.2724, 76.6713], url: "https://en.wikipedia.org/wiki/Chamundi_Hills", km: 13, tags: ["spiritual", "heritage"], why: "The goddess Dasara honours. Climb 1,000 steps past the giant Nandi." },
+  { name: "Srirangapatna", at: [12.4216, 76.6930], url: "https://en.wikipedia.org/wiki/Srirangapatna", km: 15, tags: ["spiritual", "heritage"], why: "Ranganathaswamy Temple. Dasara began here before moving to Mysuru." },
+  { name: "Nanjangud", at: [12.1199, 76.6804], url: "https://en.wikipedia.org/wiki/Nanjangud", km: 25, tags: ["spiritual"], why: "Srikanteshwara Temple, the Kashi of the south." },
+  { name: "Somanathapura", at: [12.2756, 76.8814], url: "https://en.wikipedia.org/wiki/Chennakesava_Temple,_Somanathapura", km: 35, tags: ["heritage"], why: "The finest star-shaped Hoysala temple." },
+  { name: "Talakadu", at: [12.1857, 77.0270], url: "https://en.wikipedia.org/wiki/Talakadu", km: 45, tags: ["spiritual", "heritage"], why: "Temples half-buried in sand, with a legend of a curse." },
+  { name: "Melukote", at: [12.6623, 76.6487], url: "https://en.wikipedia.org/wiki/Melukote", km: 50, tags: ["spiritual"], why: "Cheluvanarayana and Yoga Narasimha. A centre for Ramanuja's followers." },
+  { name: "Brindavan Gardens", at: [12.4218, 76.5727], url: "https://en.wikipedia.org/wiki/Brindavan_Gardens", km: 20, tags: ["family"], why: "Musical fountain at KRS dam in the evening." },
+  { name: "Shravanabelagola", at: [12.8590, 76.4887], url: "https://en.wikipedia.org/wiki/Shravanabelagola", km: 85, tags: ["spiritual", "heritage"], why: "The 57 ft statue of Gommateshwara (Bahubali)." },
+  { name: "Bylakuppe", at: [12.4316, 75.9661], url: "https://en.wikipedia.org/wiki/Bylakuppe", km: 85, tags: ["spiritual", "family"], why: "The Tibetan Golden Temple and monasteries." },
 ];
 
 const DAYS = Array.from({ length: 11 }, (_, i) => 11 + i);
@@ -455,7 +472,10 @@ function setPlan(next) { plan = next; savePlan(); render(); if (typeof renderApp
 function togglePlan(k) {
   if (inPlan(k)) return setPlan(plan.filter((p) => p.key !== k));
   const item = catalogItem(k);
-  if (item) setPlan([...plan, item]);
+  if (!item) return;
+  setPlan([...plan, item]);
+  const c = checkStop(item.key, plan, tripMode);
+  if (c) toast(c.status, (c.status === "ok" ? "Added. " : c.status === "bad" ? "Added, but check this: " : "Added. Heads up: ") + c.text);
 }
 
 function planText() {
@@ -467,18 +487,167 @@ function planText() {
 function renderPlan() {
   const el = document.getElementById("planList");
   if (!el) return;
+  const sum = document.getElementById("pCheck");
   if (!plan.length) {
     el.innerHTML = `<p class="empty">Your plan is empty. Tap <b>+ Add to plan</b> on any event or day trip, or let Claude draft a plan for you.</p>`;
+    if (sum) sum.innerHTML = "";
     return;
   }
-  el.innerHTML = DAYS.filter((d) => plan.some((p) => p.day === d)).map((d) => `
-    <div class="pday">
+  const ev = evaluatePlan(plan, tripMode);
+  if (sum) sum.innerHTML = ev.bad
+    ? `<span class="pill bad">${ev.bad} problem${ev.bad > 1 ? "s" : ""}</span>${ev.warn ? `<span class="pill tba">${ev.warn} to watch</span>` : ""}`
+    : ev.warn ? `<span class="pill tba">${ev.warn} to watch</span><span class="pill ok">No clashes</span>` : `<span class="pill ok">All stops reachable</span>`;
+  const legRow = (l) => `<li class="leg" data-status="${l.status}"><span class="legicon" aria-hidden="true">${l.status === "bad" ? "!" : l.status === "warn" ? "~" : "↓"}</span><div>${esc(l.text)}${l.url ? ` <a class="srclink" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">Route ↗</a>` : ""}</div></li>`;
+  el.innerHTML = Object.entries(ev.days).map(([d, r]) => {
+    d = Number(d);
+    const byKey = Object.fromEntries(plan.filter((p) => p.day === d).map((p) => [p.key, p]));
+    const rows = r.stops.map((s, i) => {
+      const p = byKey[s.key];
+      const leg = r.legs.find((l) => l.to === s.key);
+      const shown = s.start !== null ? `${fromMin(s.arriveBy ? s.mustBy : s.start)}${s.arriveBy ? " gates" : ""}` : (p.time || "");
+      return `${leg ? legRow(leg) : ""}
+        <li><span class="mono">${esc(/^\d\d:\d\d$/.test(p.time) && s.start === null ? fmtT.format(T(d, p.time)) : shown)}</span>
+          <div><b>${esc(p.title)}</b>${s.place ? `<span class="meta">${esc(s.place)}${s.end !== null && s.start !== null ? ` · until ${fromMin(s.end)}` : ""}</span>` : ""}${src(p.url)}</div>
+          <button type="button" class="rm" data-rm="${esc(p.key)}" aria-label="Remove ${esc(p.title)}">×</button></li>`;
+    }).join("");
+    const notes = r.notes.map((n) => `<li class="leg" data-status="${n.status}"><span class="legicon" aria-hidden="true">${n.status === "bad" ? "!" : "~"}</span><div>${esc(n.text)}</div></li>`).join("");
+    return `<div class="pday">
       <div class="dlabel"><b>${d}</b><small>${new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", weekday: "short" }).format(T(d, "12:00"))} · Day ${d - 10}</small></div>
-      <ol class="pitems">${plan.filter((p) => p.day === d).sort((a, b) => String(a.time).localeCompare(String(b.time))).map((p) => `
-        <li><span class="mono">${esc(/^\d\d:\d\d$/.test(p.time) ? fmtT.format(T(d, p.time)) : p.time || "")}</span>
-          <div><b>${esc(p.title)}</b>${p.place ? `<span class="meta">${esc(p.place)}</span>` : ""}${p.note ? `<span class="meta">${esc(p.note)}</span>` : ""}${src(p.url)}</div>
-          <button type="button" class="rm" data-rm="${esc(p.key)}" aria-label="Remove ${esc(p.title)}">×</button></li>`).join("")}</ol>
-    </div>`).join("");
+      <ol class="pitems">${rows}${notes}</ol>
+    </div>`;
+  }).join("");
+}
+
+/* ---------- Trip check ----------
+   Flags stops at different places that overlap in time, and whether the gap between stops
+   is long enough to travel by the chosen vehicle. Distances are straight-line km × 1.4 for roads. */
+const VENUES = {
+  palace: { name: "Mysore Palace", at: [12.3052, 76.6552] },
+  chamundi: { name: "Chamundi Hill", at: [12.2724, 76.6713] },
+  bannimantap: { name: "Bannimantap grounds", at: [12.3366, 76.6618] },
+  exhibition: { name: "Exhibition grounds", at: [12.2985, 76.6597] },
+  uttanahalli: { name: "Yuva Dasara ground, Uttanahalli", at: [12.2490, 76.7114] },
+};
+// km/h inside the city during Dasara, km/h on highways, and fixed minutes (waiting, parking)
+const MODES = {
+  car: { label: "car or taxi", city: 18, road: 45, wait: 0, maxKm: 999 },
+  bike: { label: "two-wheeler", city: 22, road: 45, wait: 0, maxKm: 999 },
+  auto: { label: "auto-rickshaw", city: 16, road: 30, wait: 5, maxKm: 40 },
+  bus: { label: "bus", city: 13, road: 35, wait: 15, maxKm: 999 },
+};
+const ROAD_FACTOR = 1.4;
+const toMin = (hhmm) => { const [h, m] = String(hhmm).split(":").map(Number); return h * 60 + m; };
+const fromMin = (m) => fmtT.format(T(11, `${String(Math.floor(m / 60) % 24).padStart(2, "0")}:${String(Math.round(m % 60)).padStart(2, "0")}`));
+function roadKm(a, b) {
+  const R = 6371, rad = Math.PI / 180;
+  const dLat = (b[0] - a[0]) * rad, dLng = (b[1] - a[1]) * rad;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(a[0] * rad) * Math.cos(b[0] * rad) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h)) * ROAD_FACTOR;
+}
+function driveMin(km, mode) {
+  const m = MODES[mode] || MODES.car;
+  const cityKm = Math.min(km, 15), roadPart = Math.max(0, km - 15);
+  return Math.round((cityKm / m.city + roadPart / m.road) * 60 + m.wait);
+}
+const routeUrl = (a, b, mode) => `https://www.google.com/maps/dir/?api=1&origin=${a[0]},${a[1]}&destination=${b[0]},${b[1]}&travelmode=${mode === "bus" ? "transit" : mode === "bike" ? "two-wheeler" : "driving"}`;
+
+// Turn a plan entry into { start, end, mustBy, place, at, tba, crowd } using the board's own data.
+function resolveStop(p, mode) {
+  const [kind, ...rest] = p.key.split("@")[0].split(":");
+  const base = { ...p, tba: false, crowd: false, at: null, place: p.place };
+  if (kind === "ev") {
+    const d = Number(rest[0]), title = rest.slice(1).join(":");
+    const e = EVENTS.find((x) => x.d === d && x.title === title);
+    if (!e) return null;
+    const v = VENUES[e.venue];
+    const tba = e.tba && e.s === "00:00";
+    return { ...base, start: tba ? null : toMin(e.s), end: tba ? null : toMin(e.e), mustBy: e.arriveBy ? toMin(e.arriveBy) : tba ? null : toMin(e.s), at: v?.at, place: v?.name || e.place, tba, crowd: !!e.crowd, arriveBy: e.arriveBy };
+  }
+  if (kind === "nt") {
+    const n = NIGHTLY.find((x) => x.title === rest.join(":"));
+    if (!n) return null;
+    const v = VENUES[n.venue];
+    return { ...base, start: toMin(n.s), end: toMin(n.e), mustBy: toMin(n.s), at: v?.at, place: v?.name || n.place, flexible: true };
+  }
+  if (kind === "trip") {
+    const t = TRIPS.find((x) => x.name === rest.join(":"));
+    if (!t) return null;
+    const leave = /^\d\d:\d\d$/.test(p.time) ? toMin(p.time) : 480;
+    const oneWay = driveMin(roadKm(VENUES.palace.at, t.at), mode);
+    const visit = t.km > 60 ? 180 : 120;
+    return { ...base, start: leave, end: leave + oneWay * 2 + visit, mustBy: leave, at: VENUES.palace.at, place: `${t.name} and back`, tripTo: t.at, tripMin: oneWay };
+  }
+  return { ...base, start: null, end: null, mustBy: null, at: null, unknown: true };
+}
+
+// Checks one day. Returns { stops (sorted), legs: [{ from, to, status, text, url }], notes: [] }.
+function evaluateDay(entries, mode) {
+  const stops = entries.map((p) => resolveStop(p, mode)).filter(Boolean)
+    .sort((a, b) => (a.mustBy ?? a.start ?? 9999) - (b.mustBy ?? b.start ?? 9999));
+  const legs = [], notes = [];
+  const timed = stops.filter((s) => s.start !== null);
+  stops.filter((s) => s.tba).forEach((s) => notes.push({ status: "warn", key: s.key, text: `${s.title}: time not announced yet. Recheck before you book anything else that day.` }));
+  stops.filter((s) => s.unknown).forEach((s) => notes.push({ status: "warn", key: s.key, text: `${s.title}: no fixed time or map location, so it can't be checked.` }));
+  stops.filter((s) => s.tripTo && MODES[mode].maxKm < roadKm(VENUES.palace.at, s.tripTo)).forEach((s) => notes.push({ status: "bad", key: s.key, text: `${s.title}: too far for an ${MODES[mode].label}. Take a car, taxi or bus.` }));
+  for (let i = 1; i < timed.length; i++) {
+    const a = timed[i - 1], b = timed[i];
+    const km = a.at && b.at ? roadKm(a.tripTo ? a.at : a.at, b.at) : null;
+    const sameVenue = km !== null && km < 0.8;
+    const travel = km === null ? null : sameVenue ? 5 : driveMin(km, mode) + (b.crowd ? 25 : 10);
+    const gap = b.mustBy - a.end;
+    let status, text;
+    const deadline = b.arriveBy ? `gates close ${fromMin(b.mustBy)}` : `starts ${fromMin(b.mustBy)}`;
+    if (gap < 0 && !sameVenue) {
+      status = a.flexible || b.flexible ? "warn" : "bad";
+      text = a.flexible || b.flexible
+        ? `Overlaps with ${a.title}, which runs all evening. Leave by ${fromMin(b.mustBy - (travel ?? 30))} to make ${b.title}.`
+        : `Clash: ${a.title} (${a.place}) runs until ${fromMin(a.end)}, but ${b.title} at ${b.place} ${deadline}. You can't be at both.`;
+    } else if (sameVenue) {
+      status = "ok"; text = `Same venue as ${a.title}.`;
+    } else if (travel === null) {
+      status = "warn"; text = `Can't work out the distance to ${b.title}. Allow extra time.`;
+    } else if (gap < travel) {
+      status = "bad"; text = `Not enough time: ${km.toFixed(0)} km by ${MODES[mode].label} takes about ${travel} min with parking and entry, but you have ${gap} min. You'd miss the start of ${b.title}.`;
+    } else if (gap < travel + 15) {
+      status = "warn"; text = `Tight: about ${travel} min by ${MODES[mode].label} for ${km.toFixed(0)} km, and you have ${gap} min. Leave on time.`;
+    } else {
+      status = "ok"; text = `${km.toFixed(0)} km, about ${travel} min by ${MODES[mode].label}. You have ${gap} min.`;
+    }
+    legs.push({ from: a.key, to: b.key, status, text, url: km !== null && !sameVenue ? routeUrl(a.at, b.at, mode) : "" });
+  }
+  timed.filter((s) => s.arriveBy && s.title === "Jamboo Savari").forEach((s) => notes.push({ status: "warn", key: s.key, text: `Jamboo Savari seats: be inside by ${fromMin(s.mustBy)}, when the gates close. Roads near the palace close from 11 am, so park at a hub and take the free shuttle.` }));
+  return { stops, legs, notes };
+}
+
+function evaluatePlan(items, mode) {
+  const days = {};
+  DAYS.forEach((d) => { const e = items.filter((p) => p.day === d); if (e.length) days[d] = evaluateDay(e, mode); });
+  const all = Object.values(days).flatMap((r) => [...r.legs, ...r.notes]);
+  return { days, bad: all.filter((x) => x.status === "bad").length, warn: all.filter((x) => x.status === "warn").length, ok: all.filter((x) => x.status === "ok").length };
+}
+
+// The check for one stop against the rest of its day, as a short sentence for a toast.
+function checkStop(key, items, mode) {
+  const base = key.split("@")[0];
+  const entry = items.find((p) => p.key === key) || catalogItem(base);
+  if (!entry) return null;
+  const withIt = items.some((p) => p.key === entry.key) ? items : [...items, entry];
+  const r = evaluateDay(withIt.filter((p) => p.day === entry.day), mode);
+  const hits = [...r.legs.filter((l) => l.from === entry.key || l.to === entry.key), ...r.notes.filter((n) => n.key === entry.key)];
+  const worst = hits.find((h) => h.status === "bad") || hits.find((h) => h.status === "warn") || hits[0];
+  if (!worst) return { status: "ok", text: `${entry.title}: nothing else planned that day.` };
+  return { status: worst.status, text: worst.text };
+}
+
+let tripMode = "car";
+try { tripMode = localStorage.getItem("mm-mode") || "car"; } catch (e) {}
+
+function toast(status, text) {
+  const t = document.getElementById("toast");
+  if (!t) return;
+  t.dataset.status = status; t.textContent = text; t.hidden = false;
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => { t.hidden = true; }, status === "ok" ? 4000 : 8000);
 }
 
 const src = (u, label = "Details") => /^https:\/\//.test(String(u)) && host(u) ? `<a class="srclink" href="${esc(u)}" target="_blank" rel="noopener noreferrer">${label} ↗ <span>${esc(host(u))}</span></a>` : "";
@@ -562,7 +731,7 @@ function render() {
           <div class="meta mono">${o.tba && o.s === "00:00" ? "Time TBA" : `${fmtT.format(o.start)}–${fmtT.format(o.end)}`}</div>
           <div class="meta">${esc(o.place)}</div>
           <p class="note">${esc(o.note)}</p>
-          <div class="ev-links">${src(o.url)}${o.book ? src(o.book, "Book tickets") : ""}${addBtn(keyOf(o))}</div>
+          <div class="ev-links">${src(o.url)}${o.book ? `<a class="srclink" data-book="${esc(keyOf(o))}" href="${esc(o.book)}" target="_blank" rel="noopener noreferrer">Book tickets ↗ <span>${esc(host(o.book))}</span></a>` : ""}${addBtn(keyOf(o))}</div>
         </div>`).join("") : `<p class="empty">${filter === "all" ? "Palace lights, cultural stage and exhibition only." : "Nothing in this category today."}</p>`}</div>
     </div>`;
   }).join("");
@@ -611,10 +780,23 @@ document.getElementById("aDay").innerHTML = dayOpts;
 try { const saved = JSON.parse(localStorage.getItem("mm-plan") || "[]"); if (Array.isArray(saved)) plan = saved; } catch (e) {}
 
 document.addEventListener("click", (e) => {
+  const book = e.target.closest("[data-book]");
+  if (book) {
+    const c = checkStop(book.dataset.book, plan, tripMode);
+    if (c && c.status !== "ok") toast(c.status, "Before you book: " + c.text);
+    else toast("ok", "No clash with your itinerary. Opening the official booking site.");
+    return;
+  }
   const add = e.target.closest("[data-add]");
   if (add) return togglePlan(add.dataset.add);
   const rm = e.target.closest("[data-rm]");
   if (rm) return setPlan(plan.filter((p) => p.key !== rm.dataset.rm));
+});
+document.getElementById("pMode").value = MODES[tripMode] ? tripMode : "car";
+document.getElementById("pMode").addEventListener("change", (e) => {
+  tripMode = e.target.value;
+  try { localStorage.setItem("mm-mode", tripMode); } catch (err) {}
+  renderPlan();
 });
 document.getElementById("pCopy").addEventListener("click", async () => {
   const m = document.getElementById("pMsg");

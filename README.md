@@ -24,6 +24,7 @@ To regenerate it (macOS, uses the `say` voice "Rishi"):
 - **Picks for you**: suggestions for Spiritual, Music & DJ, Heritage or Family travellers.
 - **DJ & party nights**: in Mysuru and Bengaluru.
 - **My itinerary**: tap "+ Add to plan" on any event or day trip to build a day-by-day plan. Copy it to share on WhatsApp or email. Saved to your claude.ai account (or this browser when opened from disk).
+- **Trip check**: checks your itinerary for stops at different venues that overlap in time, and whether each gap is long enough to travel by car or taxi, two-wheeler, auto-rickshaw or bus. It allows for Dasara traffic and for parking and entry at crowded venues, links a Google Maps route for each leg, and warns you when you add a stop or tap "Book tickets".
 - **Plan with Claude**: pick arrival day, length, style and pace, and Claude drafts an itinerary using only events and day trips listed on the board, so it can't invent stops.
 - **Fun events from travellers**: anyone with Contributor access can submit an event with an official link and a short write-up. Submissions stay hidden until the host approves them.
 - **Day trips** from Mysuru, and the **Gaya Pitru Paksha** status.
@@ -55,7 +56,7 @@ python3 -m venv .venv
 .venv/bin/python tests/run_dashboard.py --hold 15 --pause 2
 ```
 
-Opens the board in Chrome, runs 9 checks (timeline, source links, filters, itinerary add/remove, picks, traveller form), saves screenshots to `screenshots/`, lingers `--pause` seconds on each step and keeps the window open `--hold` seconds at the end.
+Opens the board in Chrome, runs 15 checks (timeline, source links, filters, itinerary add/remove, picks, traveller form, and trip-check clashes, travel times, vehicle limits and booking warnings), saves screenshots to `screenshots/`, lingers `--pause` seconds on each step and keeps the window open `--hold` seconds at the end.
 
 ## Data
 

@@ -17,7 +17,7 @@ from pathlib import Path
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import Select, WebDriverWait
 
 ROOT = Path(__file__).resolve().parent.parent
 PAGE = (ROOT / "index.html").as_uri()
@@ -107,6 +107,56 @@ def main() -> int:
             assert "Sign in" in msg, msg
             driver.save_screenshot(str(SHOTS / "04-traveller-events.png"))
 
+        def add(key):
+            btn = driver.find_element(By.CSS_SELECTOR, f'[data-add="{key}"]')
+            if btn.get_attribute("aria-pressed") != "true":
+                driver.execute_script("arguments[0].scrollIntoView({block: 'center'}); arguments[0].click()", btn)
+
+        def legs(status):
+            return [e.text for e in driver.find_elements(By.CSS_SELECTOR, f'#planList .leg[data-status="{status}"]')]
+
+        def clash_different_venues():
+            # 17 Oct: Jasmine Sandlas at Uttanahalli and the drone show at Bannimantap overlap in the evening
+            add("ev:17:Jasmine Sandlas closing night")
+            add("ev:17:Drone show")
+            scroll_to("planH")
+            bad = legs("bad")
+            assert any("Clash" in t for t in bad), bad
+            assert "problem" in driver.find_element(By.ID, "pCheck").text.lower()
+            driver.save_screenshot(str(SHOTS / "05-trip-check-clash.png"))
+
+        def toast_on_add():
+            toast = driver.find_element(By.ID, "toast")
+            assert toast.is_displayed() and "Clash" in toast.text, toast.text
+
+        def same_venue_is_fine():
+            # 21 Oct: Jamboo Savari at the palace, then the torchlight parade at Bannimantap
+            add("ev:21:Jamboo Savari")
+            add("nt:Palace illumination")
+            texts = " ".join(legs("ok") + legs("warn") + legs("bad"))
+            assert "Jamboo Savari seats: be inside by" in texts, texts
+
+        def travel_time_shown():
+            add("ev:21:Torchlight parade")
+            texts = legs("ok") + legs("warn") + legs("bad")
+            assert any("km" in t and "min by car" in t for t in texts), texts
+
+        def auto_too_far():
+            driver.execute_script("document.getElementById('pDay').value='19'")
+            add("trip:Shravanabelagola")
+            Select(driver.find_element(By.ID, "pMode")).select_by_value("auto")
+            bad = legs("bad")
+            assert any("too far for an auto-rickshaw" in t for t in bad), bad
+            Select(driver.find_element(By.ID, "pMode")).select_by_value("car")
+            assert not any("too far" in t for t in legs("bad"))
+
+        def book_link_warns():
+            link = driver.find_element(By.CSS_SELECTOR, '[data-book="ev:17:Drone show"]')
+            driver.execute_script("arguments[0].addEventListener('click', e => e.preventDefault(), {once: true}); arguments[0].scrollIntoView({block: 'center'}); arguments[0].click()", link)
+            toast = driver.find_element(By.ID, "toast").text
+            assert toast.startswith("Before you book") and "Clash" in toast, toast
+            driver.save_screenshot(str(SHOTS / "06-book-warning.png"))
+
         step("Page loads with all 11 Dasara days", loads)
         step("Now & next shows events", now_and_next)
         step("Timeline events link to https sources", source_links)
@@ -116,8 +166,15 @@ def main() -> int:
         step("Remove a stop from my itinerary", remove_from_plan)
         step("Picks change with travel style", picks_switch)
         step("Traveller form asks to sign in when offline", traveller_form_signed_out)
+        step("Trip check flags a clash at different venues", clash_different_venues)
+        step("Adding a clashing event shows a warning", toast_on_add)
+        step("Jamboo Savari gate time is flagged", same_venue_is_fine)
+        step("Travel distance and time are shown between stops", travel_time_shown)
+        step("Far day trip is flagged for an auto-rickshaw", auto_too_far)
+        step("Book tickets warns about a clash first", book_link_warns)
 
-        print(f"\n{9 - len(failures)}/9 passed. Screenshots in {SHOTS}")
+        total = 15
+        print(f"\n{total - len(failures)}/{total} passed. Screenshots in {SHOTS}")
         print(f"Keeping the browser open for {args.hold:g} s…")
         driver.execute_script("window.scrollTo({top: 0, behavior: 'smooth'})")
         time.sleep(args.hold)
