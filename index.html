@@ -1,0 +1,825 @@
+<title>Musafir Mela</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Mukta:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: a festival "night board" — palace-bulb header with live day counter, a Now & Next strip,
+   then the 11-day timeline beside a sidebar of personal picks, DJ nights and the Gaya status. */
+:root {
+  --bg: #F5F3F8; --surface: #FFFFFF; --ink: #241A33; --muted: #675E7C; --line: #E2DCEC;
+  --gold: #A9690F; --gold-soft: #F7EAD0; --bulb: #F2B544; --kumkum: #B3263E;
+  --live: #1D7F54; --live-soft: #DDF2E8; --tba: #7A5F12; --tba-soft: #F5EDD3;
+  --chip: #EEEAF4;
+  --f-display: "Yatra One", "Mukta", Georgia, serif;
+  --f-body: "Mukta", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #140F1F; --surface: #1D1630; --ink: #F1ECF8; --muted: #A99FBE; --line: #312849;
+  --gold: #F2B544; --gold-soft: #3A2C17; --bulb: #FFC857; --kumkum: #F0607A;
+  --live: #4CC38A; --live-soft: #173A2B; --tba: #E5C46A; --tba-soft: #3A3115;
+  --chip: #2A2140; color-scheme: dark;
+} }
+:root[data-theme="dark"] {
+  --bg: #140F1F; --surface: #1D1630; --ink: #F1ECF8; --muted: #A99FBE; --line: #312849;
+  --gold: #F2B544; --gold-soft: #3A2C17; --bulb: #FFC857; --kumkum: #F0607A;
+  --live: #4CC38A; --live-soft: #173A2B; --tba: #E5C46A; --tba-soft: #3A3115;
+  --chip: #2A2140; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 1rem; line-height: 1.5; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 20px 48px; display: grid; gap: 28px; }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+h2 { font-family: var(--f-display); font-weight: 400; font-size: 1.45rem; color: var(--ink); }
+h3 { font-size: 1.02rem; font-weight: 700; line-height: 1.3; }
+p { margin: 0; }
+a { color: var(--gold); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.eyebrow { font-size: .74rem; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); font-weight: 700; }
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-size: .82rem; }
+
+/* header */
+.bulbs { height: 10px; background-image: radial-gradient(circle, var(--bulb) 0 3px, transparent 3.5px); background-size: 18px 10px; animation: twinkle 2.4s steps(2) infinite; }
+@keyframes twinkle { 50% { opacity: .55; } }
+@media (prefers-reduced-motion: reduce) { .bulbs, .dot.live { animation: none; } }
+header.top { display: grid; gap: 14px; }
+.brand { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 16px; }
+.brand h1 { font-family: var(--f-display); font-weight: 400; font-size: clamp(2.2rem, 6vw, 3.4rem); line-height: 1; color: var(--ink); }
+.brand h1 span { color: var(--gold); }
+.brand p.sub { color: var(--muted); max-width: 52ch; margin-top: 6px; }
+.counter { display: flex; gap: 10px; flex-wrap: wrap; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; min-width: 128px; }
+.tile b { display: block; font-family: var(--f-display); font-weight: 400; font-size: 1.6rem; line-height: 1.1; color: var(--gold); font-variant-numeric: tabular-nums; }
+.tile small { color: var(--muted); font-size: .8rem; }
+
+/* pills */
+.pill { display: inline-flex; align-items: center; gap: 6px; font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.pill.live { background: var(--live-soft); color: var(--live); }
+.pill.soon { background: var(--gold-soft); color: var(--gold); }
+.pill.tba { background: var(--tba-soft); color: var(--tba); }
+.pill.done { background: var(--chip); color: var(--muted); }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.dot.live { animation: pulse 1.4s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .3; } }
+
+/* now & next */
+.now { display: grid; gap: 12px; }
+.now-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.ncard { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.ncard.is-live { border-color: var(--live); }
+.ncard .when { color: var(--muted); }
+.ncard .place { color: var(--muted); font-size: .9rem; }
+
+/* main grid */
+.main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 28px; align-items: start; }
+@media (max-width: 900px) { .main { grid-template-columns: minmax(0, 1fr); } }
+.sec-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 10px; margin-bottom: 12px; }
+.filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.chipbtn { font: inherit; font-size: .85rem; border: 1px solid var(--line); background: var(--surface); color: var(--ink); padding: 4px 12px; border-radius: 999px; cursor: pointer; }
+.chipbtn:hover { border-color: var(--gold); }
+.chipbtn[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+.nightly { background: var(--gold-soft); border-radius: 12px; padding: 12px 16px; display: grid; gap: 8px; margin-bottom: 16px; }
+.nightly ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.nightly li { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+
+.day { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 14px; padding-block: 14px; border-top: 1px solid var(--line); }
+.day.today .dlabel b { color: var(--kumkum); }
+.day.past { opacity: .6; }
+.dlabel { display: grid; align-content: start; }
+.dlabel b { font-family: var(--f-display); font-weight: 400; font-size: 1.7rem; line-height: 1; color: var(--ink); }
+.dlabel small { color: var(--muted); font-size: .78rem; }
+.items { display: grid; gap: 10px; min-width: 0; }
+.ev { display: grid; gap: 3px; padding-left: 12px; border-left: 3px solid var(--line); }
+.ev[data-cat="music"], .ev[data-cat="dj"] { border-left-color: var(--kumkum); }
+.ev[data-cat="ritual"] { border-left-color: var(--gold); }
+.ev-top { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+.ev .meta { color: var(--muted); font-size: .9rem; }
+.ev .note { font-size: .92rem; }
+.empty { color: var(--muted); font-size: .9rem; }
+
+/* sidebar */
+aside { display: grid; gap: 18px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 12px; min-width: 0; }
+.panel ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+.panel li { display: grid; gap: 2px; }
+.panel li .meta { color: var(--muted); font-size: .88rem; }
+.callout { font-size: .88rem; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 10px; }
+.gaya .status { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+/* trips */
+.trips { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+.trip { border-top: 2px solid var(--gold); padding-top: 10px; display: grid; gap: 4px; align-content: start; }
+.trip .km { color: var(--gold); }
+.trip p { font-size: .92rem; color: var(--muted); }
+
+.srclink { font-size: .84rem; font-weight: 500; color: var(--gold); text-decoration: none; justify-self: start; overflow-wrap: anywhere; }
+.srclink span { color: var(--muted); font-weight: 400; }
+.srclink:hover { text-decoration: underline; }
+
+/* traveller-added events */
+.community { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 380px); gap: 28px; align-items: start; }
+@media (max-width: 900px) { .community { grid-template-columns: minmax(0, 1fr); } }
+.cgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+.ccard { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.ccard p { font-size: .93rem; overflow-wrap: anywhere; }
+.ccard .meta { color: var(--muted); font-size: .86rem; }
+.pill.ok { background: var(--live-soft); color: var(--live); }
+.pill.no { background: var(--chip); color: var(--kumkum); }
+form.add { display: grid; gap: 12px; }
+.field { display: grid; gap: 4px; }
+.field label { font-size: .85rem; font-weight: 700; }
+.field small { color: var(--muted); font-size: .8rem; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 420px) { .row2 { grid-template-columns: 1fr; } }
+input, select, textarea { font: inherit; font-size: .95rem; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; width: 100%; }
+input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+textarea { min-height: 96px; resize: vertical; }
+.check { display: flex; gap: 8px; align-items: start; font-size: .88rem; }
+.check input { width: auto; margin-top: 4px; }
+.btn { font: inherit; font-weight: 700; border: 0; border-radius: 8px; padding: 9px 16px; background: var(--ink); color: var(--bg); cursor: pointer; justify-self: start; }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); font-weight: 500; padding: 5px 12px; }
+.btn:disabled { opacity: .5; cursor: default; }
+.msg { font-size: .88rem; }
+.msg.err { color: var(--kumkum); }
+.msg.good { color: var(--live); }
+.review { border-top: 1px dashed var(--line); padding-top: 12px; display: grid; gap: 10px; }
+.review .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* itinerary + AI */
+.planctl { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: .88rem; color: var(--muted); }
+.planctl select { width: auto; }
+.plangrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 400px); gap: 20px; align-items: start; }
+@media (max-width: 900px) { .plangrid { grid-template-columns: minmax(0, 1fr); } }
+.pday { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 14px; padding-block: 10px; border-top: 1px solid var(--line); }
+.pday:first-child { border-top: 0; padding-top: 0; }
+.pitems { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.pitems li { display: grid; grid-template-columns: 72px minmax(0, 1fr) auto; gap: 10px; align-items: start; }
+.pitems li > div { display: grid; gap: 2px; min-width: 0; }
+.pitems .meta { color: var(--muted); font-size: .86rem; }
+.rm { font: inherit; font-size: 1.1rem; line-height: 1; border: 1px solid var(--line); background: transparent; color: var(--muted); border-radius: 6px; width: 28px; height: 28px; cursor: pointer; }
+.rm:hover { color: var(--kumkum); border-color: var(--kumkum); }
+.ev-links { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
+.addbtn { font: inherit; font-size: .8rem; font-weight: 700; border: 1px dashed var(--gold); background: transparent; color: var(--gold); border-radius: 999px; padding: 2px 10px; cursor: pointer; justify-self: start; }
+.addbtn[aria-pressed="true"] { border-style: solid; background: var(--gold-soft); }
+.ai { border-color: var(--gold); }
+.ai .meta { color: var(--muted); font-size: .9rem; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+#aOut { display: grid; gap: 12px; border-top: 1px dashed var(--line); padding-top: 12px; }
+#aOut ol { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: .93rem; }
+#aOut .sugg { color: var(--muted); font-style: italic; }
+
+footer { color: var(--muted); font-size: .85rem; display: grid; gap: 8px; border-top: 1px solid var(--line); padding-top: 16px; }
+footer ul { margin: 0; padding-left: 18px; display: grid; gap: 2px; }
+</style>
+
+<div class="bulbs" aria-hidden="true"></div>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div>
+        <div class="eyebrow">Festival travel board · Mysuru Dasara 2026</div>
+        <h1>Musafir <span>Mela</span></h1>
+        <p class="sub">What's on right now, what's next, and where to go nearby. Built for a traveller who wants the culture, not just the crowd.</p>
+      </div>
+      <div class="counter">
+        <div class="tile"><b id="dayNum">–</b><small id="dayLbl">Dasara day</small></div>
+        <div class="tile"><b id="cd">–</b><small>to Jamboo Savari</small></div>
+      </div>
+    </div>
+  </header>
+
+  <section class="now" aria-labelledby="nowH">
+    <div class="sec-head"><h2 id="nowH">Now &amp; next</h2><span class="mono" id="clock"></span></div>
+    <div class="now-grid" id="nowGrid"></div>
+  </section>
+
+  <section aria-labelledby="planH">
+    <div class="sec-head">
+      <h2 id="planH">My itinerary</h2>
+      <div class="planctl">
+        <label for="pDay">Day trips and nightly events go on</label>
+        <select id="pDay"></select>
+        <button type="button" class="btn ghost" id="pCopy">Copy plan</button>
+        <button type="button" class="btn ghost" id="pClear">Clear</button>
+      </div>
+    </div>
+    <div class="plangrid">
+      <div class="panel"><div id="planList"></div><p class="msg" id="pMsg" role="status"></p><p class="callout" id="pWhere">Saved in this browser.</p></div>
+      <div class="panel ai" id="aiPanel">
+        <h3>Plan with Claude</h3>
+        <p class="meta">Claude drafts a day-by-day plan using only the events and day trips on this board, so every stop is real.</p>
+        <form id="aiForm" class="add" novalidate>
+          <div class="row2">
+            <div class="field"><label for="aDay">Arriving</label><select id="aDay"></select></div>
+            <div class="field"><label for="aLen">Staying</label><select id="aLen"><option value="1">1 day</option><option value="2">2 days</option><option value="3" selected>3 days</option><option value="4">4 days</option><option value="5">5 days</option></select></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label for="aStyle">Travel style</label><select id="aStyle"><option value="spiritual">Spiritual</option><option value="music">Music &amp; DJ</option><option value="heritage">Heritage</option><option value="family">Family</option></select></div>
+            <div class="field"><label for="aPace">Pace</label><select id="aPace"><option value="relaxed">Relaxed</option><option value="packed">See everything</option></select></div>
+          </div>
+          <div class="field"><label for="aNote">Anything else? (optional)</label><input id="aNote" maxlength="160" placeholder="e.g. travelling with parents, vegetarian food, no long drives"></div>
+          <div class="actions"><button class="btn" id="aGo" type="submit">Draft my itinerary</button><button class="btn ghost" id="aStop" type="button" hidden>Stop</button></div>
+          <p class="msg" id="aMsg" role="status"></p>
+        </form>
+        <div id="aOut" hidden></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="main">
+    <section aria-labelledby="tlH">
+      <div class="sec-head">
+        <h2 id="tlH">11 days of Dasara</h2>
+        <div class="filters" role="group" aria-label="Filter events">
+          <button class="chipbtn" data-f="all" aria-pressed="true">All</button>
+          <button class="chipbtn" data-f="music" aria-pressed="false">Concerts</button>
+          <button class="chipbtn" data-f="dj" aria-pressed="false">DJ &amp; party</button>
+          <button class="chipbtn" data-f="ritual" aria-pressed="false">Ritual</button>
+          <button class="chipbtn" data-f="show" aria-pressed="false">Shows</button>
+        </div>
+      </div>
+      <div class="nightly">
+        <div class="eyebrow">Every night, 11–21 Oct</div>
+        <ul id="nightly"></ul>
+      </div>
+      <div id="timeline"></div>
+    </section>
+
+    <aside>
+      <div class="panel">
+        <h2>Picks for you</h2>
+        <div class="filters" role="group" aria-label="Your travel style">
+          <button class="chipbtn" data-v="spiritual" aria-pressed="true">Spiritual</button>
+          <button class="chipbtn" data-v="music" aria-pressed="false">Music &amp; DJ</button>
+          <button class="chipbtn" data-v="heritage" aria-pressed="false">Heritage</button>
+          <button class="chipbtn" data-v="family" aria-pressed="false">Family</button>
+        </div>
+        <ul id="picks"></ul>
+      </div>
+
+      <div class="panel">
+        <h2>DJ &amp; party nights</h2>
+        <ul id="dj"></ul>
+        <p class="callout">No standalone DJ club nights in Mysuru have been announced for Dasara yet. Check District and BookMyShow for Mysuru closer to the weekend of 16–18 Oct.</p>
+      </div>
+
+      <div class="panel gaya">
+        <h2>Gaya · Pitru Paksha</h2>
+        <div class="status"><span class="pill done">Ended 10 Oct</span><span class="mono">Next: around Sept 2027</span></div>
+        <p>The 2026 fortnight of ancestor rites ran 25 Sept to 10 Oct, with Bihar Tourism's 2,500-bed tent city. Pind daan at Vishnupad Temple, the Phalgu river and Akshayavat can still be done any time of year.</p>
+        <p class="callout">Pair with Bodh Gaya (15 km), Rajgir (75 km) and Nalanda (90 km).</p>
+      </div>
+    </aside>
+  </div>
+
+  <section aria-labelledby="cmH">
+    <div class="sec-head"><h2 id="cmH">Fun events from travellers</h2><span class="eyebrow">Checked by the host before they appear</span></div>
+    <div class="community">
+      <div>
+        <div class="cgrid" id="approved"><p class="empty">No traveller events yet. Know a real concert, food walk or DJ night in Mysuru? Add it with its official link, and it shows here once the host has checked it.</p></div>
+        <div class="review" id="mineWrap" hidden><div class="eyebrow">Your submissions</div><div class="cgrid" id="mine"></div></div>
+        <div class="review" id="reviewWrap" hidden><div class="eyebrow">Waiting for your check (host only)</div><div class="cgrid" id="pending"></div></div>
+      </div>
+      <div class="panel">
+        <h3>Add a fun event</h3>
+        <form class="add" id="addForm" novalidate>
+          <div class="field"><label for="fTitle">Event name</label><input id="fTitle" maxlength="80" placeholder="e.g. Mysuru Food Walk, Devaraja Market"></div>
+          <div class="field"><label for="fUrl">Official link or ticket page</label><input id="fUrl" type="url" maxlength="400" placeholder="https://"><small>Use the organiser's page or a ticket site. Short links like bit.ly are not accepted.</small></div>
+          <div class="row2">
+            <div class="field"><label for="fDate">Date</label><input id="fDate" type="date" min="2026-10-11" max="2026-10-31" value="2026-10-16"></div>
+            <div class="field"><label for="fCat">Type</label><select id="fCat"><option value="dj">DJ &amp; party</option><option value="music">Concert</option><option value="food">Food</option><option value="ritual">Ritual</option><option value="show">Show</option></select></div>
+          </div>
+          <div class="field"><label for="fPlace">Venue</label><input id="fPlace" maxlength="100" placeholder="Venue name, area"></div>
+          <div class="field"><label for="fWrite">Short write-up</label><textarea id="fWrite" maxlength="400" placeholder="What happens there, who's playing, why a traveller would enjoy it. 40–400 characters."></textarea><small id="fCount">0 / 400</small></div>
+          <label class="check" for="fTrue"><input id="fTrue" type="checkbox"> I've checked this event is real and the link is its own page.</label>
+          <button class="btn" id="fSubmit" type="submit">Send for checking</button>
+          <p class="msg" id="fMsg" role="status"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="trH">
+    <div class="sec-head"><h2 id="trH">Day trips from Mysuru</h2><span class="eyebrow">Same culture, fewer crowds</span></div>
+    <div class="trips" id="trips"></div>
+  </section>
+
+  <footer>
+    <p><b>Last checked 11 Oct 2026.</b> Times marked "Time TBA" have not been announced yet. Several sources disagreed on exact times, so confirm passes and timings through official Mysuru Dasara channels before you go.</p>
+    <ul>
+      <li><a href="https://www.siasat.com/mysuru-dasara-2026-from-october-11-jumbo-savari-on-october-21-3505227/" target="_blank" rel="noopener">Siasat: Dasara dates and Jamboo Savari</a></li>
+      <li><a href="https://newskarnataka.com/karnataka/yuva-dasara-2026-prabhu-deva-sid-sriram-and-more-to-perform/29092026/" target="_blank" rel="noopener">News Karnataka: Yuva Dasara lineup</a></li>
+      <li><a href="https://www.inmysore.com/about-mysore/mysore-dasara-festival/mysore-dasara-events" target="_blank" rel="noopener">inMysore: events, illumination, air show</a></li>
+      <li><a href="https://hindutone.com/festivals/mysore-dasara-2026-day-by-day-guide/" target="_blank" rel="noopener">Hindutone: day-by-day guide</a></li>
+      <li><a href="https://www.district.in/events/rangilo-2026-the-grand-dandiya-garba-festival-oct16-2026-buy-tickets" target="_blank" rel="noopener">District: Rangilo 2026, Bengaluru</a></li>
+      <li><a href="https://patnapress.com/pitru-paksha-mela-2026-gaya-2500-bed-tent-city-tourism-facilities/" target="_blank" rel="noopener">Patna Press: Gaya Pitru Paksha Mela 2026</a></li>
+    </ul>
+  </footer>
+</div>
+
+<script>
+const T = (d, t) => new Date(`2026-10-${String(d).padStart(2, "0")}T${t}:00+05:30`);
+const UTTANAHALLI = "Yuva Dasara ground, Uttanahalli";
+
+// cat: ritual | music | dj | show. tags drive "Picks for you". tba = time not announced.
+const EVENTS = [
+  { title: "Dasara inauguration", url: "https://www.siasat.com/mysuru-dasara-2026-from-october-11-jumbo-savari-on-october-21-3505227/", place: "Chamundeshwari Temple, Chamundi Hill", d: 11, s: "11:50", e: "12:45", cat: "ritual", tags: ["spiritual", "heritage"], note: "Opening puja to Goddess Chamundeshwari in Dhanur Lagna. Some reports say 11:00." },
+  { title: "Yuva Dasara opening night", url: "https://newskarnataka.com/karnataka/yuva-dasara-2026-prabhu-deva-sid-sriram-and-more-to-perform/29092026/", place: UTTANAHALLI, d: 13, s: "17:30", e: "22:30", cat: "music", tags: ["music"], note: "Prabhu Deva opens. Ajaneesh Loknath with Vasuki Vaibhav, Mangli, Sai Vignesh, Ananya Bhat and more. Headliners from 7:30 pm." },
+  { title: "Shankar-Ehsaan-Loy live", url: "https://newskarnataka.com/karnataka/yuva-dasara-2026-prabhu-deva-sid-sriram-and-more-to-perform/29092026/", place: UTTANAHALLI, d: 14, s: "17:30", e: "22:30", cat: "music", tags: ["music"], note: "Local artistes 5:30–7:30 pm, then the trio." },
+  { title: "Sid Sriram live", url: "https://newskarnataka.com/karnataka/yuva-dasara-2026-prabhu-deva-sid-sriram-and-more-to-perform/29092026/", place: UTTANAHALLI, d: 15, s: "17:30", e: "22:30", cat: "music", tags: ["music"], note: "One listing says 16 Oct. Recheck the day before." },
+  { title: "Sandalwood Nights", url: "https://newskarnataka.com/karnataka/yuva-dasara-2026-prabhu-deva-sid-sriram-and-more-to-perform/29092026/", place: UTTANAHALLI, d: 16, s: "17:30", e: "22:30", cat: "dj", tags: ["music"], note: "Shivarajkumar and Rachita Ram, with Vijay Prakash, Rajesh Krishnan, rapper Chandan Shetty and All Ok. The closest thing to a party night." },
+  { title: "Jasmine Sandlas closing night", url: "https://newskarnataka.com/karnataka/yuva-dasara-2026-prabhu-deva-sid-sriram-and-more-to-perform/29092026/", place: UTTANAHALLI, d: 17, s: "17:30", e: "22:30", cat: "dj", tags: ["music"], note: "Punjabi pop to close Yuva Dasara." },
+  { title: "Surya Kiran air show", url: "https://www.inmysore.com/about-mysore/mysore-dasara-festival/mysore-dasara-events", place: "Venue TBA (usually Bannimantap)", d: 18, s: "00:00", e: "23:59", cat: "show", tags: ["family"], tba: true, note: "IAF aerobatic team, 18–20 Oct. Timings and passes not announced." },
+  { title: "Surya Kiran air show", url: "https://www.inmysore.com/about-mysore/mysore-dasara-festival/mysore-dasara-events", place: "Venue TBA (usually Bannimantap)", d: 19, s: "00:00", e: "23:59", cat: "show", tags: ["family"], tba: true, note: "Day 2 of 3." },
+  { title: "Durga Ashtami", url: "https://hindutone.com/festivals/mysore-dasara-2026-day-by-day-guide/", place: "Chamundi Hill and palace temples", d: 19, s: "00:00", e: "23:59", cat: "ritual", tags: ["spiritual"], tba: true, note: "Per the Mysuru panchanga. Jamboo Savari rehearsals often run around now." },
+  { title: "Surya Kiran air show", url: "https://www.inmysore.com/about-mysore/mysore-dasara-festival/mysore-dasara-events", place: "Venue TBA (usually Bannimantap)", d: 20, s: "00:00", e: "23:59", cat: "show", tags: ["family"], tba: true, note: "Final day." },
+  { title: "Maha Navami & Ayudha Puja", url: "https://hindutone.com/festivals/mysore-dasara-2026-day-by-day-guide/", place: "Mysore Palace and homes city-wide", d: 20, s: "14:06", e: "14:53", cat: "ritual", tags: ["spiritual", "heritage"], note: "Tools, vehicles and the royal arms are blessed. Vijay Muhurat 2:06–2:53 pm." },
+  { title: "Jamboo Savari", url: "https://www.siasat.com/mysuru-dasara-2026-from-october-11-jumbo-savari-on-october-21-3505227/", place: "Mysore Palace → Bannimantap, 4.8 km", d: 21, s: "16:10", e: "19:00", cat: "ritual", tags: ["spiritual", "heritage", "family"], note: "Flowers offered to the goddess in the 750 kg Golden Howdah at 4:10–4:35 pm (Meena Lagna), then the elephant procession. A new elephant carries the howdah this year." },
+  { title: "Torchlight parade", url: "https://www.inmysore.com/about-mysore/mysore-dasara-festival/mysore-dasara-events", place: "Bannimantap Parade Grounds", d: 21, s: "19:00", e: "22:00", cat: "show", tags: ["heritage", "family"], tba: true, note: "Pass required. Exact time not announced." },
+];
+
+const NIGHTLY = [
+  { title: "Palace illumination", url: "https://www.inmysore.com/about-mysore/mysore-dasara-festival/mysore-dasara-events", s: "19:00", e: "22:00", cat: "show", tags: ["family", "heritage"], place: "Mysore Palace", note: "About 100,000 bulbs." },
+  { title: "Classical music & dance", url: "https://hindutone.com/festivals/mysore-dasara-2026-day-by-day-guide/", s: "18:30", e: "21:30", cat: "music", tags: ["heritage", "spiritual"], place: "Palace stage", note: "Time approximate.", tba: true },
+  { title: "Dasara Exhibition", url: "https://hindutone.com/festivals/mysore-dasara-2026-day-by-day-guide/", s: "16:00", e: "22:00", cat: "show", tags: ["family"], place: "Exhibition grounds near the palace", note: "Hours approximate.", tba: true },
+];
+
+const DJ = [
+  { title: "Sandalwood Nights", url: "https://newskarnataka.com/karnataka/yuva-dasara-2026-prabhu-deva-sid-sriram-and-more-to-perform/29092026/", meta: "Fri 16 Oct · Uttanahalli, Mysuru", note: "Chandan Shetty and All Ok bring the rap and dance-floor energy." },
+  { title: "Jasmine Sandlas", url: "https://newskarnataka.com/karnataka/yuva-dasara-2026-prabhu-deva-sid-sriram-and-more-to-perform/29092026/", meta: "Sat 17 Oct · Uttanahalli, Mysuru", note: "Closing night of Yuva Dasara." },
+  { title: "Rangilo 2026 Dandiya & Garba", url: "https://www.district.in/events/rangilo-2026-the-grand-dandiya-garba-festival-oct16-2026-buy-tickets", meta: "16–18 Oct · Legend Microbrewery, Bengaluru (150 km)", note: "DJs including Suketu. Tickets on District." },
+];
+
+const TRIPS = [
+  { name: "Chamundi Hill", url: "https://en.wikipedia.org/wiki/Chamundi_Hills", km: 13, tags: ["spiritual", "heritage"], why: "The goddess Dasara honours. Climb 1,000 steps past the giant Nandi." },
+  { name: "Srirangapatna", url: "https://en.wikipedia.org/wiki/Srirangapatna", km: 15, tags: ["spiritual", "heritage"], why: "Ranganathaswamy Temple. Dasara began here before moving to Mysuru." },
+  { name: "Nanjangud", url: "https://en.wikipedia.org/wiki/Nanjangud", km: 25, tags: ["spiritual"], why: "Srikanteshwara Temple, the Kashi of the south." },
+  { name: "Somanathapura", url: "https://en.wikipedia.org/wiki/Chennakesava_Temple,_Somanathapura", km: 35, tags: ["heritage"], why: "The finest star-shaped Hoysala temple." },
+  { name: "Talakadu", url: "https://en.wikipedia.org/wiki/Talakadu", km: 45, tags: ["spiritual", "heritage"], why: "Temples half-buried in sand, with a legend of a curse." },
+  { name: "Melukote", url: "https://en.wikipedia.org/wiki/Melukote", km: 50, tags: ["spiritual"], why: "Cheluvanarayana and Yoga Narasimha. A centre for Ramanuja's followers." },
+  { name: "Brindavan Gardens", url: "https://en.wikipedia.org/wiki/Brindavan_Gardens", km: 20, tags: ["family"], why: "Musical fountain at KRS dam in the evening." },
+  { name: "Shravanabelagola", url: "https://en.wikipedia.org/wiki/Shravanabelagola", km: 85, tags: ["spiritual", "heritage"], why: "The 57 ft statue of Gommateshwara (Bahubali)." },
+  { name: "Bylakuppe", url: "https://en.wikipedia.org/wiki/Bylakuppe", km: 85, tags: ["spiritual", "family"], why: "The Tibetan Golden Temple and monasteries." },
+];
+
+const DAYS = Array.from({ length: 11 }, (_, i) => 11 + i);
+const fmtT = new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", hour: "numeric", minute: "2-digit" });
+const fmtD = new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", weekday: "short", day: "numeric", month: "short" });
+const istDay = (date) => Number(new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", day: "numeric" }).format(date));
+const istMonth = (date) => Number(new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", month: "numeric" }).format(date));
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const host = (u) => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch (e) { return ""; } };
+/* ---------- My itinerary ----------
+   plan = [{ key, day, title, time, place, url }]. Saved to data/users/<id>/plan when signed in,
+   otherwise kept in this browser only. */
+let plan = [];
+let planDb = null, planUid = null, saveTimer = null;
+const keyOf = (o) => (o.nightly ? "nt:" + o.title : `ev:${o.d}:${o.title}`);
+const inPlan = (k) => plan.some((p) => p.key === k);
+const addBtn = (k) => `<button type="button" class="addbtn" data-add="${esc(k)}" aria-pressed="${inPlan(k)}">${inPlan(k) ? "✓ In my plan" : "+ Add to plan"}</button>`;
+const planDay = () => Number(document.getElementById("pDay")?.value) || DAYS[0];
+
+function catalogItem(k) {
+  const [kind, ...rest] = k.split(":");
+  if (kind === "ev") {
+    const d = Number(rest[0]), title = rest.slice(1).join(":");
+    const e = EVENTS.find((x) => x.d === d && x.title === title);
+    return e && { key: k, day: d, title: e.title, time: e.tba && e.s === "00:00" ? "Time TBA" : e.s, place: e.place, url: e.url };
+  }
+  if (kind === "nt") {
+    const n = NIGHTLY.find((x) => x.title === rest.join(":"));
+    return n && { key: k, day: planDay(), title: n.title, time: n.s, place: n.place, url: n.url };
+  }
+  if (kind === "trip") {
+    const t = TRIPS.find((x) => x.name === rest.join(":"));
+    return t && { key: k, day: planDay(), title: "Day trip: " + t.name, time: "08:00", place: `${t.km} km from Mysuru`, url: t.url };
+  }
+  if (kind === "cm") {
+    const a = (typeof approvedDocs !== "undefined" ? approvedDocs : []).find((x) => x.id === rest.join(":"));
+    const d = a && Number(String(a.date).slice(8, 10));
+    return a && { key: k, day: DAYS.includes(d) ? d : planDay(), title: a.title, time: "Evening", place: a.place, url: a.url };
+  }
+  return null;
+}
+
+function savePlan() {
+  try { localStorage.setItem("mm-plan", JSON.stringify(plan)); } catch (e) {}
+  if (!planDb || !planUid) return;
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => { planDb.doc(`data/users/${planUid}/plan`).set({ items: plan }).catch(() => {}); }, 700);
+}
+function setPlan(next) { plan = next; savePlan(); render(); if (typeof renderApproved === "function") renderApproved(); }
+function togglePlan(k) {
+  if (inPlan(k)) return setPlan(plan.filter((p) => p.key !== k));
+  const item = catalogItem(k);
+  if (item) setPlan([...plan, item]);
+}
+
+function planText() {
+  return DAYS.filter((d) => plan.some((p) => p.day === d)).map((d) =>
+    `${fmtD.format(T(d, "12:00"))} (Dasara day ${d - 10})\n` + plan.filter((p) => p.day === d).sort((a, b) => String(a.time).localeCompare(String(b.time)))
+      .map((p) => `  ${p.time ? p.time + "  " : ""}${p.title}${p.place ? " · " + p.place : ""}${p.url ? "\n    " + p.url : ""}`).join("\n")).join("\n\n");
+}
+
+function renderPlan() {
+  const el = document.getElementById("planList");
+  if (!el) return;
+  if (!plan.length) {
+    el.innerHTML = `<p class="empty">Your plan is empty. Tap <b>+ Add to plan</b> on any event or day trip, or let Claude draft a plan for you.</p>`;
+    return;
+  }
+  el.innerHTML = DAYS.filter((d) => plan.some((p) => p.day === d)).map((d) => `
+    <div class="pday">
+      <div class="dlabel"><b>${d}</b><small>${new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", weekday: "short" }).format(T(d, "12:00"))} · Day ${d - 10}</small></div>
+      <ol class="pitems">${plan.filter((p) => p.day === d).sort((a, b) => String(a.time).localeCompare(String(b.time))).map((p) => `
+        <li><span class="mono">${esc(/^\d\d:\d\d$/.test(p.time) ? fmtT.format(T(d, p.time)) : p.time || "")}</span>
+          <div><b>${esc(p.title)}</b>${p.place ? `<span class="meta">${esc(p.place)}</span>` : ""}${p.note ? `<span class="meta">${esc(p.note)}</span>` : ""}${src(p.url)}</div>
+          <button type="button" class="rm" data-rm="${esc(p.key)}" aria-label="Remove ${esc(p.title)}">×</button></li>`).join("")}</ol>
+    </div>`).join("");
+}
+
+const src = (u, label = "Details") => /^https:\/\//.test(String(u)) && host(u) ? `<a class="srclink" href="${esc(u)}" target="_blank" rel="noopener noreferrer">${label} ↗ <span>${esc(host(u))}</span></a>` : "";
+
+// Expand everything into dated occurrences.
+const OCC = [
+  ...EVENTS.map((e) => ({ ...e, start: T(e.d, e.s), end: T(e.d, e.e) })),
+  ...NIGHTLY.flatMap((n) => DAYS.map((d) => ({ ...n, d, nightly: true, start: T(d, n.s), end: T(d, n.e) }))),
+];
+
+function state(o, now) {
+  if (now >= o.end) return "done";
+  if (now >= o.start) return o.tba ? "today" : "live";
+  if (o.start - now < 6 * 3600e3) return "soon";
+  return o.tba ? "tba" : "up";
+}
+function pill(st, o) {
+  if (st === "live") return `<span class="pill live"><span class="dot live"></span>Live now</span>`;
+  if (st === "today") return `<span class="pill soon">Today · time TBA</span>`;
+  if (st === "soon") return `<span class="pill soon">Starts ${fmtT.format(o.start)}</span>`;
+  if (st === "done") return `<span class="pill done">Ended</span>`;
+  if (st === "tba") return `<span class="pill tba">Time TBA</span>`;
+  return "";
+}
+function whenText(o) {
+  if (o.tba && o.s === "00:00") return `${fmtD.format(o.start)} · time TBA`;
+  return `${fmtD.format(o.start)} · ${fmtT.format(o.start)}–${fmtT.format(o.end)}`;
+}
+
+let filter = "all", vibe = "spiritual";
+
+function render() {
+  const now = new Date();
+  const inFest = istMonth(now) === 10 && istDay(now) >= 11 && istDay(now) <= 21 && now.getUTCFullYear() === 2026;
+  const today = inFest ? istDay(now) : null;
+
+  // counters
+  const js = T(21, "16:10");
+  document.getElementById("dayNum").textContent = inFest ? `${today - 10} / 11` : now < T(11, "00:00") ? "Soon" : "Done";
+  document.getElementById("dayLbl").textContent = inFest ? "Dasara day" : "Dasara 2026";
+  const ms = js - now;
+  document.getElementById("cd").textContent = ms <= 0 ? "Today's done" : ms > 864e5 ? `${Math.floor(ms / 864e5)}d ${Math.floor((ms % 864e5) / 36e5)}h` : `${Math.floor(ms / 36e5)}h ${Math.floor((ms % 36e5) / 6e4)}m`;
+  document.getElementById("clock").textContent = `IST ${fmtD.format(now)}, ${fmtT.format(now)}`;
+
+  // now & next: live first, then next upcoming (one per title)
+  const seen = new Set();
+  const upcoming = OCC.filter((o) => now < o.end)
+    .sort((a, b) => (state(b, now) === "live") - (state(a, now) === "live") || a.start - b.start)
+    .filter((o) => (seen.has(o.title) ? false : seen.add(o.title)))
+    .slice(0, 4);
+  document.getElementById("nowGrid").innerHTML = upcoming.length
+    ? upcoming.map((o) => {
+        const st = state(o, now);
+        return `<article class="ncard ${st === "live" ? "is-live" : ""}">
+          <div>${pill(st, o) || `<span class="pill tba">${o.tba ? "Time TBA" : "Coming up"}</span>`}</div>
+          <h3>${esc(o.title)}</h3>
+          <div class="when mono">${whenText(o)}</div>
+          <div class="place">${esc(o.place)}</div>${src(o.url)}${addBtn(keyOf(o))}</article>`;
+      }).join("")
+    : `<p class="empty">Dasara 2026 is over. Ask Claude to refresh this board for the next festival.</p>`;
+
+  // nightly band
+  document.getElementById("nightly").innerHTML = NIGHTLY.filter((n) => filter === "all" || n.cat === filter)
+    .map((n) => {
+      const o = OCC.find((x) => x.nightly && x.title === n.title && now < x.end);
+      const st = o ? state(o, now) : "done";
+      return `<li><b>${esc(n.title)}</b><span class="mono">${fmtT.format(T(11, n.s))}–${fmtT.format(T(11, n.e))}</span><span class="meta">${esc(n.place)}. ${esc(n.note)}</span>${st === "live" || st === "today" ? pill(st, o) : ""}${src(n.url, "Source")}${addBtn("nt:" + n.title)}</li>`;
+    }).join("") || `<li class="empty">Nothing nightly in this category.</li>`;
+
+  // timeline
+  document.getElementById("timeline").innerHTML = DAYS.map((d) => {
+    const items = EVENTS.map((e) => OCC.find((o) => !o.nightly && o.d === e.d && o.title === e.title))
+      .filter((o, i, arr) => o && o.d === d && arr.indexOf(o) === i && (filter === "all" || o.cat === filter));
+    const cls = today === d ? "today" : now > T(d, "23:59") ? "past" : "";
+    const label = new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", weekday: "short" }).format(T(d, "12:00"));
+    return `<div class="day ${cls}">
+      <div class="dlabel"><b>${d}</b><small>${label} · Day ${d - 10}${today === d ? " · today" : ""}</small></div>
+      <div class="items">${items.length ? items.map((o) => `
+        <div class="ev" data-cat="${o.cat}">
+          <div class="ev-top"><h3>${esc(o.title)}</h3>${pill(state(o, now), o)}</div>
+          <div class="meta mono">${o.tba && o.s === "00:00" ? "Time TBA" : `${fmtT.format(o.start)}–${fmtT.format(o.end)}`}</div>
+          <div class="meta">${esc(o.place)}</div>
+          <p class="note">${esc(o.note)}</p>
+          <div class="ev-links">${src(o.url)}${addBtn(keyOf(o))}</div>
+        </div>`).join("") : `<p class="empty">${filter === "all" ? "Palace lights, cultural stage and exhibition only." : "Nothing in this category today."}</p>`}</div>
+    </div>`;
+  }).join("");
+
+  // picks
+  const ev = OCC.filter((o) => !o.nightly && o.tags.includes(vibe) && now < o.end)
+    .filter((o, i, arr) => arr.findIndex((x) => x.title === o.title) === i).slice(0, 3);
+  const tr = TRIPS.filter((t) => t.tags.includes(vibe)).slice(0, 2);
+  document.getElementById("picks").innerHTML = [
+    ...ev.map((o) => `<li><b>${esc(o.title)}</b><span class="meta mono">${whenText(o)}</span><span class="meta">${esc(o.place)}</span><div class="ev-links">${src(o.url)}${addBtn(keyOf(o))}</div></li>`),
+    ...tr.map((t) => `<li><b>Day trip: ${esc(t.name)}</b><span class="meta">${t.km} km · ${esc(t.why)}</span><div class="ev-links">${src(t.url, "About")}${addBtn("trip:" + t.name)}</div></li>`),
+  ].join("") || `<li class="empty">No upcoming picks for this style.</li>`;
+
+  document.getElementById("trips").innerHTML = TRIPS.slice().sort((a, b) => a.km - b.km).map((t) => `
+    <div class="trip"><span class="mono km">${t.km} km</span><h3>${esc(t.name)}</h3><p>${esc(t.why)}</p><div class="ev-links">${src(t.url, "About")}${addBtn("trip:" + t.name)}</div></div>`).join("");
+  renderPlan();
+
+  document.getElementById("dj").innerHTML = DJ.map((x) => `<li><b>${esc(x.title)}</b><span class="meta mono">${esc(x.meta)}</span><span class="meta">${esc(x.note)}</span>${src(x.url)}</li>`).join("");
+}
+
+
+function bindChips(attr, set) {
+  document.querySelectorAll(`[data-${attr}]`).forEach((b) => b.addEventListener("click", () => {
+    document.querySelectorAll(`[data-${attr}]`).forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    set(b.dataset[attr]);
+    try { localStorage.setItem("mm-" + attr, b.dataset[attr]); } catch (e) {}
+    render();
+  }));
+  try {
+    const saved = localStorage.getItem("mm-" + attr);
+    const btn = saved && document.querySelector(`[data-${attr}="${saved}"]`);
+    if (btn) { document.querySelectorAll(`[data-${attr}]`).forEach((x) => x.setAttribute("aria-pressed", String(x === btn))); set(saved); }
+  } catch (e) {}
+}
+bindChips("f", (v) => (filter = v));
+bindChips("v", (v) => (vibe = v));
+
+// day pickers + saved plan
+const dayOpts = DAYS.map((d) => `<option value="${d}">${fmtD.format(T(d, "12:00"))}</option>`).join("");
+document.getElementById("pDay").innerHTML = dayOpts;
+document.getElementById("aDay").innerHTML = dayOpts;
+{
+  const now = new Date(), td = istDay(now);
+  if (istMonth(now) === 10 && DAYS.includes(td)) { document.getElementById("pDay").value = td; document.getElementById("aDay").value = td; }
+}
+try { const saved = JSON.parse(localStorage.getItem("mm-plan") || "[]"); if (Array.isArray(saved)) plan = saved; } catch (e) {}
+
+document.addEventListener("click", (e) => {
+  const add = e.target.closest("[data-add]");
+  if (add) return togglePlan(add.dataset.add);
+  const rm = e.target.closest("[data-rm]");
+  if (rm) return setPlan(plan.filter((p) => p.key !== rm.dataset.rm));
+});
+document.getElementById("pCopy").addEventListener("click", async () => {
+  const m = document.getElementById("pMsg");
+  if (!plan.length) { m.className = "msg err"; m.textContent = "Add something to your plan first."; return; }
+  try { await navigator.clipboard.writeText(planText()); m.className = "msg good"; m.textContent = "Plan copied. Paste it into WhatsApp, notes or email."; }
+  catch (err) { m.className = "msg err"; m.textContent = "Couldn't copy here. Select the plan above and copy it by hand."; }
+});
+const clearBtn = document.getElementById("pClear");
+clearBtn.addEventListener("click", () => {
+  if (!plan.length) return;
+  if (clearBtn.dataset.armed) { delete clearBtn.dataset.armed; clearBtn.textContent = "Clear"; setPlan([]); return; }
+  clearBtn.dataset.armed = "1"; clearBtn.textContent = "Tap again to clear";
+  setTimeout(() => { delete clearBtn.dataset.armed; clearBtn.textContent = "Clear"; }, 3000);
+});
+
+render();
+setInterval(render, 60000);
+
+/* ---------- Traveller-added events ----------
+   tips/<viewerId>  : one doc per traveller, { items: [...] } (max 5), private to them and the host.
+   approved/<tipId> : events the host has checked; everyone reads these. */
+const CAT_LABEL = { dj: "DJ & party", music: "Concert", food: "Food", ritual: "Ritual", show: "Show" };
+const SHORTENERS = ["bit.ly", "tinyurl.com", "t.co", "goo.gl", "rb.gy", "cutt.ly", "is.gd", "ow.ly", "shorturl.at", "tiny.cc"];
+const MAX_TIPS = 5;
+const $ = (id) => document.getElementById(id);
+const fmtDate = (iso) => { try { return fmtD.format(new Date(String(iso) + "T12:00:00+05:30")); } catch (e) { return "Date unclear"; } };
+let approvedDocs = [], myTips = [], allTips = [], uid = null, user = null, db = null, isOwner = false;
+
+function validate(t) {
+  if (t.title.length < 4) return "Give the event a name (at least 4 characters).";
+  let u;
+  try { u = new URL(t.url); } catch (e) { return "Paste the full link, starting with https://"; }
+  if (u.protocol !== "https:") return "The link must start with https://";
+  if (!u.hostname.includes(".")) return "That link doesn't look like a real website.";
+  if (SHORTENERS.includes(u.hostname.replace(/^www\./, ""))) return "Short links hide where they go. Paste the full event page instead.";
+  if (!/^2026-10-(1[1-9]|2\d|3[01])$/.test(t.date)) return "Pick a date between 11 and 31 October 2026.";
+  if (t.place.length < 3) return "Add the venue.";
+  if (t.writeup.length < 40) return `The write-up needs at least 40 characters (${t.writeup.length} so far).`;
+  if (!$("fTrue").checked) return "Tick the box to confirm the event is real.";
+  const dup = approvedDocs.some((a) => a.url === t.url) || myTips.some((m) => m.url === t.url && m.status !== "rejected");
+  if (dup) return "That link has already been added.";
+  if (myTips.filter((m) => m.status === "pending").length >= MAX_TIPS) return `You have ${MAX_TIPS} events waiting for checking. Try again once they're reviewed.`;
+  return "";
+}
+
+async function names(ids) {
+  try { return user && ids.length ? await user.profiles(ids) : {}; } catch (e) { return {}; }
+}
+
+function card(t, opts = {}) {
+  const status = opts.status ? (t.status === "approved" ? `<span class="pill ok">Checked</span>` : t.status === "rejected" ? `<span class="pill no">Not added</span>` : `<span class="pill tba">Waiting for check</span>`) : `<span class="pill ok">Checked by host</span>`;
+  return `<article class="ccard">
+    <div class="ev-top"><span class="pill soon">${esc(CAT_LABEL[t.cat] || "Event")}</span>${status}</div>
+    <h3>${esc(t.title)}</h3>
+    <div class="meta mono">${esc(fmtDate(t.date))}</div>
+    <div class="meta">${esc(t.place)}</div>
+    <p>${esc(t.writeup)}</p>
+    ${src(t.url, "Event page")}
+    ${opts.by ? `<div class="meta">Added by ${esc(opts.by)}</div>` : ""}
+    ${t.reason ? `<div class="meta">${esc(t.reason)}</div>` : ""}
+    ${opts.add ? `<div class="ev-links">${addBtn("cm:" + t.id)}</div>` : ""}
+    ${opts.actions || ""}
+  </article>`;
+}
+
+async function renderApproved() {
+  const list = approvedDocs.slice().sort((a, b) => String(a.date).localeCompare(String(b.date)));
+  if (!list.length) { $("approved").innerHTML = `<p class="empty">No traveller events yet. Know a real concert, food walk or DJ night in Mysuru? Add it with its official link, and it shows here once the host has checked it.</p>`; return; }
+  const ps = await names([...new Set(list.map((a) => a.by).filter(Boolean))]);
+  $("approved").innerHTML = list.map((a) => card(a, { by: ps[a.by]?.name || "a traveller", add: true })).join("");
+}
+function renderMine() {
+  $("mineWrap").hidden = !myTips.length || isOwner;
+  $("mine").innerHTML = myTips.slice().reverse().map((t) => card(t, { status: true })).join("");
+}
+async function renderPending() {
+  const pending = allTips.filter((t) => t.status === "pending");
+  $("reviewWrap").hidden = !isOwner;
+  if (!isOwner) return;
+  if (!pending.length) { $("pending").innerHTML = `<p class="empty">Nothing waiting. New submissions appear here for you to check.</p>`; return; }
+  const ps = await names([...new Set(pending.map((t) => t.by))]);
+  $("pending").innerHTML = pending.map((t) => card(t, {
+    status: true, by: ps[t.by]?.name || "a traveller",
+    actions: `<p class="meta">Open the link and check the date and venue match before approving.</p>
+      <div class="actions"><button class="btn" data-approve="${esc(t.by)}|${esc(t.id)}">Approve</button><button class="btn ghost" data-reject="${esc(t.by)}|${esc(t.id)}">Don't add</button></div>`,
+  })).join("");
+}
+
+async function setStatus(by, id, status) {
+  const ref = db.doc("tips/" + by);
+  const snap = await ref.get();
+  if (!snap.exists) return;
+  const items = (snap.data().items || []).map((t) => (t.id === id ? { ...t, status, reason: status === "rejected" ? "The host couldn't confirm this event." : "" } : t));
+  const tip = items.find((t) => t.id === id);
+  if (!tip) return;
+  if (status === "approved") {
+    const { title, url, date, place, cat, writeup } = tip;
+    await db.doc("approved/" + id).set({ title, url, date, place, cat, writeup, by, approvedAt: new Date().toISOString() });
+  } else {
+    await db.doc("approved/" + id).delete();
+  }
+  await ref.set({ items });
+}
+
+$("fWrite").addEventListener("input", () => { $("fCount").textContent = `${$("fWrite").value.trim().length} / 400`; });
+
+$("addForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const msg = $("fMsg");
+  msg.className = "msg";
+  if (!db || !uid) { msg.className = "msg err"; msg.textContent = "Sign in to claude.ai to add events. Viewers need Contributor access to submit."; return; }
+  const t = { title: $("fTitle").value.trim(), url: $("fUrl").value.trim(), date: $("fDate").value, cat: $("fCat").value, place: $("fPlace").value.trim(), writeup: $("fWrite").value.trim() };
+  const problem = validate(t);
+  if (problem) { msg.className = "msg err"; msg.textContent = problem; return; }
+  $("fSubmit").disabled = true;
+  try {
+    const tip = { ...t, id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7), by: uid, status: "pending", createdAt: new Date().toISOString() };
+    const keep = myTips.filter((m) => m.status !== "rejected").slice(-(MAX_TIPS * 2 - 1));
+    await db.doc("tips/" + uid).set({ items: [...keep, tip] });
+    ["fTitle", "fUrl", "fPlace", "fWrite"].forEach((id) => ($(id).value = ""));
+    $("fTrue").checked = false; $("fCount").textContent = "0 / 400";
+    msg.className = "msg good";
+    msg.textContent = isOwner ? "Added to your check list below." : "Sent. It appears for everyone once the host has checked it.";
+  } catch (err) {
+    msg.className = "msg err";
+    msg.textContent = err?.code === "invalid_argument" ? "You can view this board but not add to it. Ask the host for Contributor access." : "Couldn't send right now. Try again in a moment.";
+  } finally { $("fSubmit").disabled = false; }
+});
+
+$("pending").addEventListener("click", async (e) => {
+  const b = e.target.closest("[data-approve],[data-reject]");
+  if (!b) return;
+  const [by, id] = (b.dataset.approve || b.dataset.reject).split("|");
+  b.disabled = true;
+  try { await setStatus(by, id, b.dataset.approve ? "approved" : "rejected"); }
+  catch (err) { b.disabled = false; }
+});
+
+(async () => {
+  const claude = window.claude;
+  if (!claude?.use) return;
+  [db, user] = await Promise.all([claude.use("db"), claude.use("user")]);
+  if (!db) {
+    $("fMsg").className = "msg err";
+    $("fMsg").textContent = "Sign in to claude.ai to see and add traveller events.";
+    $("fSubmit").disabled = true;
+    return;
+  }
+  uid = user ? await user.id() : null;
+  isOwner = user ? await user.isOwner() : false;
+  if (uid) {
+    let first = true;
+    db.doc(`data/users/${uid}/plan`).onSnapshot((snap) => {
+      const remote = snap.exists ? snap.data().items : null;
+      if (first) {
+        first = false;
+        planDb = db; planUid = uid;
+        $("pWhere").textContent = "Saved to your account, so it follows you to other devices.";
+        if (!Array.isArray(remote)) { if (plan.length) savePlan(); return; }
+      }
+      if (Array.isArray(remote) && !snap.metadata.hasPendingWrites) { plan = remote; render(); renderApproved(); }
+    }, () => { planDb = null; $("pWhere").textContent = "Saved in this browser."; });
+  }
+  db.collection("approved").onSnapshot((snap) => { approvedDocs = snap.docs.map((d) => ({ id: d.id, ...d.data() })); renderApproved(); }, () => {});
+  if (isOwner) {
+    db.collection("tips").onSnapshot((snap) => {
+      allTips = snap.docs.flatMap((d) => (d.data().items || []).map((t) => ({ ...t, by: d.id })));
+      myTips = allTips.filter((t) => t.by === uid);
+      renderPending(); renderMine();
+    }, () => {});
+  } else if (uid) {
+    db.doc("tips/" + uid).onSnapshot((snap) => { myTips = snap.exists ? snap.data().items || [] : []; renderMine(); }, () => {});
+  }
+})();
+
+/* ---------- Plan with Claude ----------
+   Claude may only pick from the board's own events and day trips (by key), so the plan can't invent events. */
+(async () => {
+  const sample = window.claude?.use ? await window.claude.use("sample") : null;
+  if (!sample) { $("aMsg").textContent = "Open this board on claude.ai to have Claude draft a plan."; $("aGo").disabled = true; return; }
+  let ctl = null, draft = null;
+
+  function choices(from, len) {
+    const days = DAYS.filter((d) => d >= from && d < from + len);
+    const events = EVENTS.filter((e) => days.includes(e.d)).map((e) => ({ key: `ev:${e.d}:${e.title}`, day: e.d, time: e.tba && e.s === "00:00" ? "TBA" : `${e.s}-${e.e}`, title: e.title, place: e.place, type: e.cat, tags: e.tags, note: e.note }));
+    const nightly = NIGHTLY.map((n) => ({ key: "nt:" + n.title, time: `${n.s}-${n.e}`, title: n.title, place: n.place, every_night: true }));
+    const trips = TRIPS.map((t) => ({ key: "trip:" + t.name, title: t.name, km_from_mysuru: t.km, tags: t.tags, why: t.why }));
+    const community = approvedDocs.filter((a) => days.includes(Number(String(a.date).slice(8, 10)))).map((a) => ({ key: "cm:" + a.id, day: Number(String(a.date).slice(8, 10)), title: a.title, place: a.place, type: a.cat, about: a.writeup }));
+    return { days, events, nightly, trips, community };
+  }
+
+  $("aForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const from = Number($("aDay").value), len = Number($("aLen").value);
+    const c = choices(from, len);
+    if (!c.days.length) return;
+    const ask = `You are a local travel planner for Mysuru Dasara 2026 (11-21 October, Asia/Kolkata time).
+Build a day-by-day itinerary for these festival days: ${c.days.join(", ")} October 2026.
+Travel style: ${$("aStyle").value}. Pace: ${$("aPace").value}.${$("aNote").value.trim() ? " Traveller's note: " + $("aNote").value.trim().slice(0, 160) : ""}
+
+Rules:
+- Only use stops from the CHOICES below and refer to each by its exact "key". Never invent events, venues or times.
+- Respect each event's day and time. "every_night" items can go on any day. Day trips take a morning or a whole day; don't put a far trip (over 60 km) on a day with an afternoon event.
+- You may add short free-time suggestions (meals, rest, travel) with key null.
+- ${$("aPace").value === "relaxed" ? "2-3 stops per day." : "3-5 stops per day."}
+
+CHOICES:
+${JSON.stringify(c)}
+
+Reply with JSON only, in this shape:
+{"summary": "one sentence", "days": [{"day": 13, "theme": "short title", "stops": [{"key": "ev:13:Yuva Dasara opening night" or null, "time": "HH:MM", "title": "short", "why": "one short sentence"}]}], "tips": ["up to 3 practical tips"]}`;
+    ctl = new AbortController();
+    $("aGo").disabled = true; $("aStop").hidden = false;
+    $("aMsg").className = "msg"; $("aMsg").textContent = "Claude is drafting your plan…";
+    try {
+      const res = await sample.json(ask, { signal: ctl.signal, modelTier: "default" });
+      const valid = new Set([...c.events, ...c.nightly, ...c.trips, ...c.community].map((x) => x.key));
+      draft = (Array.isArray(res?.days) ? res.days : []).filter((d) => c.days.includes(Number(d.day))).map((d) => ({
+        day: Number(d.day), theme: String(d.theme || ""),
+        stops: (Array.isArray(d.stops) ? d.stops : []).filter((s) => s && (s.key === null || valid.has(s.key))).slice(0, 6),
+      }));
+      if (!draft.length) throw { code: "empty" };
+      const tips = (Array.isArray(res.tips) ? res.tips : []).slice(0, 3).map(String);
+      $("aOut").innerHTML = `${res.summary ? `<p><b>${esc(String(res.summary))}</b></p>` : ""}
+        ${draft.map((d) => `<div><div class="eyebrow">${esc(fmtD.format(T(d.day, "12:00")))}${d.theme ? " · " + esc(d.theme) : ""}</div><ol>${d.stops.map((s) =>
+          `<li>${/^\d\d:\d\d$/.test(String(s.time)) ? `<span class="mono">${esc(fmtT.format(T(d.day, s.time)))}</span> ` : ""}${s.key ? `<b>${esc(catalogItem(s.key)?.title || s.title)}</b>` : `<span class="sugg">${esc(String(s.title || ""))}</span>`}${s.why ? ` · ${esc(String(s.why))}` : ""}</li>`).join("")}</ol></div>`).join("")}
+        ${tips.length ? `<div><div class="eyebrow">Tips</div><ol>${tips.map((t) => `<li>${esc(t)}</li>`).join("")}</ol></div>` : ""}
+        <div class="actions"><button type="button" class="btn" id="aAdd">Add all to my plan</button><span class="meta">Free-time suggestions stay here and aren't added.</span></div>`;
+      $("aOut").hidden = false;
+      $("aMsg").textContent = "";
+    } catch (err) {
+      const code = err?.code;
+      $("aMsg").className = code === "cancelled" ? "msg" : "msg err";
+      $("aMsg").textContent = code === "cancelled" ? "Stopped." : code === "not_granted" ? "Claude planning is turned off for this page. You can allow it from the page's Permissions menu." : code === "rate_limited" ? "Too many requests just now. Wait a minute, then try again." : "Claude couldn't draft a plan this time. Try again, or add stops yourself with + Add to plan.";
+    } finally { $("aGo").disabled = false; $("aStop").hidden = true; ctl = null; }
+  });
+  $("aStop").addEventListener("click", () => ctl?.abort());
+  $("aOut").addEventListener("click", (e) => {
+    if (!e.target.closest("#aAdd") || !draft) return;
+    const items = draft.flatMap((d) => d.stops.filter((s) => s.key).map((s) => {
+      const base = catalogItem(s.key);
+      return base && { ...base, day: d.day, time: /^\d\d:\d\d$/.test(String(s.time)) ? s.time : base.time, key: base.key.startsWith("ev:") ? base.key : `${base.key}@${d.day}` };
+    })).filter(Boolean);
+    const merged = [...plan];
+    items.forEach((it) => { if (!merged.some((p) => p.key === it.key)) merged.push(it); });
+    setPlan(merged);
+    $("aMsg").className = "msg good"; $("aMsg").textContent = `Added ${items.length} stops to your itinerary.`;
+  });
+})();
+</script>
