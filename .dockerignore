@@ -1,0 +1,9 @@
+.git
+.venv
+**/node_modules
+screenshots
+video
+resources/*.mp4
+eval/results
+ops/telemetry.jsonl
+deploy/k8s

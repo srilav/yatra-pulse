@@ -1,0 +1,12 @@
+# Optional: scrape the metrics consumer with the Prometheus Operator.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: yatra-metrics
+  namespace: yatra-pulse
+  labels: { app.kubernetes.io/part-of: yatra-pulse }
+spec:
+  selector:
+    matchLabels: { serving.knative.dev/service: yatra-metrics, networking.internal.knative.dev/serviceType: Private }
+  endpoints:
+    - { port: http, path: /metrics, interval: 30s }

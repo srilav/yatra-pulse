@@ -1,0 +1,5 @@
+# Single-node Apache Pulsar in the cluster. Leave this out when you use an existing Pulsar cluster.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - pulsar.yaml

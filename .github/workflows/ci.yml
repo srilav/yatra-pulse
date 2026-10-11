@@ -32,3 +32,25 @@ jobs:
         with:
           name: eval-results
           path: eval/results/latest.json
+
+  build-images:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build container images
+        run: |
+          for c in web mcp metrics; do
+            docker build -f deploy/docker/$c.Dockerfile -t yatra-pulse/$c:ci .
+          done
+      - name: Smoke-test the MCP image
+        run: |
+          docker run -d --name mcp -p 8080:8080 -e TELEMETRY=off yatra-pulse/mcp:ci
+          for i in $(seq 1 20); do curl -sf localhost:8080/readyz && break; sleep 1; done
+          curl -s -X POST localhost:8080/mcp -H 'content-type: application/json' -H 'accept: application/json, text/event-stream' \
+            -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"search_board","arguments":{"query":"Sid Sriram","k":1}}}' \
+            | grep "ev:15:Sid Sriram live"
+      - name: Render Kubernetes manifests
+        run: |
+          kubectl kustomize deploy/k8s > /dev/null
+          kubectl kustomize deploy/kind > /dev/null

@@ -1,0 +1,76 @@
+# Yatra Pulse on Knative Serving. Works on any Kubernetes with Knative installed:
+# on-prem (kind, k3s, OpenShift Serverless, Rancher) or cloud (GKE, EKS, AKS, Cloud Run for Anthos).
+---
+# Web board: static, scales to zero when nobody is looking.
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: yatra-web
+  namespace: yatra-pulse
+  labels: { app.kubernetes.io/part-of: yatra-pulse, app.kubernetes.io/component: web }
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/min-scale: "0"
+        autoscaling.knative.dev/max-scale: "5"
+        autoscaling.knative.dev/target: "200"
+    spec:
+      containers:
+        - image: yatra-pulse/web:1.0.0
+          ports: [{ containerPort: 8080 }]
+          readinessProbe: { httpGet: { path: /index.html } }
+          resources:
+            requests: { cpu: 25m, memory: 32Mi }
+            limits: { memory: 64Mi }
+---
+# MCP server over Streamable HTTP. Stateless, so it scales from zero to many on request load.
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: yatra-mcp
+  namespace: yatra-pulse
+  labels: { app.kubernetes.io/part-of: yatra-pulse, app.kubernetes.io/component: mcp }
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/min-scale: "0"
+        autoscaling.knative.dev/max-scale: "10"
+        autoscaling.knative.dev/target: "50"
+        autoscaling.knative.dev/scale-down-delay: "2m"
+    spec:
+      timeoutSeconds: 60
+      containers:
+        - image: yatra-pulse/mcp:1.0.0
+          ports: [{ containerPort: 8080 }]
+          envFrom: [{ configMapRef: { name: yatra-config } }]
+          readinessProbe: { httpGet: { path: /readyz } }
+          livenessProbe: { httpGet: { path: /healthz }, periodSeconds: 20 }
+          resources:
+            requests: { cpu: 50m, memory: 96Mi }
+            limits: { memory: 256Mi }
+---
+# Metrics consumer. Always one replica: it keeps the rolling SLO window in memory and must stay
+# subscribed to Pulsar to receive telemetry, so it never scales to zero.
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: yatra-metrics
+  namespace: yatra-pulse
+  labels: { app.kubernetes.io/part-of: yatra-pulse, app.kubernetes.io/component: metrics }
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/min-scale: "1"
+        autoscaling.knative.dev/max-scale: "1"
+    spec:
+      containers:
+        - image: yatra-pulse/metrics:1.0.0
+          ports: [{ containerPort: 8080 }]
+          envFrom: [{ configMapRef: { name: yatra-config } }]
+          readinessProbe: { httpGet: { path: /healthz }, periodSeconds: 10, failureThreshold: 30 }
+          resources:
+            requests: { cpu: 25m, memory: 64Mi }
+            limits: { memory: 128Mi }

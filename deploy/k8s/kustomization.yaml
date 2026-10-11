@@ -1,0 +1,12 @@
+# Full install: app + in-cluster Pulsar.        kubectl apply -k deploy/k8s
+# App only, with your own Pulsar:                kubectl apply -k deploy/k8s/app   (set PULSAR_WS_URL in app/config.yaml)
+# Point images at your registry with `kustomize edit set image` or the list below.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - app
+  - pulsar
+images:
+  - { name: yatra-pulse/web, newTag: "1.0.0" }
+  - { name: yatra-pulse/mcp, newTag: "1.0.0" }
+  - { name: yatra-pulse/metrics, newTag: "1.0.0" }

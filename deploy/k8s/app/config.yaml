@@ -1,0 +1,13 @@
+# Shared settings for the Yatra Pulse services.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: yatra-config
+  namespace: yatra-pulse
+data:
+  TELEMETRY: "pulsar"
+  # In-cluster Pulsar (pulsar.yaml). Point at your own Pulsar cluster's WebSocket endpoint in production.
+  PULSAR_WS_URL: "ws://pulsar.yatra-pulse.svc.cluster.local:8080/ws/v2"
+  PULSAR_NAMESPACE: "public/default"
+  SLO_WINDOW_MS: "900000"
+  TELEMETRY_INCLUDE_QUERIES: "0"

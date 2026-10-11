@@ -12,7 +12,7 @@ import http from "node:http";
 import { readFileSync } from "node:fs";
 import { consume, Producer, TOPICS, PULSAR_WS_URL } from "./pulsar.js";
 
-const PORT = Number(process.env.METRICS_PORT || 9464);
+const PORT = Number(process.env.METRICS_PORT || process.env.PORT || 9464);
 const WINDOW_MS = Number(process.env.SLO_WINDOW_MS || 15 * 60 * 1000);
 const SUBSCRIPTION = process.env.METRICS_SUBSCRIPTION || "yatra-metrics";
 const BUCKETS = [5, 10, 25, 50, 100, 250, 500, 1000, 2500];

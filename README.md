@@ -57,6 +57,17 @@ cd mcp-server && TELEMETRY=pulsar npm test       # real tool traffic → yatra-t
 - **Metrics consumer**: Prometheus `/metrics`, `/healthz`, a live dashboard, four SLOs, alerts on `yatra-alerts`, and a dead-letter topic.
 - **Operations**: [ops/RUNBOOK.md](ops/RUNBOOK.md) (SLOs, alerts, game day), [ops/alerts.yml](ops/alerts.yml), [CI](.github/workflows/ci.yml).
 
+## Deploy on Kubernetes with Knative (on-prem or any cloud)
+
+Three Knative services (web board, MCP server over HTTP, metrics consumer) plus Apache Pulsar. Verified on kind with Knative Serving 1.23: 9/9 smoke checks, telemetry flowing MCP → Pulsar → metrics.
+
+```bash
+./deploy/kind-up.sh && ./deploy/smoke-test.sh   # laptop
+kubectl apply -k deploy/k8s                     # any cluster with Knative (images in your registry)
+```
+
+Guide: [deploy/README.md](deploy/README.md). Architecture by category (functionality, tech stack, components, AI-enabled components, end-to-end testing, telemetry, deployment): [resources/architecture.html](resources/architecture.html).
+
 ## How it runs
 
 `index.html` is a single self-contained page (HTML, CSS and plain JavaScript). It is published as a claude.ai Artifact and uses the Artifact runtime's `db`, `user` and `sample` capabilities for saved itineraries, traveller submissions and Plan with Claude. Opened directly in a browser, the schedule and itinerary work (saved in that browser), while submissions and Plan with Claude are disabled.

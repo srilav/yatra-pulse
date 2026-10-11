@@ -1,0 +1,7 @@
+# Yatra Pulse application: namespace, shared config and the three Knative services.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml
+  - config.yaml
+  - knative-services.yaml

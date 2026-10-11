@@ -1,0 +1,62 @@
+# Optional: the same alert rules as ops/alerts.yml for clusters running the Prometheus Operator.
+#   kubectl apply -f deploy/k8s/monitoring/
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: yatra-pulse
+  namespace: yatra-pulse
+  labels: { app.kubernetes.io/part-of: yatra-pulse }
+spec:
+  groups:
+    - name: yatra-pulse
+      rules:
+        - alert: YatraToolErrorRateHigh
+          expr: |
+            sum(rate(yatra_tool_calls_total{outcome="error"}[15m]))
+              / clamp_min(sum(rate(yatra_tool_calls_total[15m])), 1e-9) > 0.01
+          for: 5m
+          labels: { severity: page, slo: availability }
+          annotations:
+            summary: "More than 1% of MCP tool calls are failing"
+            runbook: "ops/RUNBOOK.md#tool-error-rate-high"
+
+        - alert: YatraToolLatencyHigh
+          expr: |
+            histogram_quantile(0.95, sum by (le) (rate(yatra_tool_latency_ms_bucket[15m]))) > 250
+          for: 10m
+          labels: { severity: ticket, slo: latency_p95 }
+          annotations:
+            summary: "p95 MCP tool latency above 250 ms"
+            runbook: "ops/RUNBOOK.md#tool-latency-high"
+
+        - alert: YatraSearchEmptyResults
+          expr: |
+            rate(yatra_search_zero_results_total[1h]) / clamp_min(rate(yatra_search_total[1h]), 1e-9) > 0.10
+          for: 30m
+          labels: { severity: ticket, slo: search_recall }
+          annotations:
+            summary: "More than 10% of board searches return nothing"
+            runbook: "ops/RUNBOOK.md#search-returns-nothing"
+
+        - alert: YatraEvalFailing
+          expr: yatra_eval_passed == 0
+          for: 0m
+          labels: { severity: page, slo: eval_passing }
+          annotations:
+            summary: "The latest evaluator run is below threshold"
+            runbook: "ops/RUNBOOK.md#evaluator-failing"
+
+        - alert: YatraPulsarDisconnected
+          expr: yatra_pulsar_connected == 0
+          for: 2m
+          labels: { severity: page }
+          annotations:
+            summary: "Metrics consumer lost its Pulsar subscription"
+            runbook: "ops/RUNBOOK.md#pulsar-down"
+
+        - alert: YatraTelemetryPoisonMessages
+          expr: increase(yatra_consumer_messages_total{result="poison"}[1h]) > 0
+          labels: { severity: ticket }
+          annotations:
+            summary: "Unparseable telemetry moved to yatra-telemetry-dlq"
+            runbook: "ops/RUNBOOK.md#dead-letter-messages"

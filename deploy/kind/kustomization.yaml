@@ -1,0 +1,18 @@
+# Local profile for kind on a laptop.
+# - Images are loaded into kind as dev.local/..., a registry Knative doesn't try to resolve.
+# - Pulsar is the Docker Compose one from ops/docker-compose.yml, joined to the kind network as
+#   "yatra-pulsar", the same way production would point at an existing Pulsar cluster.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../k8s/app
+images:
+  - { name: yatra-pulse/web, newName: dev.local/yatra-pulse/web, newTag: "1.0.0" }
+  - { name: yatra-pulse/mcp, newName: dev.local/yatra-pulse/mcp, newTag: "1.0.0" }
+  - { name: yatra-pulse/metrics, newName: dev.local/yatra-pulse/metrics, newTag: "1.0.0" }
+patches:
+  - target: { kind: ConfigMap, name: yatra-config }
+    patch: |-
+      - op: replace
+        path: /data/PULSAR_WS_URL
+        value: ws://yatra-pulsar:8080/ws/v2

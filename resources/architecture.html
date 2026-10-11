@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Yatra Pulse Architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Mukta:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: architecture reference in seven categories. Sticky contents on wide screens; flow diagrams are
+   rows of nodes and arrows that wrap on phones. Same palette and type as the app. */
+:root {
+  --bg: #F5F3F8; --surface: #FFFFFF; --ink: #241A33; --muted: #675E7C; --line: #E2DCEC;
+  --gold: #A9690F; --gold-soft: #F7EAD0; --bulb: #F2B544; --kumkum: #B3263E; --live: #1D7F54; --live-soft: #DDF2E8; --chip: #EEEAF4; --ai: #5B3FB0; --ai-soft: #ECE6FA;
+  --f-display: "Yatra One", "Mukta", Georgia, serif;
+  --f-body: "Mukta", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #140F1F; --surface: #1D1630; --ink: #F1ECF8; --muted: #A99FBE; --line: #312849; --gold: #F2B544; --gold-soft: #3A2C17; --bulb: #FFC857;
+  --kumkum: #F0607A; --live: #4CC38A; --live-soft: #173A2B; --chip: #2A2140; --ai: #B9A3FF; --ai-soft: #2B2250; color-scheme: dark;
+} }
+:root[data-theme="dark"] {
+  --bg: #140F1F; --surface: #1D1630; --ink: #F1ECF8; --muted: #A99FBE; --line: #312849; --gold: #F2B544; --gold-soft: #3A2C17; --bulb: #FFC857;
+  --kumkum: #F0607A; --live: #4CC38A; --live-soft: #173A2B; --chip: #2A2140; --ai: #B9A3FF; --ai-soft: #2B2250; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 1.02rem; line-height: 1.6; }
+.bulbs { height: 10px; background-image: radial-gradient(circle, var(--bulb) 0 3px, transparent 3.5px); background-size: 18px 10px; }
+.page { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 64px; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 40px; align-items: start; }
+@media (max-width: 900px) { .page { grid-template-columns: minmax(0, 1fr); } }
+nav.toc { position: sticky; top: calc(16px + env(safe-area-inset-top, 0px)); display: grid; gap: 2px; font-size: .92rem; }
+@media (max-width: 900px) { nav.toc { position: static; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } }
+nav.toc a { color: var(--muted); text-decoration: none; padding: 4px 8px; border-radius: 6px; }
+nav.toc a:hover, nav.toc a:focus-visible { color: var(--ink); background: var(--chip); outline: none; }
+main { display: grid; gap: 48px; min-width: 0; }
+h1, h2, h3 { margin: 0; text-wrap: balance; line-height: 1.2; }
+h1 { font-family: var(--f-display); font-weight: 400; font-size: clamp(2rem, 5vw, 3rem); } h1 span { color: var(--gold); }
+h2 { font-family: var(--f-display); font-weight: 400; font-size: 1.7rem; }
+h3 { font-size: 1.02rem; }
+p { margin: 0; max-width: 72ch; }
+.lede { color: var(--muted); font-size: 1.08rem; }
+.eyebrow { font-size: .74rem; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); font-weight: 700; }
+section { display: grid; gap: 16px; scroll-margin-top: 16px; }
+section > header { display: grid; gap: 4px; padding-top: 18px; border-top: 1px solid var(--line); }
+.num { font-family: var(--f-mono); font-size: .8rem; color: var(--gold); }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.card ul { margin: 0; padding-left: 18px; display: grid; gap: 3px; font-size: .94rem; }
+.card.ai { border-color: var(--ai); }
+.tag { display: inline-block; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; padding: 1px 8px; border-radius: 999px; background: var(--chip); color: var(--muted); justify-self: start; }
+.tag.ai { background: var(--ai-soft); color: var(--ai); }
+.tag.ok { background: var(--live-soft); color: var(--live); }
+.flow { display: grid; gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+.lane { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.node { border: 1px solid var(--line); background: var(--bg); border-radius: 8px; padding: 6px 10px; font-size: .88rem; }
+.node.ai { border-color: var(--ai); background: var(--ai-soft); }
+.node.topic { border-style: dashed; border-color: var(--gold); font-family: var(--f-mono); font-size: .8rem; }
+.node.k8s { border-color: var(--live); }
+.arrow { color: var(--muted); font-size: .9rem; }
+.lanelabel { font-size: .74rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); min-width: 92px; }
+.tablewrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+th { text-align: left; font-size: .74rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); padding: 0 10px 8px 0; }
+td { padding: 8px 10px 8px 0; border-top: 1px solid var(--line); vertical-align: top; }
+td.mono, .mono { font-family: var(--f-mono); font-size: .84rem; font-variant-numeric: tabular-nums; }
+code { font-family: var(--f-mono); font-size: .82em; background: var(--chip); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+pre { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; overflow-x: auto; font-family: var(--f-mono); font-size: .8rem; line-height: 1.55; }
+pre code { background: none; padding: 0; font-size: inherit; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; }
+.stat b { display: block; font-family: var(--f-mono); font-size: 1.4rem; color: var(--gold); }
+.stat small { color: var(--muted); }
+footer { color: var(--muted); font-size: .9rem; border-top: 1px solid var(--line); padding-top: 14px; }
+a { color: var(--gold); }
+</style>
+</head>
+<body>
+<div class="bulbs" aria-hidden="true"></div>
+<div class="page">
+  <nav class="toc" aria-label="Contents">
+    <span class="eyebrow" style="padding:4px 8px">Contents</span>
+    <a href="#functionality">1 · Functionality</a>
+    <a href="#stack">2 · Tech stack</a>
+    <a href="#components">3 · Components</a>
+    <a href="#ai">4 · AI-enabled components</a>
+    <a href="#testing">5 · End-to-end testing</a>
+    <a href="#telemetry">6 · Telemetry to Pulsar</a>
+    <a href="#deploy">7 · Knative on Kubernetes</a>
+  </nav>
+
+  <main>
+    <header style="display:grid;gap:10px">
+      <div class="eyebrow">Architecture reference · Yatra Pulse</div>
+      <h1>Yatra <span>Pulse</span> architecture</h1>
+      <p class="lede">A live travel board for Mysuru Dasara 2026, an MCP server that lets Claude answer from it, an evaluator that keeps its AI honest, telemetry on Apache Pulsar, and a Knative deployment that runs on any Kubernetes, on-prem or in the cloud.</p>
+      <div class="stats">
+        <div class="stat"><b>21</b><small>use cases</small></div>
+        <div class="stat"><b>13</b><small>UI components</small></div>
+        <div class="stat"><b>5</b><small>AI-enabled components</small></div>
+        <div class="stat"><b>16 + 8</b><small>Selenium + MCP checks</small></div>
+        <div class="stat"><b>4</b><small>Pulsar topics</small></div>
+        <div class="stat"><b>3</b><small>Knative services</small></div>
+      </div>
+    </header>
+
+    <section id="functionality" aria-labelledby="fH">
+      <header><span class="num">01</span><h2 id="fH">Functionality</h2><p class="lede">What a traveller can do, grouped by the job they're doing.</p></header>
+      <div class="cards">
+        <div class="card"><span class="tag">Discover</span><h3>See what's on</h3><ul><li>Festival day and Jamboo Savari countdown</li><li>Now &amp; next, live in IST</li><li>11-day timeline with filters</li><li>Schedule at a glance</li><li>Picks by travel style</li><li>DJ and party nights</li></ul></div>
+        <div class="card"><span class="tag">Plan</span><h3>Build a trip that works</h3><ul><li>Add any event, show or day trip to My itinerary</li><li>Trip check: clashes, travel time by car, two-wheeler, auto or bus</li><li>Gate deadlines and vehicle range</li><li>Plan with Claude</li><li>Copy the plan to share</li></ul></div>
+        <div class="card"><span class="tag">Book</span><h3>Book safely</h3><ul><li>Official steps and prices</li><li>Collection counter and ID rules</li><li>"Book tickets" checks your plan first</li><li>Helpline and getting there</li></ul></div>
+        <div class="card"><span class="tag">Share</span><h3>Grow the board</h3><ul><li>Travellers add events with official links</li><li>Host checks each before it's public</li><li>Day trips and Gaya Pitru Paksha</li></ul></div>
+        <div class="card ai"><span class="tag ai">Ask Claude</span><h3>Grounded answers</h3><ul><li>MCP tools in Claude Code and Desktop</li><li>Search, day schedule, booking facts</li><li>Trip-check any plan</li><li>plan_trip prompt</li></ul></div>
+        <div class="card"><span class="tag ok">Operate</span><h3>Keep it healthy</h3><ul><li>Evaluator quality gates</li><li>Telemetry on Pulsar, metrics, SLOs, alerts</li><li>Runbook and game day</li><li>Knative scale-to-zero deployment</li></ul></div>
+      </div>
+    </section>
+
+    <section id="stack" aria-labelledby="sH">
+      <header><span class="num">02</span><h2 id="sH">Tech stack</h2><p class="lede">Few moving parts, each chosen so the board runs anywhere: a browser, a claude.ai artifact, a laptop or a cluster.</p></header>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Layer</th><th>Technology</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>Web app</td><td>One HTML file: HTML, CSS custom properties, plain JavaScript; Google Fonts</td><td>No build step; publishes as an artifact, opens from disk, serves from nginx</td></tr>
+          <tr><td>Hosting</td><td>claude.ai Artifact · nginx-unprivileged 1.29.8 container</td><td>Artifact adds database, identity and Claude; nginx for self-hosting</td></tr>
+          <tr><td>Data</td><td>claude.ai artifact database (<code>db</code> capability) · browser storage fallback</td><td>Per-person plans, host-approved traveller events, access rules</td></tr>
+          <tr><td>AI</td><td>Claude via the artifact <code>sample</code> capability · Claude via MCP</td><td>Plan drafting in the page; tool use from Claude Code / Desktop</td></tr>
+          <tr><td>Retrieval</td><td>BM25 in JavaScript (shared by page and server)</td><td>~40 passages with proper nouns; instant, offline, identical everywhere</td></tr>
+          <tr><td>MCP server</td><td>Node.js 22, <code>@modelcontextprotocol/sdk</code> 1.30.1, zod; stdio and Streamable HTTP</td><td>Local clients and stateless cloud deployment from one codebase</td></tr>
+          <tr><td>Messaging</td><td>Apache Pulsar 4.2.4 via its WebSocket API</td><td>Durable topics, shared subscriptions, dead-letter; no native client libraries</td></tr>
+          <tr><td>Metrics</td><td>Prometheus text format · alert rules · PrometheusRule / ServiceMonitor</td><td>Works with any Prometheus-compatible stack</td></tr>
+          <tr><td>Testing</td><td>Selenium 4.27 (Python) · Node test client over MCP · evaluator datasets</td><td>Real browser, real protocol, labelled AI quality</td></tr>
+          <tr><td>CI</td><td>GitHub Actions</td><td>MCP tests and evaluator gates on every push and pull request</td></tr>
+          <tr><td>Runtime</td><td>Docker images · Kubernetes · Knative Serving 1.23 with Kourier</td><td>Scale-to-zero, revisions and traffic splitting on any cluster</td></tr>
+          <tr><td>Media</td><td>Headless Chrome, macOS speech, ffmpeg · YouTube</td><td>Reproducible narrated walkthrough</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="components" aria-labelledby="cH">
+      <header><span class="num">03</span><h2 id="cH">Components</h2><p class="lede">The board's building blocks. Each is marked with a comment in <code>index.html</code>; the design guide (<code>docs/design.html</code>) shows them live.</p></header>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Component</th><th>What it does</th><th>Built with</th></tr></thead>
+        <tbody>
+          <tr><td>Palace-bulb strip</td><td>Brand border that twinkles</td><td>CSS radial-gradient, reduced-motion aware</td></tr>
+          <tr><td>Header</td><td>Festival day, countdown</td><td><code>render()</code>, IST formatters</td></tr>
+          <tr><td>Status pill</td><td>Live, starts soon, TBA, ended, checked, problem</td><td><code>state()</code>, words + color</td></tr>
+          <tr><td>Now &amp; next</td><td>Up to four live/upcoming cards</td><td>Occurrence list, sort and de-duplicate</td></tr>
+          <tr><td>My itinerary</td><td>Day-by-day plan, copy, clear</td><td><code>plan[]</code>, <code>catalogItem()</code>, db + browser storage</td></tr>
+          <tr><td>Trip check</td><td>Clashes, travel time, gates, range</td><td><code>evaluateDay()</code>, haversine, vehicle speeds</td></tr>
+          <tr><td>Plan with Claude</td><td>AI-drafted plan from retrieved events</td><td><code>searchBoard()</code>, <code>sample.json()</code>, key whitelist</td></tr>
+          <tr><td>Timeline</td><td>11 days, filters, nightly band, Book tickets</td><td>Templates, <code>data-cat</code>, delegated clicks</td></tr>
+          <tr><td>Sidebar</td><td>Picks, DJ nights, Gaya</td><td>Tags, curated lists</td></tr>
+          <tr><td>Traveller events</td><td>Submit, review, approved cards</td><td><code>validate()</code>, db rules, host queue</td></tr>
+          <tr><td>How to book</td><td>Steps, prices, tips</td><td>CSS counters, scrollable table</td></tr>
+          <tr><td>Day trips</td><td>Nine trips with distance</td><td>Coordinates for trip check</td></tr>
+          <tr><td>Footer</td><td>Last checked, sources</td><td>Static</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="ai" aria-labelledby="aiH">
+      <header><span class="num">04</span><h2 id="aiH">AI-enabled components</h2><p class="lede">Every AI path is grounded in the board and checked by deterministic code before a traveller sees it.</p></header>
+      <div class="flow" aria-label="AI flow">
+        <div class="lane"><span class="lanelabel">Retrieve</span><span class="node">Events · shows · DJ · trips · facts · traveller events</span><span class="arrow">→</span><span class="node ai">boardPassages()</span><span class="arrow">→</span><span class="node ai">searchBoard() BM25</span></div>
+        <div class="lane"><span class="lanelabel">Generate</span><span class="node ai">Plan with Claude (sample.json)</span><span class="arrow">or</span><span class="node ai">Claude via MCP tools</span></div>
+        <div class="lane"><span class="lanelabel">Guard</span><span class="node">Keep retrieved keys only</span><span class="arrow">→</span><span class="node">Trip check the draft</span><span class="arrow">→</span><span class="node">Show sources</span></div>
+        <div class="lane"><span class="lanelabel">Measure</span><span class="node">Evaluator datasets</span><span class="arrow">→</span><span class="node">Quality gates in CI</span><span class="arrow">→</span><span class="node topic">yatra-eval</span></div>
+      </div>
+      <div class="cards">
+        <div class="card ai"><span class="tag ai">AI · RAG</span><h3>Board search</h3><p>BM25 over every passage, with category and style words. Hit@1 0.97, recall@3 1.0 on 31 labelled questions; p95 under 1 ms.</p></div>
+        <div class="card ai"><span class="tag ai">AI · generation</span><h3>Plan with Claude</h3><p>Retrieves up to 4 events per day, 3 nightly shows, 4 trips, 3 facts; one Claude call; drops unknown keys; tips only from facts.</p></div>
+        <div class="card ai"><span class="tag ai">AI · guardrail</span><h3>Trip check</h3><p>Deterministic check on every AI draft: clashes, travel time, gate deadlines, vehicle range. Problems shown in red before "Add all".</p></div>
+        <div class="card ai"><span class="tag ai">AI · tools</span><h3>MCP server</h3><p><code>search_board</code>, <code>get_day</code>, <code>check_itinerary</code>, <code>booking_guide</code>, two resources and the <code>plan_trip</code> prompt for Claude Code and Desktop.</p></div>
+        <div class="card ai"><span class="tag ai">AI · evaluation</span><h3>Evaluator</h3><p>Scores retrieval, trip check (10 scenarios) and plan grounding (invented stops, clashes, wrong days) against thresholds.</p></div>
+      </div>
+    </section>
+
+    <section id="testing" aria-labelledby="tH">
+      <header><span class="num">05</span><h2 id="tH">End-to-end testing</h2><p class="lede">Four layers, from the real browser to production-like failure drills.</p></header>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Layer</th><th>Tool</th><th>What it proves</th><th>Run</th></tr></thead>
+        <tbody>
+          <tr><td>Browser end-to-end</td><td>Selenium (Chrome)</td><td>16 checks: load, now &amp; next, source links, filters, itinerary add/remove, picks, traveller form, board search, trip-check clash, toast, gate time, travel time, vehicle range, booking warning</td><td class="mono">tests/run_dashboard.py --hold 15 --pause 2</td></tr>
+          <tr><td>Protocol</td><td>MCP client over stdio</td><td>8 checks across tools, resources, prompt</td><td class="mono">cd mcp-server &amp;&amp; npm test</td></tr>
+          <tr><td>AI quality</td><td>Evaluator</td><td>Search, trip check, plan grounding, latency gates</td><td class="mono">node eval/run.js</td></tr>
+          <tr><td>Operations</td><td>Game day</td><td>Alerts fire on errors/slow/empty searches; poison messages go to the DLQ</td><td class="mono">node ops/simulate.js errors</td></tr>
+          <tr><td>Deployment</td><td>kind + Knative smoke test</td><td>All three Knative services ready; MCP call over HTTP; telemetry reaches in-cluster Pulsar</td><td class="mono">deploy/smoke-test.sh</td></tr>
+        </tbody>
+      </table></div>
+      <p>Selenium runs a visible Chrome window by default: <code>--pause</code> lingers on each step and <code>--hold</code> keeps the window open at the end so you can watch. Screenshots of each stage go to <code>screenshots/</code>. CI runs the protocol and evaluator layers on every push.</p>
+    </section>
+
+    <section id="telemetry" aria-labelledby="pH">
+      <header><span class="num">06</span><h2 id="pH">Telemetry flowing to Pulsar</h2><p class="lede">Every decision the server makes for a traveller becomes an event, and every event turns into metrics, SLOs and alerts.</p></header>
+      <div class="flow" aria-label="Telemetry flow">
+        <div class="lane"><span class="lanelabel">Produce</span><span class="node">MCP tool call</span><span class="arrow">→</span><span class="node">telemetry.span()</span><span class="arrow">→</span><span class="node topic">yatra-telemetry</span><span class="arrow">(Pulsar down →</span><span class="node">telemetry.jsonl</span><span class="arrow">)</span></div>
+        <div class="lane"><span class="lanelabel">Produce</span><span class="node">eval/run.js</span><span class="arrow">→</span><span class="node topic">yatra-eval</span></div>
+        <div class="lane"><span class="lanelabel">Consume</span><span class="node">metrics consumer (Shared subscription)</span><span class="arrow">→</span><span class="node">/metrics · /stats · dashboard</span></div>
+        <div class="lane"><span class="lanelabel">Alert</span><span class="node">SLO check every 30 s</span><span class="arrow">→</span><span class="node topic">yatra-alerts</span><span class="arrow">· bad payloads →</span><span class="node topic">yatra-telemetry-dlq</span></div>
+      </div>
+      <pre><code>{ "v": 1, "kind": "tool_call", "service": "yatra-pulse-mcp", "tool": "check_itinerary",
+  "trace_id": "d2c4…", "ok": true, "latency_ms": 3.5,
+  "input": { "stops": 2, "days": 1, "mode": "car" },
+  "problems": 1, "to_watch": 0, "clashes": 1, "unknown_keys": 0 }</code></pre>
+      <div class="tablewrap"><table>
+        <thead><tr><th>SLO</th><th>Target</th><th>Alert</th></tr></thead>
+        <tbody>
+          <tr><td>Tool calls succeed</td><td class="mono">≥ 99%</td><td>YatraToolErrorRateHigh (page)</td></tr>
+          <tr><td>p95 tool latency</td><td class="mono">≤ 250 ms</td><td>YatraToolLatencyHigh (ticket)</td></tr>
+          <tr><td>Searches that find something</td><td class="mono">≥ 90%</td><td>YatraSearchEmptyResults (ticket)</td></tr>
+          <tr><td>Latest evaluator run passes</td><td class="mono">pass</td><td>YatraEvalFailing (page)</td></tr>
+        </tbody>
+      </table></div>
+      <p>Clients use Pulsar's WebSocket API with reconnect and backoff, so there are no native libraries to install. Search text isn't recorded unless <code>TELEMETRY_INCLUDE_QUERIES=1</code>. The runbook (<code>ops/RUNBOOK.md</code>) covers every alert.</p>
+    </section>
+
+    <section id="deploy" aria-labelledby="dH">
+      <header><span class="num">07</span><h2 id="dH">Deployment: Knative on Kubernetes</h2><p class="lede">Three Knative services and Pulsar, deployable with one command to any Kubernetes cluster with Knative Serving: on-prem or any cloud-native platform.</p></header>
+      <div class="flow" aria-label="Deployment">
+        <div class="lane"><span class="lanelabel">Ingress</span><span class="node k8s">Kourier (or Istio / Contour)</span><span class="arrow">→ Host header routes to</span></div>
+        <div class="lane"><span class="lanelabel">Knative</span><span class="node k8s">yatra-web · 0–5 pods</span><span class="node k8s">yatra-mcp · 0–10 pods</span><span class="node k8s">yatra-metrics · exactly 1</span></div>
+        <div class="lane"><span class="lanelabel">Stateful</span><span class="node k8s">pulsar StatefulSet + 5 Gi volume</span><span class="arrow">or</span><span class="node">your Pulsar cluster / managed Pulsar</span></div>
+        <div class="lane"><span class="lanelabel">Observe</span><span class="node">Prometheus Operator: ServiceMonitor + PrometheusRule (optional)</span></div>
+      </div>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Service</th><th>Image</th><th>Scaling</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>yatra-web</td><td class="mono">yatra-pulse/web</td><td>0 → 5, target 200 concurrent</td><td>Static files; costs nothing when idle</td></tr>
+          <tr><td>yatra-mcp</td><td class="mono">yatra-pulse/mcp</td><td>0 → 10, target 50 concurrent, 2 min scale-down delay</td><td>Stateless Streamable HTTP; any pod answers any request</td></tr>
+          <tr><td>yatra-metrics</td><td class="mono">yatra-pulse/metrics</td><td>exactly 1</td><td>Holds the SLO window and must stay subscribed</td></tr>
+          <tr><td>pulsar</td><td class="mono">apachepulsar/pulsar:4.2.4</td><td>StatefulSet, 1 replica</td><td>Single node for dev/small on-prem; use the Pulsar Helm chart at scale</td></tr>
+        </tbody>
+      </table></div>
+      <pre><code># Build images (repo root)
+docker build -f deploy/docker/web.Dockerfile     -t yatra-pulse/web:1.0.0 .
+docker build -f deploy/docker/mcp.Dockerfile     -t yatra-pulse/mcp:1.0.0 .
+docker build -f deploy/docker/metrics.Dockerfile -t yatra-pulse/metrics:1.0.0 .
+
+# Push to your registry, set it in deploy/k8s/kustomization.yaml, then
+kubectl apply -k deploy/k8s          # app + in-cluster Pulsar
+# or: kubectl apply -k deploy/k8s/app   # app only, PULSAR_WS_URL → your Pulsar
+# laptop: ./deploy/kind-up.sh && ./deploy/smoke-test.sh
+kubectl get ksvc -n yatra-pulse</code></pre>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Where</th><th>Kubernetes</th><th>Knative</th><th>Pulsar</th></tr></thead>
+        <tbody>
+          <tr><td>Laptop / CI</td><td>kind, minikube, k3d</td><td>Serving + Kourier (deploy/kind-up.sh)</td><td>Docker Compose Pulsar (kind profile)</td></tr>
+          <tr><td>On-prem</td><td>k3s, Rancher RKE2, OpenShift, vanilla kubeadm</td><td>Knative Operator or OpenShift Serverless</td><td>Pulsar Helm chart on local storage</td></tr>
+          <tr><td>Google Cloud</td><td>GKE</td><td>Knative Serving (or Cloud Run for Anthos)</td><td>Helm chart or a managed Pulsar service</td></tr>
+          <tr><td>AWS</td><td>EKS</td><td>Knative Serving + Kourier/Istio</td><td>Helm chart on EBS, or managed Pulsar</td></tr>
+          <tr><td>Azure</td><td>AKS</td><td>Knative Serving + Kourier/Istio</td><td>Helm chart on Azure Disk, or managed Pulsar</td></tr>
+        </tbody>
+      </table></div>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Verified on kind + Knative 1.23.0 (11 Oct 2026)</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td>Knative services yatra-web, yatra-mcp, yatra-metrics Ready</td><td><span class="tag ok">pass</span></td></tr>
+          <tr><td>Web board and architecture page served through Kourier</td><td><span class="tag ok">pass</span></td></tr>
+          <tr><td>MCP readiness reports Pulsar connected</td><td><span class="tag ok">pass</span></td></tr>
+          <tr><td>search_board and check_itinerary over HTTP (17 Oct clash found)</td><td><span class="tag ok">pass</span></td></tr>
+          <tr><td>Telemetry MCP → Pulsar → metrics consumer (tool calls counted)</td><td><span class="tag ok">pass</span></td></tr>
+          <tr><td>Metrics consumer healthy; Prometheus metrics exported</td><td><span class="tag ok">pass</span></td></tr>
+          <tr><td>Scale to zero: web and MCP 1 → 0 pods after 4 idle minutes; metrics stays at 1</td><td><span class="tag ok">pass</span></td></tr>
+          <tr><td>Cold start of the MCP server from zero</td><td class="mono">2.2 s</td></tr>
+        </tbody>
+      </table></div>
+      <p>On the laptop, the <code>deploy/kind</code> profile loads images into kind and uses the Docker Compose Pulsar, because Knative alone fills a 2 GB Docker VM. Real clusters use <code>kubectl apply -k deploy/k8s</code>, which adds the Pulsar StatefulSet, or <code>deploy/k8s/app</code> with an existing Pulsar.</p>
+    </section>
+
+    <footer>Yatra Pulse · architecture reference · 11 October 2026 · github.com/srilav/yatra-pulse · related: SPEC.md, resources/design-discussion.html, docs/design.html, ops/RUNBOOK.md</footer>
+  </main>
+</div>
+</body>
+</html>
