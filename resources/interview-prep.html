@@ -164,6 +164,13 @@ footer { color: var(--muted); font-size: .9rem; border-top: 1px solid var(--line
           <tr><td>SLOs computed by the consumer itself</td><td>Rely only on Prometheus alerting</td><td>Alerts work on a laptop or small on-prem with no Prometheus</td><td>Rules exist twice (consumer + alerts.yml)</td><td>Standardise on one alerting stack</td></tr>
           <tr><td>Evaluator with labelled datasets in CI</td><td>Manual spot checks; LLM-as-judge</td><td>Deterministic, cheap, blocks regressions; tests "must not" as well as "must"</td><td>Datasets need upkeep when data changes</td><td>Add LLM-judged plan quality for subjective aspects</td></tr>
           <tr><td>Knative scale-to-zero (web, MCP); metrics pinned to 1</td><td>Plain Deployments with HPA</td><td>Pay nothing when idle; revisions and traffic splitting free</td><td>2.2 s cold start; metrics can't scale out</td><td>Latency-critical traffic → min-scale 1</td></tr>
+          <tr><td>AWS: Knative on EKS, not ECS Fargate</td><td>ECS Fargate, App Runner, Lambda</td><td>Same manifests on laptop, on-prem and AWS; scale-to-zero and revisions from Knative</td><td>Pay for an EKS control plane and nodes</td><td>Single small service with no portability need → App Runner/Fargate</td></tr>
+          <tr><td>AWS: Terraform owns the ALB</td><td>AWS Load Balancer Controller + Ingress</td><td>CloudFront can target it in one apply; SG trusts only CloudFront; destroy can't miss it</td><td>Node group ASG attached to the target group by hand</td><td>Many services with per-path ALB rules → controller</td></tr>
+          <tr><td>AWS: nginx edge gateway</td><td>One ALB host per service; Knative DomainMapping</td><td>Knative routes by host; one public host must serve board, MCP and ops</td><td>Extra hop and a deployment to run</td><td>Custom domains per service → DomainMapping</td></tr>
+          <tr><td>AWS: CloudFront in front, ALB locked to its prefix list</td><td>Public ALB; Global Accelerator</td><td>HTTPS at the edge, caching, origin hidden from the internet</td><td>Needs account verification (hit it); HTTP between CloudFront and ALB</td><td>Add an ACM certificate for end-to-end TLS</td></tr>
+          <tr><td>AWS: one NAT gateway</td><td>One per AZ; VPC endpoints</td><td>Lowest cost for a demo</td><td>Single-AZ egress; data charges</td><td>Production → per-AZ NAT or ECR/S3 endpoints</td></tr>
+          <tr><td>AWS: scheduled node shutdown</td><td>Karpenter consolidation</td><td>Baseline pods need a node; schedule stops both overnight with 4 resources</td><td>App offline overnight; control plane, NAT, ALB still bill</td><td>Bursty daytime load → Karpenter for right-sizing</td></tr>
+          <tr><td>AWS: no customer KMS key</td><td>KMS envelope encryption for secrets</td><td>A deleted key lingers 7+ days; teardown should leave a clean account</td><td>Default encryption only</td><td>Real secrets in the cluster → add the key</td></tr>
           <tr><td>Host approval for traveller events</td><td>Auto-publish with automated checks</td><td>A page can't verify that an event exists</td><td>Host workload; delay before publication</td><td>Trusted contributors or verified organisers</td></tr>
           <tr><td>Privacy by default</td><td>Log raw queries</td><td>Queries can be personal; hash and length are enough for most analysis</td><td>Harder to debug empty searches (opt-in flag exists)</td><td>Never by default</td></tr>
         </tbody>
@@ -208,6 +215,16 @@ footer { color: var(--muted); font-size: .9rem; border-top: 1px solid var(--line
           <dt>Task</dt><dd>Make it impossible to invent events and cheap to run.</dd>
           <dt>Action</dt><dd>Added retrieval, a key whitelist, tips only from facts, and trip check on the draft; built an evaluator for invented, clashing and wrong-day stops.</dd>
           <dt>Result</dt><dd>Grounded 100% by construction; measured in CI. <b>Skill:</b> AI safety by design.</dd></dl></article>
+        <article class="story"><h3>AWS: a page that only broke in production</h3><dl>
+          <dt>Situation</dt><dd>On AWS, API checks passed 8/8 but browser tests 0/16.</dd>
+          <dt>Task</dt><dd>Find why the same page failed only there.</dd>
+          <dt>Action</dt><dd>Diffed the served HTML (identical) and looked at the recording: mojibake ("Â·"). The page had no &lt;meta charset&gt;; claude.ai and GitHub Pages had supplied one, nginx didn't.</dd>
+          <dt>Result</dt><dd>One-line fix, 16/16 on AWS. <b>Skill:</b> environment differences and evidence from recordings.</dd></dl></article>
+        <article class="story"><h3>AWS: CloudFront refused by account policy</h3><dl>
+          <dt>Situation</dt><dd>Terraform failed at the last resource with "account must be verified".</dd>
+          <dt>Task</dt><dd>Keep delivering without hiding the gap.</dd>
+          <dt>Action</dt><dd>Made CloudFront a switch, re-pointed scripts at whichever public URL exists, tested through the ALB, documented the path back. A targeted retry also re-closed the ALB; caught it from target health and SG rules.</dd>
+          <dt>Result</dt><dd>Full test cycle and teardown done the same day. <b>Skill:</b> degrade gracefully, be explicit about trade-offs.</dd></dl></article>
       </div>
     </section>
 
@@ -238,6 +255,9 @@ footer { color: var(--muted); font-size: .9rem; border-top: 1px solid var(--line
         <details><summary>Why Knative rather than plain Deployments?</summary><p>Scale to zero for idle services, request-based autoscaling, immutable revisions and traffic splitting out of the box, and the same manifests on any cluster. Verified: web and MCP scaled to zero after 4 idle minutes; 2.2 s cold start.</p></details>
         <details><summary>Why is the metrics consumer pinned to one replica?</summary><p>It holds the SLO window in memory and must stay subscribed to receive telemetry; scale-to-zero would drop events and windows. With Failover subscriptions, overlapping pods during rollouts are safe.</p></details>
         <details><summary>How would you run this on-prem vs in the cloud?</summary><p>Same Knative manifests. On-prem: k3s/RKE2/OpenShift with the Knative Operator or OpenShift Serverless, Pulsar via Helm on local storage. Cloud: GKE/EKS/AKS with Knative, Pulsar via Helm or a managed service; point <code>PULSAR_WS_URL</code> at it. Images in any registry via kustomize.</p></details>
+        <details><summary>Walk me through the AWS architecture.</summary><p>Terraform builds a two-AZ VPC (public subnets for ALB and one NAT, private for nodes), EKS 1.35 with a managed node group and EBS CSI via Pod Identity, three ECR repos, an ALB with a NodePort target group, and CloudFront in front. Knative and Kourier (ClusterIP) are installed by script; an nginx gateway maps /, /mcp and /ops/ to the Knative services. EventBridge Scheduler stops the nodes overnight. Verified with 16/16 recorded browser scenarios and 8/8 API checks, then torn down with a leftover sweep.</p></details>
+        <details><summary>Why not ECS Fargate on AWS?</summary><p>Fargate would be simpler for one service, but Knative keeps one set of manifests for laptop, on-prem and AWS, and gives scale-to-zero and revisions. The cost is running EKS; I'd pick Fargate or App Runner if portability didn't matter.</p></details>
+        <details><summary>How do you make sure teardown leaves nothing billable?</summary><p>Delete the namespace first so the EBS CSI driver deletes Pulsar's volume (Terraform doesn't track it), run terraform destroy, then sweep for EKS, load balancers, CloudFront, NAT, EIPs, EBS, instances, VPC and ECR, and write the result to a report. No KMS key, because deleted keys linger 7+ days.</p></details>
         <details><summary>How did you secure the containers?</summary><p>Non-root images, runAsNonRoot with explicit UIDs, no privilege escalation, all capabilities dropped, RuntimeDefault seccomp, memory limits, read-only tools, no secrets in config.</p></details>
         <h3>Scaling and trade-offs</h3>
         <details><summary>What breaks first at 100× traffic?</summary><p>The metrics consumer (single, in-memory) and per-call BM25 index rebuilds. Fixes: cache the index, partition telemetry and aggregate per partition or move aggregation to Prometheus, run Pulsar via its Helm chart, raise MCP max-scale.</p></details>
@@ -258,6 +278,8 @@ footer { color: var(--muted); font-size: .9rem; border-top: 1px solid var(--line
         <div class="stat"><b>4</b><small>Pulsar topics</small></div>
         <div class="stat"><b>2.2 s</b><small>Knative cold start</small></div>
         <div class="stat"><b>0 → 10</b><small>MCP pods (scale to zero)</small></div>
+        <div class="stat"><b>16/16 · 8/8</b><small>AWS browser · API checks</small></div>
+        <div class="stat"><b>≈ $0.36/h</b><small>AWS stack while running</small></div>
       </div>
     </section>
 

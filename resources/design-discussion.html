@@ -93,6 +93,7 @@ footer { color: var(--muted); font-size: .9rem; border-top: 1px solid var(--line
     <a href="#telemetry">Telemetry to Pulsar</a>
     <a href="#metrics">Metrics, SLOs &amp; alerts</a>
     <a href="#knative">Knative deployment</a>
+    <a href="#aws">AWS deployment</a>
     <a href="#security">Safety &amp; honesty</a>
     <a href="#testing">Testing &amp; video</a>
     <a href="#next">Limits &amp; next steps</a>
@@ -345,8 +346,26 @@ status  = gap &lt; 0 &amp;&amp; differentVenue ? "Clash"
       <div class="risk"><p><b>Found while deploying:</b> Knative tried to resolve local image tags on Docker Hub (fixed with <code>dev.local</code> names), and Pulsar couldn't be scheduled next to Knative in a 1.9 GB Docker VM (laptop profile uses the Compose Pulsar; real clusters keep the StatefulSet).</p></div>
     </section>
 
+    <section id="aws" aria-labelledby="awsH">
+      <header><span class="num">20</span><h2 id="awsH">AWS deployment (Terraform, EKS, ALB, CloudFront, NAT, ECR)</h2></header>
+      <p>Everything for AWS lives in <code>deploy/aws/</code>, separate from the laptop setup in <code>deploy/local/</code>; both share the images and the app manifests.</p>
+      <div class="parts">
+        <div class="part"><b>Network</b><ul><li>VPC across two AZs; public subnets for the ALB and one NAT gateway; private subnets for the EKS nodes. Nodes reach ECR, GitHub and Docker Hub through the NAT.</li></ul></div>
+        <div class="part"><b>Compute</b><ul><li>EKS 1.35 with one managed node group (2 × t3.large); EBS CSI driver via EKS Pod Identity; gp3 StorageClass for Pulsar. Knative Serving 1.23 + Kourier installed by <code>deploy.sh</code>, Kourier as ClusterIP.</li></ul></div>
+        <div class="part"><b>Edge</b><ul><li>CloudFront (HTTPS; cache <code>/</code>, pass <code>/mcp*</code> and <code>/ops/*</code> uncached) → ALB that only accepts CloudFront's origin-facing prefix list → target group on NodePort 30080 → nginx edge gateway → Knative services by cluster-local name.</li></ul></div>
+        <div class="part"><b>Images</b><ul><li>Three ECR repositories with scan-on-push and a keep-last-5 lifecycle; <code>force_delete</code> so teardown removes them with images inside.</li></ul></div>
+        <div class="part"><b>Idle cost</b><ul><li>EventBridge Scheduler calls <code>eks:UpdateNodegroupConfig</code> to scale nodes to 0 at 22:00 and back at 07:00 IST; <code>nodes.sh stop|start|status</code> does the same by hand.</li></ul></div>
+        <div class="part"><b>Scripts</b><ul><li><code>deploy.sh --plan|--yes</code>, <code>smoke-test.sh</code>, <code>record-tests.sh</code> (Selenium video + JSON, API checks, cluster snapshot), <code>teardown.sh --yes</code> with a leftover sweep. All pass <code>--context yatra-pulse-aws</code>, so they can't touch the local cluster.</li></ul></div>
+        <div class="part"><b>Verified</b><ul><li>11 Oct 2026, us-east-1: Selenium 16/16 (recorded) and API 8/8 through the ALB, then full teardown. CloudFront was refused for the account (pending AWS verification), so the run used the ALB directly with <code>ENABLE_CLOUDFRONT=false</code>.</li></ul></div>
+      </div>
+      <div class="decision"><b>Decision: Terraform owns the ALB, not an ingress controller</b><p>An AWS Load Balancer Controller would create the ALB from a Kubernetes Ingress, outside Terraform's state. Owning the ALB and target group in Terraform lets CloudFront point at it in one apply, lets the security group trust only CloudFront, and guarantees <code>terraform destroy</code> removes it. The node group's Auto Scaling group is attached to the target group, so new nodes register themselves.</p></div>
+      <div class="decision"><b>Decision: an nginx edge gateway in front of Knative</b><p>CloudFront and the ALB present one host name, but Knative routes by host. The gateway maps paths to each service's cluster-local address (<code>yatra-web.yatra-pulse.svc.cluster.local</code> and so on), so one public URL serves the board, MCP and the ops dashboard.</p></div>
+      <div class="decision"><b>Decision: scheduled shutdown instead of Karpenter</b><p>Pulsar, the metrics consumer, the gateway and Knative's control plane always need a node, so Karpenter could save at most one of two nodes. A schedule stops both overnight with four Terraform resources and no in-cluster controller. Trade-off: the app is offline overnight; the control plane, NAT and ALB still bill.</p></div>
+      <div class="risk"><p><b>Found on AWS:</b> CloudFront needs account verification; Knative's ECR digest lookup timed out (skip tag resolution for ECR); a fresh EBS volume wasn't writable by Pulsar (fsGroup 10000); a targeted apply re-closed the ALB; the page had no <code>&lt;meta charset&gt;</code> and broke when nginx served it without one (0/16 browser tests until fixed).</p></div>
+    </section>
+
     <section id="security" aria-labelledby="secH">
-      <header><span class="num">20</span><h2 id="secH">Safety and honesty</h2></header>
+      <header><span class="num">21</span><h2 id="secH">Safety and honesty</h2></header>
       <div class="tablewrap"><table>
         <thead><tr><th>Concern</th><th>How it's handled</th></tr></thead>
         <tbody>
@@ -362,7 +381,7 @@ status  = gap &lt; 0 &amp;&amp; differentVenue ? "Clash"
     </section>
 
     <section id="testing" aria-labelledby="testH">
-      <header><span class="num">21</span><h2 id="testH">Testing and the video</h2></header>
+      <header><span class="num">22</span><h2 id="testH">Testing and the video</h2></header>
       <div class="parts">
         <div class="part"><b>Browser</b><ul><li><code>tests/run_dashboard.py</code> (Selenium): 16 checks, from page load to trip-check clashes and the booking warning. Each step lingers (<code>--pause</code>) and the window stays open at the end (<code>--hold</code>).</li></ul></div>
         <div class="part"><b>MCP</b><ul><li><code>mcp-server/test.js</code> connects as a real MCP client over stdio: 8 checks across tools, resources and the prompt.</li></ul></div>
@@ -373,7 +392,7 @@ status  = gap &lt; 0 &amp;&amp; differentVenue ? "Clash"
     </section>
 
     <section id="next" aria-labelledby="nextH">
-      <header><span class="num">22</span><h2 id="nextH">Limits and next steps</h2></header>
+      <header><span class="num">23</span><h2 id="nextH">Limits and next steps</h2></header>
       <div class="tablewrap"><table>
         <thead><tr><th>Today</th><th>Possible next step</th></tr></thead>
         <tbody>
@@ -383,6 +402,7 @@ status  = gap &lt; 0 &amp;&amp; differentVenue ? "Clash"
           <tr><td>Plan with Claude only on claude.ai</td><td>Offer the MCP prompt as the path for everyone else (already deployable over HTTP)</td></tr>
           <tr><td>Page planner flags problems but doesn't revise</td><td>Optional second "fix it" round, at the traveller's request</td></tr>
           <tr><td>Lexical search only; one known miss</td><td>Hybrid BM25 + embeddings when the corpus grows; cache the index</td></tr>
+          <tr><td>CloudFront pending AWS account verification</td><td>Redeploy with ENABLE_CLOUDFRONT=true; ALB then accepts only CloudFront</td></tr>
           <tr><td>Single-node Pulsar in the cluster</td><td>Apache Pulsar Helm chart or managed Pulsar for production</td></tr>
           <tr><td>Saved plans keyed with the old "mm-" prefix in browser storage</td><td>Kept on purpose so existing plans survive the rename</td></tr>
           <tr><td>Dasara-only</td><td>The data model (events, venues, knowledge) generalises to other festivals</td></tr>
@@ -390,7 +410,7 @@ status  = gap &lt; 0 &amp;&amp; differentVenue ? "Clash"
       </table></div>
     </section>
 
-    <footer>Yatra Pulse · design discussion · updated 11 October 2026 (agent, evaluator, Pulsar, Knative) · code at github.com/srilav/yatra-pulse</footer>
+    <footer>Yatra Pulse · design discussion · updated 11 October 2026 (agent, evaluator, Pulsar, Knative, AWS) · code at github.com/srilav/yatra-pulse</footer>
   </main>
 </div>
 </body>

@@ -353,6 +353,8 @@ Then ask, for example: *"I'm in Mysuru 17–18 Oct and love live music. What can
 
 Knative Serving on any Kubernetes (kind, k3s, RKE2, OpenShift, GKE, EKS, AKS). `deploy/docker/*.Dockerfile` build three non-root images; `deploy/k8s` installs the app (`app/`: namespace, ConfigMap, Knative Services) and a single-node Pulsar (`pulsar/`); `deploy/local/kind` is the laptop profile. The MCP server runs stateless over Streamable HTTP (`mcp-server/http.js`) with `/healthz` and `/readyz`, so Knative scales it 0–10; the web board scales 0–5; the metrics consumer stays at exactly 1. `deploy/local/smoke-test.sh` checks a running deployment end to end (9 checks). Details: `deploy/README.md`, `resources/architecture.html`.
 
+**AWS** (`deploy/aws/`, separate from `deploy/local/`): Terraform creates a two-AZ VPC with one NAT gateway, EKS 1.35 (2 × t3.large, EBS CSI via Pod Identity), three ECR repositories, an ALB with a NodePort target group, CloudFront in front (ALB accepts only CloudFront's prefix list), and an EventBridge schedule that stops the nodes 22:00–07:00 IST. An nginx edge gateway maps `/`, `/mcp` and `/ops/` to the Knative services. Verified 11 Oct 2026: Selenium 16/16 (recorded) and API 8/8 through the ALB, then a full teardown with a leftover sweep. CloudFront needs the AWS account to be verified first (`ENABLE_CLOUDFRONT=false` until then). Details: `deploy/aws/README.md`.
+
 ## 11. Quality and testing
 
 | Suite | Command | Checks |
