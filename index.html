@@ -1,4 +1,5 @@
-<title>Musafir Mela</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Yatra Pulse</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Mukta:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap">
 <style>
@@ -199,14 +200,17 @@ footer { color: var(--muted); font-size: .85rem; display: grid; gap: 8px; border
 footer ul { margin: 0; padding-left: 18px; display: grid; gap: 2px; }
 </style>
 
+<!-- Component: palace-bulb strip. Decorative dotted border (radial-gradient), twinkles unless reduced motion. -->
 <div class="bulbs" aria-hidden="true"></div>
+<!-- Component: toast. One fixed message for trip-check results on "+ Add to plan" and "Book tickets"; data-status = ok | warn | bad. -->
 <div id="toast" role="status" hidden></div>
 <div class="wrap">
+  <!-- Component: header. Brand + two stat tiles (#dayNum festival day, #cd Jamboo Savari countdown), filled by render() every minute. -->
   <header class="top">
     <div class="brand">
       <div>
         <div class="eyebrow">Festival travel board · Mysuru Dasara 2026</div>
-        <h1>Musafir <span>Mela</span></h1>
+        <h1>Yatra <span>Pulse</span></h1>
         <p class="sub">What's on right now, what's next, and where to go nearby. Built for a traveller who wants the culture, not just the crowd.</p>
       </div>
       <div class="counter">
@@ -216,11 +220,14 @@ footer ul { margin: 0; padding-left: 18px; display: grid; gap: 2px; }
     </div>
   </header>
 
+  <!-- Component: Now & next. Up to 4 .ncard cards; live first, then soonest. Status pill comes from state(): live | soon | today (TBA) | tba | done. -->
   <section class="now" aria-labelledby="nowH">
     <div class="sec-head"><h2 id="nowH">Now &amp; next</h2><span class="mono" id="clock"></span></div>
     <div class="now-grid" id="nowGrid"></div>
   </section>
 
+  <!-- Component: My itinerary. Left: #planList grouped by day, with .leg rows from evaluateDay() between stops (trip check).
+       Right: Plan with Claude (#aiForm), which uses the sample capability and only accepts keys from the board's own data. -->
   <section aria-labelledby="planH">
     <div class="sec-head">
       <h2 id="planH">My itinerary</h2>
@@ -237,7 +244,7 @@ footer ul { margin: 0; padding-left: 18px; display: grid; gap: 2px; }
       <div class="panel"><div class="checkbar"><span class="eyebrow">Trip check</span><span id="pCheck" class="checkpills"></span></div><div id="planList"></div><p class="msg" id="pMsg" role="status"></p><p class="callout">Trip check estimates road distance and Dasara traffic, and adds time for parking and entry at crowded venues. Use the Route links for live traffic on the day.</p><p class="callout" id="pWhere">Saved in this browser.</p></div>
       <div class="panel ai" id="aiPanel">
         <h3>Plan with Claude</h3>
-        <p class="meta">Claude drafts a day-by-day plan using only the events and day trips on this board, so every stop is real.</p>
+        <p class="meta">The board finds the events, day trips and facts that match your style and note, and Claude drafts a day-by-day plan from only those, so every stop is real. Trip check then reviews the draft.</p>
         <form id="aiForm" class="add" novalidate>
           <div class="row2">
             <div class="field"><label for="aDay">Arriving</label><select id="aDay"></select></div>
@@ -256,6 +263,7 @@ footer ul { margin: 0; padding-left: 18px; display: grid; gap: 2px; }
     </div>
   </section>
 
+  <!-- Layout: two columns. Timeline (filters, nightly band, 11 .day rows) beside the sidebar; stacks under 900px. -->
   <div class="main">
     <section aria-labelledby="tlH">
       <div class="sec-head">
@@ -275,6 +283,7 @@ footer ul { margin: 0; padding-left: 18px; display: grid; gap: 2px; }
       <div id="timeline"></div>
     </section>
 
+    <!-- Sidebar panels: Picks for you (style chips), DJ & party nights, Gaya status. -->
     <aside>
       <div class="panel">
         <h2>Picks for you</h2>
@@ -302,6 +311,7 @@ footer ul { margin: 0; padding-left: 18px; display: grid; gap: 2px; }
     </aside>
   </div>
 
+  <!-- Component: traveller events. Approved cards (db: approved/*), your submissions (tips/<you>), host review queue (owner only), and the add form with validate(). -->
   <section aria-labelledby="cmH">
     <div class="sec-head"><h2 id="cmH">Fun events from travellers</h2><span class="eyebrow">Checked by the host before they appear</span></div>
     <div class="community">
@@ -329,6 +339,7 @@ footer ul { margin: 0; padding-left: 18px; display: grid; gap: 2px; }
     </div>
   </section>
 
+  <!-- Component: How to book. Numbered steps (CSS counter) + price table; prices are totals incl. fee and GST as reported 22 Sept. -->
   <section aria-labelledby="bookH" class="book">
     <div class="sec-head"><h2 id="bookH">How to book</h2><span class="eyebrow">Official tickets only · no agents</span></div>
     <div class="bookgrid">
@@ -355,11 +366,13 @@ footer ul { margin: 0; padding-left: 18px; display: grid; gap: 2px; }
     </div>
   </section>
 
+  <!-- Component: day trips. Cards sorted by distance; each can be added to the itinerary on the day chosen in #pDay. -->
   <section aria-labelledby="trH">
     <div class="sec-head"><h2 id="trH">Day trips from Mysuru</h2><span class="eyebrow">Same culture, fewer crowds</span></div>
     <div class="trips" id="trips"></div>
   </section>
 
+  <!-- Footer: last-checked date and the sources behind the data. -->
   <footer>
     <p><b>Last checked 11 Oct 2026.</b> Times marked "Time TBA" have not been announced yet. Several sources disagreed on exact times, so confirm passes and timings through official Mysuru Dasara channels before you go.</p>
     <ul>
@@ -376,6 +389,7 @@ footer ul { margin: 0; padding-left: 18px; display: grid; gap: 2px; }
 </div>
 
 <script>
+/* SHARED-START: data, itinerary, trip check and board search. Runs in the page and in mcp-server/ (no DOM at top level). */
 const T = (d, t) => new Date(`2026-10-${String(d).padStart(2, "0")}T${t}:00+05:30`);
 const UTTANAHALLI = "Yuva Dasara ground, Uttanahalli";
 
@@ -650,6 +664,83 @@ function toast(status, text) {
   toast.timer = setTimeout(() => { t.hidden = true; }, status === "ok" ? 4000 : 8000);
 }
 
+/* ---------- Board search (RAG) ----------
+   Every event, nightly item, DJ night, day trip, approved traveller event and booking fact becomes
+   a short passage with its source link, ranked by BM25. Plan with Claude retrieves the passages that
+   match the traveller's style and days instead of sending the whole board, and the MCP server in
+   mcp-server/ runs this same code. */
+const KNOWLEDGE = [
+  { id: "booking", title: "How to book Dasara tickets", url: "https://mysoredasara.gov.in",
+    text: "Book only on the official site mysoredasara.gov.in, Book Tickets. TicketGenie is the only authorised seller, so avoid agents. Pay online, then exchange the confirmation for the physical ticket or Gold Card at the Spandhana Counter, Deputy Commissioner's Office, Mysuru, with a government photo ID. Carry the ticket and the same ID on the day." },
+  { id: "prices", title: "Ticket prices and what they cover", url: "https://newskarnataka.com/mysuru/mysuru-dasara-2026-gold-cards-and-tickets-go-online/22092026/",
+    text: "Gold Card ₹6,961 total including fee and GST: palace, Chamundi Hill and zoo entry, a numbered Jamboo Savari seat, the torchlight parade and one drone show. Jamboo Savari seat ₹3,831, Enclosure I, palace forecourt. Torchlight parade ₹1,642, Bannimantap, free seating. Drone show ₹1,095 on 17 or 18 October. Prices as reported on 22 September; past years sold out within minutes." },
+  { id: "gates", title: "Gate times on Jamboo Savari day", url: "https://newskarnataka.com/mysuru/mysuru-dasara-2026-gold-cards-and-tickets-go-online/22092026/",
+    text: "On 21 October the Jamboo Savari enclosure gates open 10 am and close 12:30 pm, and roads near the palace close from 11 am. Torchlight parade gates are open 4:30 to 6:30 pm. Drone show gates open 4:30 pm." },
+  { id: "travel", title: "Getting to Mysuru and getting around", url: "https://www.nativeplanet.com/travel-guide/mysuru-dasara-2026-tickets-booking-guide-prices-travel-tips-011-24495.html",
+    text: "Vande Bharat from Bengaluru takes under 2 hours, other trains about 3. KSRTC buses run every few minutes. On 21 October park at a hub and take the free shuttle. The 24x7 Dasara helpline is 1077." },
+  { id: "yuva", title: "Yuva Dasara venue and timings", url: "https://newskarnataka.com/karnataka/yuva-dasara-2026-prabhu-deva-sid-sriram-and-more-to-perform/29092026/",
+    text: "Yuva Dasara concerts run 13 to 17 October at a 100-acre ground near the Jwalamukhi Tripura Sundari Temple, Uttanahalli, off the Mysuru–Nanjangud side. Local artistes 5:30 to 7:30 pm, headliners 7:30 to 10:30 pm. Entry details have not been published." },
+  { id: "dj", title: "DJ and party nights", url: "https://www.district.in/events/rangilo-2026-the-grand-dandiya-garba-festival-oct16-2026-buy-tickets",
+    text: "No standalone DJ club nights in Mysuru have been announced for Dasara. The closest are Sandalwood Nights on 16 October with rappers Chandan Shetty and All Ok, Jasmine Sandlas on 17 October, and Rangilo Dandiya and Garba with DJs on 16 to 18 October at Legend Microbrewery, Bengaluru." },
+  { id: "gaya", title: "Gaya Pitru Paksha", url: "https://patnapress.com/pitru-paksha-mela-2026-gaya-2500-bed-tent-city-tourism-facilities/",
+    text: "Pitru Paksha 2026 in Gaya ran 25 September to 10 October, with a 2,500-bed tent city. Pind daan at Vishnupad Temple, the Phalgu river and Akshayavat can be done any time of year. Nearby: Bodh Gaya 15 km, Rajgir 75 km, Nalanda 90 km. The next Pitru Paksha is around September 2027." },
+];
+const STYLE_WORDS = {
+  spiritual: "temple puja ritual goddess spiritual blessing",
+  music: "concert music singer live yuva dasara dj party night",
+  heritage: "palace temple heritage history hoysala royal",
+  family: "family show air drone lights gardens exhibition",
+};
+
+function boardPassages() {
+  const dayText = (d) => fmtD.format(T(d, "12:00"));
+  const out = [
+    ...EVENTS.map((e) => ({ key: `ev:${e.d}:${e.title}`, kind: "ev", day: e.d, title: e.title, url: e.url,
+      text: `${e.title}. ${dayText(e.d)}, ${e.tba && e.s === "00:00" ? "time not announced" : `${e.s} to ${e.e}`}. ${e.place}. ${e.note} Type: ${e.cat}. ${e.tags.join(" ")}.` })),
+    ...NIGHTLY.map((n) => ({ key: "nt:" + n.title, kind: "nt", title: n.title, url: n.url,
+      text: `${n.title}. Every night 11 to 21 October, ${n.s} to ${n.e}. ${n.place}. ${n.note} Type: ${n.cat}. ${n.tags.join(" ")}.` })),
+    ...DJ.map((x) => ({ key: "dj:" + x.title, kind: "dj", title: x.title, url: x.url, text: `${x.title}. ${x.meta}. ${x.note} DJ party night.` })),
+    ...TRIPS.map((t) => ({ key: "trip:" + t.name, kind: "trip", title: t.name, url: t.url,
+      text: `Day trip to ${t.name}, ${t.km} km from Mysuru. ${t.why} ${t.tags.join(" ")}.` })),
+    ...KNOWLEDGE.map((k) => ({ key: "kb:" + k.id, kind: "kb", title: k.title, url: k.url, text: `${k.title}. ${k.text}` })),
+  ];
+  if (typeof approvedDocs !== "undefined") {
+    approvedDocs.forEach((a) => {
+      const d = Number(String(a.date).slice(8, 10));
+      out.push({ key: "cm:" + a.id, kind: "cm", day: DAYS.includes(d) ? d : undefined, title: String(a.title), url: a.url,
+        text: `${a.title}. ${a.place}. ${a.writeup} Added by a traveller and checked by the host. Type: ${a.cat}.` });
+    });
+  }
+  return out;
+}
+
+const STOP = new Set("a an and are as at be by for from in is it of on or the to with this that your you can not no".split(" "));
+const tokens = (s) => String(s).toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "").split(/[^a-z0-9]+/)
+  .filter((w) => w && !STOP.has(w)).map((w) => (w.length > 3 && w.endsWith("s") ? w.slice(0, -1) : w));
+
+// BM25 over the passages. Options: day (passages without a day always match), kinds, k.
+function searchBoard(query, { day, kinds, k = 8 } = {}) {
+  const docs = boardPassages().filter((p) => (!kinds || kinds.includes(p.kind)) && (day === undefined || p.day === undefined || p.day === day));
+  const q = tokens(query);
+  if (!docs.length) return [];
+  const toks = docs.map((p) => tokens(p.text + " " + p.title));
+  const avg = toks.reduce((n, t) => n + t.length, 0) / toks.length;
+  const df = {};
+  toks.forEach((t) => new Set(t).forEach((w) => { df[w] = (df[w] || 0) + 1; }));
+  const k1 = 1.4, b = 0.75, N = docs.length;
+  return docs.map((p, i) => {
+    const tf = {};
+    toks[i].forEach((w) => { tf[w] = (tf[w] || 0) + 1; });
+    const score = q.reduce((s, w) => {
+      if (!tf[w]) return s;
+      const idf = Math.log(1 + (N - df[w] + 0.5) / (df[w] + 0.5));
+      return s + idf * (tf[w] * (k1 + 1)) / (tf[w] + k1 * (1 - b + b * toks[i].length / avg));
+    }, 0);
+    return { ...p, score: Math.round(score * 100) / 100 };
+  }).sort((a, b) => b.score - a.score || (a.day ?? 99) - (b.day ?? 99)).slice(0, k);
+}
+/* SHARED-END */
+
 const src = (u, label = "Details") => /^https:\/\//.test(String(u)) && host(u) ? `<a class="srclink" href="${esc(u)}" target="_blank" rel="noopener noreferrer">${label} ↗ <span>${esc(host(u))}</span></a>` : "";
 
 // Expand everything into dated occurrences.
@@ -907,10 +998,10 @@ $("addForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const msg = $("fMsg");
   msg.className = "msg";
-  if (!db || !uid) { msg.className = "msg err"; msg.textContent = "Sign in to claude.ai to add events. Viewers need Contributor access to submit."; return; }
   const t = { title: $("fTitle").value.trim(), url: $("fUrl").value.trim(), date: $("fDate").value, cat: $("fCat").value, place: $("fPlace").value.trim(), writeup: $("fWrite").value.trim() };
   const problem = validate(t);
   if (problem) { msg.className = "msg err"; msg.textContent = problem; return; }
+  if (!db || !uid) { msg.className = "msg err"; msg.textContent = "Sign in to claude.ai to add events. Viewers need Contributor access to submit."; return; }
   $("fSubmit").disabled = true;
   try {
     const tip = { ...t, id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7), by: uid, status: "pending", createdAt: new Date().toISOString() };
@@ -979,13 +1070,17 @@ $("pending").addEventListener("click", async (e) => {
   if (!sample) { $("aMsg").textContent = "Open this board on claude.ai to have Claude draft a plan."; $("aGo").disabled = true; return; }
   let ctl = null, draft = null;
 
+  // Retrieval: rank the board's passages for this traveller's style and note, and send only the best
+  // matches (plus the facts tips may use). Claude can only pick keys from what it was given.
   function choices(from, len) {
     const days = DAYS.filter((d) => d >= from && d < from + len);
-    const events = EVENTS.filter((e) => days.includes(e.d)).map((e) => ({ key: `ev:${e.d}:${e.title}`, day: e.d, time: e.tba && e.s === "00:00" ? "TBA" : `${e.s}-${e.e}`, title: e.title, place: e.place, type: e.cat, tags: e.tags, note: e.note }));
-    const nightly = NIGHTLY.map((n) => ({ key: "nt:" + n.title, time: `${n.s}-${n.e}`, title: n.title, place: n.place, every_night: true }));
-    const trips = TRIPS.map((t) => ({ key: "trip:" + t.name, title: t.name, km_from_mysuru: t.km, tags: t.tags, why: t.why }));
-    const community = approvedDocs.filter((a) => days.includes(Number(String(a.date).slice(8, 10)))).map((a) => ({ key: "cm:" + a.id, day: Number(String(a.date).slice(8, 10)), title: a.title, place: a.place, type: a.cat, about: a.writeup }));
-    return { days, events, nightly, trips, community };
+    const query = `${STYLE_WORDS[$("aStyle").value] || ""} ${$("aNote").value.trim().slice(0, 160)}`;
+    const slim = (p) => ({ key: p.key, ...(p.day ? { day: p.day } : {}), text: p.text.slice(0, 320) });
+    const events = days.flatMap((d) => searchBoard(query, { day: d, kinds: ["ev", "cm"], k: 4 }));
+    const nightly = searchBoard(query, { kinds: ["nt"], k: 3 });
+    const trips = searchBoard(query, { kinds: ["trip"], k: 4 });
+    const facts = searchBoard(query + " booking gates travel", { kinds: ["kb"], k: 3 });
+    return { days, choices: [...events, ...nightly, ...trips].map(slim), facts: facts.map((f) => ({ title: f.title, text: f.text.slice(0, 400), url: f.url })) };
   }
 
   $("aForm").addEventListener("submit", async (e) => {
@@ -998,13 +1093,18 @@ Build a day-by-day itinerary for these festival days: ${c.days.join(", ")} Octob
 Travel style: ${$("aStyle").value}. Pace: ${$("aPace").value}.${$("aNote").value.trim() ? " Traveller's note: " + $("aNote").value.trim().slice(0, 160) : ""}
 
 Rules:
-- Only use stops from the CHOICES below and refer to each by its exact "key". Never invent events, venues or times.
-- Respect each event's day and time. "every_night" items can go on any day. Day trips take a morning or a whole day; don't put a far trip (over 60 km) on a day with an afternoon event.
+- Only use stops from CHOICES and refer to each by its exact "key". Never invent events, venues or times.
+- Respect each event's day and time. Nightly items (key starting "nt:") and day trips ("trip:") can go on any day.
+- Don't put two stops at different venues at the same time. Day trips take a morning or a whole day; don't put a far trip (over 60 km) on a day with an afternoon event.
 - You may add short free-time suggestions (meals, rest, travel) with key null.
+- Tips must come only from FACTS.
 - ${$("aPace").value === "relaxed" ? "2-3 stops per day." : "3-5 stops per day."}
 
-CHOICES:
-${JSON.stringify(c)}
+CHOICES (retrieved from the board for this traveller):
+${JSON.stringify(c.choices)}
+
+FACTS:
+${JSON.stringify(c.facts)}
 
 Reply with JSON only, in this shape:
 {"summary": "one sentence", "days": [{"day": 13, "theme": "short title", "stops": [{"key": "ev:13:Yuva Dasara opening night" or null, "time": "HH:MM", "title": "short", "why": "one short sentence"}]}], "tips": ["up to 3 practical tips"]}`;
@@ -1013,17 +1113,28 @@ Reply with JSON only, in this shape:
     $("aMsg").className = "msg"; $("aMsg").textContent = "Claude is drafting your plan…";
     try {
       const res = await sample.json(ask, { signal: ctl.signal, modelTier: "default" });
-      const valid = new Set([...c.events, ...c.nightly, ...c.trips, ...c.community].map((x) => x.key));
+      const valid = new Set(c.choices.map((x) => x.key));
       draft = (Array.isArray(res?.days) ? res.days : []).filter((d) => c.days.includes(Number(d.day))).map((d) => ({
         day: Number(d.day), theme: String(d.theme || ""),
         stops: (Array.isArray(d.stops) ? d.stops : []).filter((s) => s && (s.key === null || valid.has(s.key))).slice(0, 6),
       }));
       if (!draft.length) throw { code: "empty" };
       const tips = (Array.isArray(res.tips) ? res.tips : []).slice(0, 3).map(String);
+      // Run trip check on the draft before offering it.
+      const problems = draft.flatMap((d) => {
+        const entries = d.stops.filter((st) => st.key).map((st) => {
+          const base = catalogItem(st.key);
+          return base && { ...base, key: base.key.startsWith("ev:") ? base.key : `${base.key}@${d.day}`, day: d.day, time: /^\d\d:\d\d$/.test(String(st.time)) ? st.time : base.time };
+        }).filter(Boolean);
+        const r = evaluateDay(entries, tripMode);
+        return [...r.legs, ...r.notes].filter((x) => x.status === "bad").map((x) => `${fmtD.format(T(d.day, "12:00"))}: ${x.text}`);
+      });
       $("aOut").innerHTML = `${res.summary ? `<p><b>${esc(String(res.summary))}</b></p>` : ""}
         ${draft.map((d) => `<div><div class="eyebrow">${esc(fmtD.format(T(d.day, "12:00")))}${d.theme ? " · " + esc(d.theme) : ""}</div><ol>${d.stops.map((s) =>
           `<li>${/^\d\d:\d\d$/.test(String(s.time)) ? `<span class="mono">${esc(fmtT.format(T(d.day, s.time)))}</span> ` : ""}${s.key ? `<b>${esc(catalogItem(s.key)?.title || s.title)}</b>` : `<span class="sugg">${esc(String(s.title || ""))}</span>`}${s.why ? ` · ${esc(String(s.why))}` : ""}</li>`).join("")}</ol></div>`).join("")}
+        <div><div class="eyebrow">Trip check on this draft</div>${problems.length ? `<ol>${problems.map((t) => `<li class="msg err">${esc(t)}</li>`).join("")}</ol>` : `<p class="msg good">No clashes, and every stop is reachable by ${esc(MODES[tripMode].label)}.</p>`}</div>
         ${tips.length ? `<div><div class="eyebrow">Tips</div><ol>${tips.map((t) => `<li>${esc(t)}</li>`).join("")}</ol></div>` : ""}
+        <div class="meta">Claude read ${c.choices.length + c.facts.length} passages retrieved from this board: ${c.facts.map((f) => src(f.url, esc(f.title))).join(" ")}</div>
         <div class="actions"><button type="button" class="btn" id="aAdd">Add all to my plan</button><span class="meta">Free-time suggestions stay here and aren't added.</span></div>`;
       $("aOut").hidden = false;
       $("aMsg").textContent = "";

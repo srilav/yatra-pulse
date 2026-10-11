@@ -3,3 +3,4 @@ screenshots/
 __pycache__/
 .DS_Store
 video/out/
+node_modules/

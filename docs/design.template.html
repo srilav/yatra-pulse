@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Yatra Pulse Design Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Mukta:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap">
+<!-- APP_STYLE: the app's own <style> block is copied here by docs/build_design.py -->
+<style>
+/* Guide-only styles. Everything else comes from the app stylesheet above. */
+body { margin: 0; }
+.guide { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 24px 64px; display: grid; gap: 40px; }
+.guide > section { display: grid; gap: 16px; }
+.guide h1 { font-family: var(--f-display); font-weight: 400; font-size: clamp(2rem, 5vw, 3rem); line-height: 1.05; }
+.guide h1 span { color: var(--gold); }
+.lede { color: var(--muted); max-width: 70ch; }
+.guide h2 { font-size: 1.6rem; }
+.spec { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; padding-top: 16px; border-top: 1px solid var(--line); }
+@media (max-width: 860px) { .spec { grid-template-columns: minmax(0, 1fr); } }
+.spec .demo { background: var(--bg); border: 1px dashed var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 12px; min-width: 0; }
+.spec .notes { display: grid; gap: 8px; font-size: .95rem; min-width: 0; }
+.spec .notes p, .spec .notes li { color: var(--muted); }
+.spec .notes ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+code { font-family: var(--f-mono); font-size: .82rem; background: var(--chip); color: var(--ink); padding: 1px 6px; border-radius: 4px; overflow-wrap: anywhere; }
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.sw { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface); }
+.sw i { display: block; height: 52px; }
+.sw div { padding: 8px 10px; display: grid; gap: 2px; font-size: .85rem; }
+.sw small { color: var(--muted); }
+.types { display: grid; gap: 14px; }
+.types > div { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 12px; align-items: baseline; border-top: 1px solid var(--line); padding-top: 10px; }
+@media (max-width: 560px) { .types > div { grid-template-columns: minmax(0, 1fr); } }
+.layoutmap { display: grid; gap: 8px; font-size: .85rem; }
+.layoutmap .row { display: grid; gap: 8px; grid-template-columns: minmax(0, 1fr); }
+.layoutmap .row.two { grid-template-columns: minmax(0, 1fr) minmax(0, 340px); }
+@media (max-width: 700px) { .layoutmap .row.two { grid-template-columns: minmax(0, 1fr); } }
+.layoutmap b { display: block; padding: 10px 12px; border-radius: 8px; background: var(--surface); border: 1px solid var(--line); font-weight: 500; }
+.layoutmap b em { font-style: normal; color: var(--muted); }
+.flow { display: grid; gap: 10px; }
+.flow .lane { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.flow .node { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; font-size: .88rem; }
+.flow .node.data { border-color: var(--gold); }
+.flow .node.store { border-style: dashed; }
+.flow .arrow { color: var(--muted); }
+.tablewrap table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.tablewrap th { text-align: left; font-size: .74rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); padding: 0 10px 8px 0; }
+.tablewrap td { padding: 8px 10px 8px 0; border-top: 1px solid var(--line); vertical-align: top; }
+.toc { display: flex; flex-wrap: wrap; gap: 6px; }
+.toc a { text-decoration: none; }
+#toast.demo-toast { position: static; transform: none; width: auto; }
+</style>
+</head>
+<body>
+<div class="bulbs" aria-hidden="true"></div>
+<main class="guide">
+  <header style="display:grid;gap:10px">
+    <div class="eyebrow">Design guide · generated from index.html</div>
+    <h1>Yatra <span>Pulse</span> design guide</h1>
+    <p class="lede">How the travel board is put together: the look, the page layout, every component with its classes and states, and how data flows from the event list to the screen. The components below are rendered with the app's real stylesheet, so they always match the live page. Switch your device to dark mode to see the dark theme.</p>
+    <nav class="toc" aria-label="Sections">
+      <a class="chipbtn" href="#look">Look</a><a class="chipbtn" href="#layout">Layout</a><a class="chipbtn" href="#components">Components</a>
+      <a class="chipbtn" href="#tripcheck">Trip check</a><a class="chipbtn" href="#data">Data flow</a><a class="chipbtn" href="#rag">RAG &amp; MCP</a><a class="chipbtn" href="#a11y">Accessibility</a>
+    </nav>
+  </header>
+
+  <section id="look" aria-labelledby="lookH">
+    <h2 id="lookH">The look</h2>
+    <p class="lede">The idea is Mysuru Palace on a Dasara night: deep night-sky purple, marigold bulb light, and kumkum red for things that need attention. The light theme keeps the same accents on a soft lilac-white. Every color is a token on <code>:root</code>, redefined for dark mode, so components never use raw colors.</p>
+    <div class="swatches">
+      <div class="sw"><i style="background:var(--bg)"></i><div><b>--bg</b><small>Page background</small></div></div>
+      <div class="sw"><i style="background:var(--surface)"></i><div><b>--surface</b><small>Cards and panels</small></div></div>
+      <div class="sw"><i style="background:var(--ink)"></i><div><b>--ink</b><small>Text, primary buttons</small></div></div>
+      <div class="sw"><i style="background:var(--muted)"></i><div><b>--muted</b><small>Secondary text</small></div></div>
+      <div class="sw"><i style="background:var(--line)"></i><div><b>--line</b><small>Borders, dividers</small></div></div>
+      <div class="sw"><i style="background:var(--gold)"></i><div><b>--gold</b><small>Accent: links, times, numbers</small></div></div>
+      <div class="sw"><i style="background:var(--bulb)"></i><div><b>--bulb</b><small>Palace bulbs, warnings</small></div></div>
+      <div class="sw"><i style="background:var(--kumkum)"></i><div><b>--kumkum</b><small>Concerts, today, problems</small></div></div>
+      <div class="sw"><i style="background:var(--live)"></i><div><b>--live</b><small>Live now, OK checks</small></div></div>
+      <div class="sw"><i style="background:var(--tba)"></i><div><b>--tba</b><small>Time TBA, to watch</small></div></div>
+    </div>
+    <div class="types">
+      <div><span class="eyebrow">Display</span><span style="font-family:var(--f-display);font-size:2rem">Yatra One · Yatra Pulse</span></div>
+      <div><span class="eyebrow">Body</span><span>Mukta · Readable at small sizes, with Indian-language roots that suit place names like Srirangapatna and Chamundeshwari.</span></div>
+      <div><span class="eyebrow">Data</span><span class="mono">JetBrains Mono · 4:10 pm · ₹6,961 · 12 km</span></div>
+      <div><span class="eyebrow">Label</span><span class="eyebrow">Uppercase eyebrow with letter-spacing</span></div>
+    </div>
+  </section>
+
+  <section id="layout" aria-labelledby="layoutH">
+    <h2 id="layoutH">Page layout</h2>
+    <p class="lede">One centred column, max 1180px wide, with a 16px side gutter. Two-column areas stack into one column below 900px, so the page works at phone width with no sideways scrolling.</p>
+    <div class="layoutmap" aria-label="Page sections in order">
+      <div class="row"><b>Palace-bulb strip <em>· decorative</em></b></div>
+      <div class="row"><b>Header <em>· name, festival day tile, Jamboo Savari countdown</em></b></div>
+      <div class="row"><b>Now &amp; next <em>· up to 4 cards, auto-fit grid</em></b></div>
+      <div class="row two"><b>My itinerary + Trip check <em>· days, stops, travel legs</em></b><b>Plan with Claude <em>· form, draft</em></b></div>
+      <div class="row two"><b>11 days of Dasara <em>· filters, nightly band, day rows</em></b><b>Sidebar <em>· Picks, DJ nights, Gaya</em></b></div>
+      <div class="row two"><b>Traveller events <em>· approved, yours, host queue</em></b><b>Add a fun event <em>· form</em></b></div>
+      <div class="row two"><b>How to book <em>· numbered steps</em></b><b>Prices <em>· table, tips</em></b></div>
+      <div class="row"><b>Day trips <em>· cards sorted by distance</em></b></div>
+      <div class="row"><b>Footer <em>· last checked, sources</em></b></div>
+    </div>
+  </section>
+
+  <section id="components" aria-labelledby="compH">
+    <h2 id="compH">Components</h2>
+
+    <div class="spec">
+      <div class="demo">
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <span class="pill live"><span class="dot live"></span>Live now</span>
+          <span class="pill soon">Starts 7:00 pm</span>
+          <span class="pill soon">Today · time TBA</span>
+          <span class="pill tba">Time TBA</span>
+          <span class="pill done">Ended</span>
+          <span class="pill ok">Checked by host</span>
+          <span class="pill bad">1 problem</span>
+        </div>
+      </div>
+      <div class="notes"><h3>Status pill</h3>
+        <p>Shows an event's state at a glance, in color and in words, so it never relies on color alone.</p>
+        <ul><li><code>.pill</code> + <code>.live</code> <code>.soon</code> <code>.tba</code> <code>.done</code> <code>.ok</code> <code>.bad</code></li>
+        <li>Chosen by <code>state()</code> from the current time in India: live, starts within 6 hours, today with no time, time not announced, ended.</li>
+        <li>The live dot pulses unless the viewer prefers reduced motion.</li></ul></div>
+    </div>
+
+    <div class="spec">
+      <div class="demo">
+        <article class="ncard is-live">
+          <div><span class="pill live"><span class="dot live"></span>Live now</span></div>
+          <h3>Palace illumination</h3>
+          <div class="when mono">Sun, 11 Oct · 7:00 pm–10:00 pm</div>
+          <div class="place">Mysore Palace</div>
+          <a class="srclink" href="#components">Details ↗ <span>inmysore.com</span></a>
+          <button type="button" class="addbtn" aria-pressed="false">+ Add to plan</button>
+        </article>
+      </div>
+      <div class="notes"><h3>Now &amp; next card</h3>
+        <p>The first thing a traveller sees: what's happening and what's next.</p>
+        <ul><li><code>.ncard</code>; add <code>.is-live</code> for a green border while it's on.</li>
+        <li>Live events sort first, then by start time; one card per event title, four at most.</li>
+        <li>Every card carries its source link and an add button.</li></ul></div>
+    </div>
+
+    <div class="spec">
+      <div class="demo">
+        <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+          <a class="srclink" href="#components">Details ↗ <span>newskarnataka.com</span></a>
+          <a class="srclink" href="#components">Book tickets ↗ <span>mysoredasara.gov.in</span></a>
+          <button type="button" class="addbtn" aria-pressed="false">+ Add to plan</button>
+          <button type="button" class="addbtn" aria-pressed="true">✓ In my plan</button>
+        </div>
+      </div>
+      <div class="notes"><h3>Source link and add button</h3>
+        <ul><li><code>.srclink</code> always shows the website's name next to the link, so people can judge the source before clicking. Only https links are shown.</li>
+        <li>"Book tickets" links carry <code>data-book</code>; clicking one runs Trip check first and shows the result in the toast.</li>
+        <li><code>.addbtn[data-add]</code> toggles the stop in the itinerary. <code>aria-pressed</code> holds the state; dashed outline when off, filled when on.</li></ul></div>
+    </div>
+
+    <div class="spec">
+      <div class="demo">
+        <div class="filters"><button class="chipbtn" aria-pressed="true">All</button><button class="chipbtn" aria-pressed="false">Concerts</button><button class="chipbtn" aria-pressed="false">DJ &amp; party</button></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn">Send for checking</button><button class="btn ghost">Copy plan</button><button class="btn" disabled>Draft my itinerary</button></div>
+      </div>
+      <div class="notes"><h3>Chips and buttons</h3>
+        <ul><li><code>.chipbtn</code> for filters and travel styles; the selected one has <code>aria-pressed="true"</code> and inverts. The choice is remembered in this browser.</li>
+        <li><code>.btn</code> is the main action in a panel; <code>.btn.ghost</code> for secondary actions.</li>
+        <li>"Clear" asks for a second tap instead of a pop-up, because the viewer can't show confirm dialogs.</li></ul></div>
+    </div>
+
+    <div class="spec">
+      <div class="demo">
+        <div class="day today">
+          <div class="dlabel"><b>21</b><small>Wed · Day 11 · today</small></div>
+          <div class="items">
+            <div class="ev" data-cat="ritual">
+              <div class="ev-top"><h3>Jamboo Savari</h3><span class="pill soon">Starts 4:10 pm</span></div>
+              <div class="meta mono">4:10 pm–5:30 pm</div>
+              <div class="meta">Mysore Palace → Bannimantap, 4.8 km</div>
+              <p class="note">Flowers offered to the goddess in the 750 kg Golden Howdah, then the procession.</p>
+              <div class="ev-links"><a class="srclink" href="#components">Details ↗ <span>siasat.com</span></a><a class="srclink" href="#components">Book tickets ↗ <span>mysoredasara.gov.in</span></a><button type="button" class="addbtn" aria-pressed="false">+ Add to plan</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="notes"><h3>Timeline day and event</h3>
+        <ul><li><code>.day</code> is a two-column row: the big date on the left, events on the right. <code>.today</code> turns the date red; <code>.past</code> fades the row.</li>
+        <li><code>.ev[data-cat]</code> sets the left rule: red for music and DJ, marigold for ritual, neutral for shows.</li>
+        <li>Times show in IST; "Time TBA" when not announced. The filters hide events by <code>data-cat</code>.</li></ul></div>
+    </div>
+
+    <div class="spec">
+      <div class="demo">
+        <div class="checkbar"><span class="eyebrow">Trip check</span><span class="checkpills"><span class="pill bad">1 problem</span><span class="pill tba">1 to watch</span></span></div>
+        <div class="pday">
+          <div class="dlabel"><b>17</b><small>Sat · Day 7</small></div>
+          <ol class="pitems">
+            <li><span class="mono">4:30 pm</span><div><b>Drone show</b><span class="meta">Bannimantap grounds · until 9:00 pm</span></div><button type="button" class="rm" aria-label="Remove Drone show">×</button></li>
+            <li class="leg" data-status="bad"><span class="legicon" aria-hidden="true">!</span><div>Clash: Drone show (Bannimantap grounds) runs until 9:00 pm, but Jasmine Sandlas closing night at Uttanahalli starts 5:30 pm. You can't be at both. <a class="srclink" href="#components">Route ↗</a></div></li>
+            <li><span class="mono">5:30 pm</span><div><b>Jasmine Sandlas closing night</b><span class="meta">Yuva Dasara ground, Uttanahalli · until 10:30 pm</span></div><button type="button" class="rm" aria-label="Remove Jasmine Sandlas">×</button></li>
+          </ol>
+        </div>
+        <ol class="pitems">
+          <li class="leg" data-status="warn"><span class="legicon" aria-hidden="true">~</span><div>Tight: about 42 min by car or taxi for 5 km, and you have 50 min. Leave on time.</div></li>
+          <li class="leg" data-status="ok"><span class="legicon" aria-hidden="true">↓</span><div>5 km, about 42 min by car or taxi. You have 60 min.</div></li>
+        </ol>
+      </div>
+      <div class="notes"><h3>Itinerary day and Trip check legs</h3>
+        <ul><li><code>.pday</code> groups one day's stops in time order; each stop has a remove button (<code>.rm[data-rm]</code>).</li>
+        <li>A <code>.leg</code> row sits between two stops and says whether you can get from one to the next. <code>data-status</code> is <code>bad</code> (clash, not enough time, too far), <code>warn</code> (tight, gate deadline, time TBA) or <code>ok</code>.</li>
+        <li>The icon (<code>!</code> <code>~</code> <code>↓</code>) repeats the status in shape as well as color.</li>
+        <li>The summary pills in <code>.checkbar</code> count problems and things to watch across the whole plan.</li></ul></div>
+    </div>
+
+    <div class="spec">
+      <div class="demo">
+        <div id="toast" class="demo-toast" data-status="bad" role="status">Added, but check this: Clash: Drone show runs until 9:00 pm, but Jasmine Sandlas starts 5:30 pm. You can't be at both.</div>
+        <div id="toast-warn" class="demo-toast" style="padding:12px 16px;border-radius:10px;background:var(--ink);color:var(--bg);border-left:6px solid var(--bulb)">Added. Heads up: Tight: about 42 min by car for 5 km, and you have 50 min.</div>
+      </div>
+      <div class="notes"><h3>Toast</h3>
+        <ul><li>One fixed message at the bottom of the screen (<code>#toast</code>, <code>role="status"</code> so screen readers announce it).</li>
+        <li>Shown when you add a stop or tap "Book tickets". The left edge is green, marigold or red by <code>data-status</code>.</li>
+        <li>OK messages hide after 4 seconds; warnings stay for 8.</li></ul></div>
+    </div>
+
+    <div class="spec">
+      <div class="demo">
+        <article class="ccard">
+          <div class="ev-top"><span class="pill soon">DJ &amp; party</span><span class="pill tba">Waiting for check</span></div>
+          <h3>Event name</h3>
+          <div class="meta mono">Fri, 16 Oct</div>
+          <div class="meta">Venue, area</div>
+          <p>The traveller's write-up, 40 to 400 characters.</p>
+          <a class="srclink" href="#components">Event page ↗ <span>organiser-site.in</span></a>
+        </article>
+        <div class="field"><label for="demoUrl">Official link or ticket page</label><input id="demoUrl" value="https://bit.ly/abc"><small>Short links like bit.ly are not accepted.</small></div>
+        <p class="msg err">Short links hide where they go. Paste the full event page instead.</p>
+      </div>
+      <div class="notes"><h3>Traveller event card and form</h3>
+        <ul><li><code>.ccard</code> shows an event a traveller added. The second pill is its review state: <em>Waiting for check</em>, <em>Checked</em> or <em>Not added</em>.</li>
+        <li><code>validate()</code> runs before anything is sent: https only, no link shorteners, a date from 11 to 31 Oct, a venue, a 40-character write-up, a "this is real" tick, no duplicate links, and at most 5 waiting per person.</li>
+        <li>Nothing is public until the host approves it from the review queue (owner only).</li></ul></div>
+    </div>
+
+    <div class="spec">
+      <div class="demo">
+        <ol class="steps">
+          <li><b>Check your itinerary first</b><span>Trip check warns about clashes before you pay.</span></li>
+          <li><b>Open the official site</b><span>mysoredasara.gov.in → Book Tickets.</span></li>
+        </ol>
+        <div class="tablewrap"><table class="prices"><thead><tr><th>Ticket</th><th>Total</th></tr></thead><tbody><tr><td>Gold Card</td><td class="mono">₹6,961</td></tr></tbody></table></div>
+      </div>
+      <div class="notes"><h3>Booking steps and price table</h3>
+        <ul><li><code>.steps</code> uses a CSS counter for the numbered circles. Numbers are used here because booking really is a sequence.</li>
+        <li><code>.prices</code> sits inside <code>.tablewrap</code>, which scrolls sideways on its own on small screens so the page never does.</li></ul></div>
+    </div>
+
+    <div class="spec">
+      <div class="demo">
+        <div class="trip"><span class="mono km">15 km</span><h3>Srirangapatna</h3><p>Ranganathaswamy Temple. Dasara began here before moving to Mysuru.</p><div class="ev-links"><a class="srclink" href="#components">About ↗ <span>en.wikipedia.org</span></a><button type="button" class="addbtn" aria-pressed="false">+ Add to plan</button></div></div>
+      </div>
+      <div class="notes"><h3>Day trip card</h3>
+        <ul><li><code>.trip</code>: a marigold top rule instead of a boxed card, to keep the page from becoming a wall of boxes.</li>
+        <li>Each trip has map coordinates, so Trip check can estimate the drive and the time back for evening events.</li></ul></div>
+    </div>
+  </section>
+
+  <section id="tripcheck" aria-labelledby="tcH">
+    <h2 id="tcH">How Trip check decides</h2>
+    <p class="lede">For each day, stops are sorted by the time you must be there (gate closing time if the ticket has one, otherwise the start). Each pair of back-to-back stops is compared.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Result</th><th>Rule</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pill bad">Clash</span></td><td>The earlier stop ends after the next must start, and they're at different venues (more than 0.8 km apart). If one of them is an all-evening item like palace lights, it's a warning with a "leave by" time instead.</td></tr>
+        <tr><td><span class="pill bad">Not enough time</span></td><td>Gap &lt; travel time. Travel = road km ÷ speed + waiting, plus 25 min for parking and entry at crowded venues or 10 min elsewhere.</td></tr>
+        <tr><td><span class="pill tba">Tight</span></td><td>Gap is less than travel time + 15 minutes.</td></tr>
+        <tr><td><span class="pill bad">Too far</span></td><td>An auto-rickshaw on a day trip over 40 km.</td></tr>
+        <tr><td><span class="pill tba">To watch</span></td><td>Time not announced, no map location (traveller events), or a gate deadline such as Jamboo Savari's 12:30 pm.</td></tr>
+        <tr><td><span class="pill ok">OK</span></td><td>Same venue, or the gap covers travel with time to spare.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Vehicle</th><th>City (Dasara traffic)</th><th>Highway</th><th>Extra wait</th></tr></thead>
+      <tbody>
+        <tr><td>Car or taxi</td><td class="mono">18 km/h</td><td class="mono">45 km/h</td><td class="mono">0 min</td></tr>
+        <tr><td>Two-wheeler</td><td class="mono">22 km/h</td><td class="mono">45 km/h</td><td class="mono">0 min</td></tr>
+        <tr><td>Auto-rickshaw</td><td class="mono">16 km/h</td><td class="mono">30 km/h</td><td class="mono">5 min</td></tr>
+        <tr><td>Bus</td><td class="mono">13 km/h</td><td class="mono">35 km/h</td><td class="mono">15 min</td></tr>
+      </tbody>
+    </table></div>
+    <p class="lede">Road distance is straight-line distance × 1.4. The first 15 km count as city driving. These are planning estimates; each leg links a Google Maps route for live traffic.</p>
+  </section>
+
+  <section id="data" aria-labelledby="dataH">
+    <h2 id="dataH">Data flow</h2>
+    <div class="flow">
+      <div class="lane"><span class="node data">EVENTS · NIGHTLY · TRIPS · VENUES</span><span class="arrow">→</span><span class="node">OCC (dated occurrences)</span><span class="arrow">→</span><span class="node">render() every minute</span><span class="arrow">→</span><span class="node">Now &amp; next · Timeline · Picks · Day trips</span></div>
+      <div class="lane"><span class="node">+ Add to plan</span><span class="arrow">→</span><span class="node">catalogItem(key)</span><span class="arrow">→</span><span class="node">plan[]</span><span class="arrow">→</span><span class="node">evaluateDay() with VENUES + MODES</span><span class="arrow">→</span><span class="node">Itinerary legs · toast</span></div>
+      <div class="lane"><span class="node">plan[]</span><span class="arrow">↔</span><span class="node store">db: data/users/&lt;you&gt;/plan</span><span class="arrow">or</span><span class="node store">this browser (localStorage)</span></div>
+      <div class="lane"><span class="node">Add a fun event</span><span class="arrow">→</span><span class="node">validate()</span><span class="arrow">→</span><span class="node store">db: tips/&lt;you&gt; (private)</span><span class="arrow">→ host approves →</span><span class="node store">db: approved/&lt;id&gt; (everyone)</span></div>
+      <div class="lane"><span class="node">Plan with Claude</span><span class="arrow">→</span><span class="node">searchBoard() retrieval</span><span class="arrow">→</span><span class="node">sample.json(retrieved choices + facts)</span><span class="arrow">→</span><span class="node">keep only known keys</span><span class="arrow">→</span><span class="node">Add all to my plan</span></div>
+    </div>
+    <p class="lede">Event keys look like <code>ev:21:Jamboo Savari</code>, <code>nt:Palace illumination</code>, <code>trip:Melukote</code> and <code>cm:&lt;id&gt;</code>. Plan with Claude must answer with these keys, which is how the page drops anything it didn't get from the board.</p>
+  </section>
+
+  <section id="rag" aria-labelledby="ragH">
+    <h2 id="ragH">RAG and MCP</h2>
+    <p class="lede">Claude only ever plans from what the board knows. The board splits itself into short passages, each with a key and a source link, and ranks them with BM25 for the traveller's question. The same code runs in the page and in the MCP server.</p>
+    <div class="spec">
+      <div class="demo">
+        <div class="flow">
+          <div class="lane"><span class="node data">Events · nightly · DJ · trips · facts · approved traveller events</span></div>
+          <div class="lane"><span class="arrow">↓</span><span class="node">boardPassages()</span><span class="arrow">→</span><span class="node">searchBoard(query, {day, kinds, k})</span></div>
+          <div class="lane"><span class="arrow">↓ in the page</span><span class="node">Plan with Claude: CHOICES + FACTS</span><span class="arrow">→</span><span class="node">Claude</span><span class="arrow">→</span><span class="node">keep retrieved keys only</span><span class="arrow">→</span><span class="node">Trip check</span></div>
+          <div class="lane"><span class="arrow">↓ in MCP</span><span class="node store">search_board · get_day · check_itinerary · booking_guide</span><span class="arrow">→</span><span class="node">Claude Code / Desktop</span></div>
+        </div>
+        <div class="meta">Claude read 14 passages retrieved from this board: <a class="srclink" href="#rag">How to book Dasara tickets ↗ <span>mysoredasara.gov.in</span></a></div>
+        <p class="msg good">No clashes, and every stop is reachable by car or taxi.</p>
+      </div>
+      <div class="notes"><h3>Plan with Claude output</h3>
+        <ul><li>Retrieval sends up to 4 events per day, 3 nightly shows, 4 day trips and 3 facts. Claude must answer with their keys; anything else is dropped.</li>
+        <li>Tips may only come from the retrieved facts. The sources read are listed under the plan.</li>
+        <li>The draft goes through Trip check before "Add all to my plan", and any problem is listed in red.</li></ul>
+        <h3>MCP server</h3>
+        <ul><li><code>mcp-server/server.js</code> loads the shared code from <code>index.html</code> between the <code>SHARED-START</code> and <code>SHARED-END</code> markers, so data and rules never drift.</li>
+        <li>Tools: <code>search_board</code> (RAG), <code>get_day</code>, <code>check_itinerary</code>, <code>booking_guide</code>. Resources: <code>yatra://schedule</code>, <code>yatra://facts</code>. Prompt: <code>plan_trip</code>.</li>
+        <li>All tools are read-only. See SPEC.md for setup in Claude Code and Claude Desktop.</li></ul></div>
+    </div>
+  </section>
+
+  <section id="a11y" aria-labelledby="a11yH">
+    <h2 id="a11yH">Accessibility and behaviour</h2>
+    <ul class="lede" style="display:grid;gap:6px;padding-left:18px">
+      <li>Status is always shown with words or a shape as well as color.</li>
+      <li>Toggle buttons use <code>aria-pressed</code>; messages use <code>role="status"</code>.</li>
+      <li>Keyboard focus shows a marigold outline. Animations stop when reduced motion is on.</li>
+      <li>Light and dark themes follow the device, from the same tokens.</li>
+      <li>Phone width: two-column areas stack under 900px; tables scroll inside their own box.</li>
+      <li>No pop-up dialogs: confirmations happen in the page, such as Clear asking for a second tap.</li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "yatra-pulse": {
+      "command": "node",
+      "args": ["mcp-server/server.js"]
+    }
+  }
+}

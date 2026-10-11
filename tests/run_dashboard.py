@@ -1,4 +1,4 @@
-"""Open Musafir Mela in Chrome with Selenium, walk through the main features, and keep the window open.
+"""Open Yatra Pulse in Chrome with Selenium, walk through the main features, and keep the window open.
 
 Usage:
     .venv/bin/python tests/run_dashboard.py            # holds the window for 10 s at the end
@@ -56,7 +56,7 @@ def main() -> int:
         driver.get(PAGE)
 
         def loads():
-            wait.until(EC.title_is("Musafir Mela"))
+            wait.until(EC.title_is("Yatra Pulse"))
             wait.until(lambda d: d.find_elements(By.CSS_SELECTOR, "#timeline .day"))
             assert len(driver.find_elements(By.CSS_SELECTOR, "#timeline .day")) == 11
             driver.save_screenshot(str(SHOTS / "01-home.png"))
@@ -102,6 +102,18 @@ def main() -> int:
 
         def traveller_form_signed_out():
             scroll_to("cmH")
+            driver.find_element(By.ID, "fSubmit").click()
+            msg = driver.find_element(By.ID, "fMsg").text
+            assert "Give the event a name" in msg, msg  # checks come before sign-in
+            driver.find_element(By.ID, "fTitle").send_keys("Test event")
+            driver.find_element(By.ID, "fUrl").send_keys("https://bit.ly/abc")
+            driver.find_element(By.ID, "fSubmit").click()
+            assert "Short links" in driver.find_element(By.ID, "fMsg").text
+            driver.find_element(By.ID, "fUrl").clear()
+            driver.find_element(By.ID, "fUrl").send_keys("https://example.org/event")
+            driver.find_element(By.ID, "fPlace").send_keys("Test venue, Mysuru")
+            driver.find_element(By.ID, "fWrite").send_keys("A test write-up that is long enough to pass the forty character check.")
+            driver.find_element(By.ID, "fTrue").click()
             driver.find_element(By.ID, "fSubmit").click()
             msg = driver.find_element(By.ID, "fMsg").text
             assert "Sign in" in msg, msg
@@ -157,7 +169,14 @@ def main() -> int:
             assert toast.startswith("Before you book") and "Clash" in toast, toast
             driver.save_screenshot(str(SHOTS / "06-book-warning.png"))
 
+        def board_search():
+            hits = driver.execute_script("return searchBoard('Sid Sriram concert', {k: 3}).map(h => h.key)")
+            assert hits[0] == "ev:15:Sid Sriram live", hits
+            facts = driver.execute_script("return searchBoard('Gold Card price', {kinds: ['kb'], k: 1})[0].text")
+            assert "6,961" in facts, facts
+
         step("Page loads with all 11 Dasara days", loads)
+        step("Board search (RAG) ranks the right passages", board_search)
         step("Now & next shows events", now_and_next)
         step("Timeline events link to https sources", source_links)
         step("Concerts filter shows only concerts", filter_concerts)
@@ -165,7 +184,7 @@ def main() -> int:
         step("Add a day trip to my itinerary", day_trip_to_plan)
         step("Remove a stop from my itinerary", remove_from_plan)
         step("Picks change with travel style", picks_switch)
-        step("Traveller form asks to sign in when offline", traveller_form_signed_out)
+        step("Traveller form checks entries, then asks to sign in", traveller_form_signed_out)
         step("Trip check flags a clash at different venues", clash_different_venues)
         step("Adding a clashing event shows a warning", toast_on_add)
         step("Jamboo Savari gate time is flagged", same_venue_is_fine)
@@ -173,7 +192,7 @@ def main() -> int:
         step("Far day trip is flagged for an auto-rickshaw", auto_too_far)
         step("Book tickets warns about a clash first", book_link_warns)
 
-        total = 15
+        total = 16
         print(f"\n{total - len(failures)}/{total} passed. Screenshots in {SHOTS}")
         print(f"Keeping the browser open for {args.hold:g} s…")
         driver.execute_script("window.scrollTo({top: 0, behavior: 'smooth'})")

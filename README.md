@@ -1,4 +1,4 @@
-# Musafir Mela
+# Yatra Pulse
 
 A live festival travel board for **Mysuru Dasara 2026** (11–21 October), built for travellers who want the culture, not just the crowd.
 
@@ -6,9 +6,9 @@ Live version: https://claude.ai/artifact/1KQUyk25gdmTGtbnHSxgJX
 
 ## Video walkthrough
 
-[![Musafir Mela video walkthrough](resources/thumbnail.png)](resources/musafir-mela.mp4)
+[![Yatra Pulse video walkthrough](resources/thumbnail.png)](resources/yatra-pulse.mp4)
 
-A 2-minute narrated tour covering the live board, the full schedule, how to book official tickets, the itinerary and day trips: [`resources/musafir-mela.mp4`](resources/musafir-mela.mp4). YouTube title, description, chapters and tags are in [`resources/youtube.txt`](resources/youtube.txt).
+A 3½-minute narrated tour of every feature: live board, schedule, filters, picks, itinerary, Trip check (clashes, travel time by vehicle), Plan with Claude, booking, traveller events, day trips, Gaya, dark mode and phone: [`resources/yatra-pulse.mp4`](resources/yatra-pulse.mp4). YouTube title, description, chapters and tags are in [`resources/youtube.txt`](resources/youtube.txt).
 
 To regenerate it (macOS, uses the `say` voice "Rishi"):
 
@@ -25,9 +25,21 @@ To regenerate it (macOS, uses the `say` voice "Rishi"):
 - **DJ & party nights**: in Mysuru and Bengaluru.
 - **My itinerary**: tap "+ Add to plan" on any event or day trip to build a day-by-day plan. Copy it to share on WhatsApp or email. Saved to your claude.ai account (or this browser when opened from disk).
 - **Trip check**: checks your itinerary for stops at different venues that overlap in time, and whether each gap is long enough to travel by car or taxi, two-wheeler, auto-rickshaw or bus. It allows for Dasara traffic and for parking and entry at crowded venues, links a Google Maps route for each leg, and warns you when you add a stop or tap "Book tickets".
-- **Plan with Claude**: pick arrival day, length, style and pace, and Claude drafts an itinerary using only events and day trips listed on the board, so it can't invent stops.
+- **Plan with Claude**: pick arrival day, length, style and pace. The board retrieves matching events and facts (RAG), Claude drafts from only those, and Trip check reviews the draft.
 - **Fun events from travellers**: anyone with Contributor access can submit an event with an official link and a short write-up. Submissions stay hidden until the host approves them.
 - **Day trips** from Mysuru, and the **Gaya Pitru Paksha** status.
+
+## Ask Claude about Dasara (MCP + RAG)
+
+`mcp-server/` is an MCP server that lets Claude Code or Claude Desktop search the board (RAG), read any day's schedule, get booking facts, and trip-check a plan. It reuses the page's own data and rules.
+
+```bash
+cd mcp-server && npm install && npm test   # 8 checks
+```
+
+In this folder, Claude Code picks it up from `.mcp.json`. Elsewhere: `claude mcp add yatra-pulse -- node /path/to/mcp-server/server.js`.
+
+Full details, every component and use case: [SPEC.md](SPEC.md). Visual design: [docs/design.html](docs/design.html).
 
 ## How it runs
 
