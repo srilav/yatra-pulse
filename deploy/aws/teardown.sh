@@ -51,6 +51,8 @@ chk "Scheduler (idle)"   "$(aws scheduler list-schedules --region $REGION --name
 chk "EKS log groups"     "$(aws logs describe-log-groups --region $REGION --log-group-name-prefix /aws/eks/$NAME --query 'logGroups[].logGroupName' --output text)"
 
 kubectl config get-contexts -o name 2>/dev/null | grep -qx "$CTX" && kubectl config delete-context "$CTX" >/dev/null && echo "  removed kubeconfig context $CTX"
+for img in $(docker images --format '{{.Repository}}:{{.Tag}}' 2>/dev/null | grep -E "dkr\.ecr\.$REGION\.amazonaws\.com/$NAME/"); do docker rmi "$img" >/dev/null && echo "  removed local image ${img#*/}"; done
+grep -l "dkr.ecr.$REGION" ~/.docker/config.json >/dev/null 2>&1 && for r in $(python3 -c "import json,os;print(' '.join(k for k in json.load(open(os.path.expanduser('~/.docker/config.json'))).get('auths',{}) if '.dkr.ecr.' in k))"); do docker logout "$r" >/dev/null 2>&1 && echo "  logged docker out of $r" | sed -E 's/[0-9]{12}/<acct>/'; done
 if [ $tf -eq 0 ] && [ $left -eq 0 ]; then echo "TEARDOWN COMPLETE: no Yatra Pulse resources left in $REGION"; else echo "TEARDOWN INCOMPLETE: see LEFT lines above"; fi
 } 2>&1 | tee "$OUT"
 echo "Saved $OUT"
