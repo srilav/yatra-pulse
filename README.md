@@ -2,7 +2,18 @@
 
 A live festival travel board for **Mysuru Dasara 2026** (11–21 October), built for travellers who want the culture, not just the crowd.
 
-Live version: https://claude.ai/artifact/1KQUyk25gdmTGtbnHSxgJX
+## Open it
+
+| Page | Link |
+|---|---|
+| The board (GitHub Pages) | https://srilav.github.io/yatra-pulse/ |
+| The board with Plan with Claude and traveller events (claude.ai) | https://claude.ai/artifact/1KQUyk25gdmTGtbnHSxgJX |
+| Architecture by category | https://srilav.github.io/yatra-pulse/resources/architecture.html |
+| How each feature is built | https://srilav.github.io/yatra-pulse/resources/design-discussion.html |
+| Design guide | https://srilav.github.io/yatra-pulse/docs/design.html |
+| Video walkthrough | https://www.youtube.com/watch?v=VNpOtIx-vuU |
+
+On GitHub Pages the schedule, itinerary, trip check, booking guide and day trips all work, with plans saved in your browser. Plan with Claude and traveller events need the claude.ai version.
 
 ## Video walkthrough
 
@@ -41,7 +52,7 @@ cd mcp-server && npm install && npm test   # 8 checks
 
 In this folder, Claude Code picks it up from `.mcp.json`. Elsewhere: `claude mcp add yatra-pulse -- node /path/to/mcp-server/server.js`.
 
-Full details, every component and use case: [SPEC.md](SPEC.md). How each feature is built, component by component: [resources/design-discussion.html](resources/design-discussion.html). Visual design: [docs/design.html](docs/design.html).
+Full details, every component and use case: [SPEC.md](SPEC.md). How each feature is built, component by component: [design discussion](https://srilav.github.io/yatra-pulse/resources/design-discussion.html). Visual design: [design guide](https://srilav.github.io/yatra-pulse/docs/design.html).
 
 ## Evaluation, metrics and observability (Apache Pulsar)
 
@@ -66,7 +77,7 @@ Three Knative services (web board, MCP server over HTTP, metrics consumer) plus 
 kubectl apply -k deploy/k8s                     # any cluster with Knative (images in your registry)
 ```
 
-Guide: [deploy/README.md](deploy/README.md). Architecture by category (functionality, tech stack, components, AI-enabled components, end-to-end testing, telemetry, deployment): [resources/architecture.html](resources/architecture.html).
+Guide: [deploy/README.md](deploy/README.md). Architecture by category (functionality, tech stack, components, AI-enabled components, end-to-end testing, telemetry, deployment): [architecture page](https://srilav.github.io/yatra-pulse/resources/architecture.html).
 
 ## How it runs
 

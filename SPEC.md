@@ -4,8 +4,9 @@ Yatra Pulse is a live travel board for **Mysuru Dasara 2026 (11–21 October)**.
 
 | | |
 |---|---|
-| Live board | https://claude.ai/artifact/1KQUyk25gdmTGtbnHSxgJX (claude.ai Artifact) |
-| Design guide | [`docs/design.html`](docs/design.html) · https://claude.ai/artifact/2PCxFoPpMJ7vepwaYKzcYE |
+| Live board | https://srilav.github.io/yatra-pulse/ (GitHub Pages) · https://claude.ai/artifact/1KQUyk25gdmTGtbnHSxgJX (claude.ai, with Plan with Claude and traveller events) |
+| Architecture | https://srilav.github.io/yatra-pulse/resources/architecture.html |
+| Design guide | https://srilav.github.io/yatra-pulse/docs/design.html |
 | Code | `index.html` (the whole app), `mcp-server/` (MCP + RAG), `tests/`, `video/` |
 | Video walkthrough | https://www.youtube.com/watch?v=VNpOtIx-vuU |
 | Data last checked | 11 October 2026 |
