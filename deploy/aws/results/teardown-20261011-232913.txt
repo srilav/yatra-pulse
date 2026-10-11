@@ -1,0 +1,2443 @@
+Yatra Pulse AWS teardown · 2026-10-11T17:59:13Z · us-east-1
+
+▸ Delete the app namespace (releases Pulsar's EBS volume)
+namespace "yatra-pulse" deleted
+  persistent volumes left: 0
+
+▸ terraform destroy
+data.aws_availability_zones.available: Reading...
+data.aws_ec2_managed_prefix_list.cloudfront: Reading...
+data.aws_iam_policy_document.pod_identity_trust: Reading...
+module.eks.module.eks_managed_node_group["default"].data.aws_iam_policy_document.assume_role_policy[0]: Reading...
+aws_ecr_repository.app["metrics"]: Refreshing state... [id=yatra-pulse/metrics]
+data.aws_caller_identity.current: Reading...
+module.eks.data.aws_caller_identity.current[0]: Reading...
+aws_ecr_repository.app["mcp"]: Refreshing state... [id=yatra-pulse/mcp]
+aws_ecr_repository.app["web"]: Refreshing state... [id=yatra-pulse/web]
+module.vpc.aws_vpc.this[0]: Refreshing state... [id=vpc-03f7732e5312d00b3]
+module.eks.module.eks_managed_node_group["default"].data.aws_iam_policy_document.assume_role_policy[0]: Read complete after 0s [id=2560088296]
+data.aws_iam_policy_document.pod_identity_trust: Read complete after 0s [id=819195744]
+data.aws_cloudfront_cache_policy.optimized: Reading...
+module.eks.aws_cloudwatch_log_group.this[0]: Refreshing state... [id=/aws/eks/yatra-pulse/cluster]
+module.eks.data.aws_caller_identity.current[0]: Read complete after 0s [id=<aws-account-id>]
+data.aws_cloudfront_origin_request_policy.all_viewer_except_host: Reading...
+data.aws_caller_identity.current: Read complete after 0s [id=<aws-account-id>]
+module.eks.data.aws_partition.current[0]: Reading...
+module.eks.data.aws_partition.current[0]: Read complete after 0s [id=aws]
+module.eks.data.aws_iam_policy_document.assume_role_policy[0]: Reading...
+module.eks.data.aws_iam_policy_document.assume_role_policy[0]: Read complete after 0s [id=2830595799]
+data.aws_cloudfront_cache_policy.disabled: Reading...
+data.aws_availability_zones.available: Read complete after 1s [id=us-east-1]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role.this[0]: Refreshing state... [id=default-eks-node-group-ffbefc1890fdf7d43b8d9bfc54]
+aws_iam_role.ebs_csi: Refreshing state... [id=yatra-pulse-ebs-csi]
+module.eks.data.aws_iam_session_context.current[0]: Reading...
+module.eks.data.aws_iam_session_context.current[0]: Read complete after 0s [id=arn:aws:iam::<aws-account-id>:user/musafir-admin]
+data.aws_iam_policy_document.scheduler_trust: Reading...
+data.aws_iam_policy_document.scheduler_trust: Read complete after 0s [id=1941880871]
+module.eks.aws_iam_role.this[0]: Refreshing state... [id=yatra-pulse-cluster-c9f0ec4d778ae8cd41e34da107]
+aws_iam_role.node_scheduler[0]: Refreshing state... [id=yatra-pulse-node-scheduler]
+aws_ecr_lifecycle_policy.app["mcp"]: Refreshing state... [id=yatra-pulse/mcp]
+data.aws_ec2_managed_prefix_list.cloudfront: Read complete after 1s [id=pl-3b927c52]
+aws_ecr_lifecycle_policy.app["metrics"]: Refreshing state... [id=yatra-pulse/metrics]
+data.aws_cloudfront_origin_request_policy.all_viewer_except_host: Read complete after 1s [id=b689b0a8-53d0-40ab-baf2-68738e2966ac]
+aws_ecr_lifecycle_policy.app["web"]: Refreshing state... [id=yatra-pulse/web]
+data.aws_cloudfront_cache_policy.optimized: Read complete after 1s [id=658327ea-f89d-4fab-a63d-7e88639e58f6]
+data.aws_cloudfront_cache_policy.disabled: Read complete after 1s [id=4135ea2d-6df8-44a3-9df3-4b5a84be39ad]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKSWorkerNodePolicy"]: Refreshing state... [id=default-eks-node-group-ffbefc1890fdf7d43b8d9bfc54/arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEC2ContainerRegistryReadOnly"]: Refreshing state... [id=default-eks-node-group-ffbefc1890fdf7d43b8d9bfc54/arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKS_CNI_Policy"]: Refreshing state... [id=default-eks-node-group-ffbefc1890fdf7d43b8d9bfc54/arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy]
+aws_iam_role_policy_attachment.ebs_csi: Refreshing state... [id=yatra-pulse-ebs-csi/arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy]
+module.eks.aws_iam_role_policy_attachment.this["AmazonEKSClusterPolicy"]: Refreshing state... [id=yatra-pulse-cluster-c9f0ec4d778ae8cd41e34da107/arn:aws:iam::aws:policy/AmazonEKSClusterPolicy]
+module.vpc.aws_default_route_table.default[0]: Refreshing state... [id=rtb-0cb7ec32e2e73b1fc]
+module.vpc.aws_default_security_group.this[0]: Refreshing state... [id=sg-07bc8c39f822a3c2d]
+aws_security_group.alb: Refreshing state... [id=sg-0be7a11957794135a]
+aws_lb_target_group.gateway: Refreshing state... [id=arn:aws:elasticloadbalancing:us-east-1:<aws-account-id>:targetgroup/yatra-pulse-gw/3f62d006906cd936]
+module.vpc.aws_default_network_acl.this[0]: Refreshing state... [id=acl-09604c094ff2e4697]
+module.vpc.aws_route_table.public[0]: Refreshing state... [id=rtb-016cd4e7941f66800]
+module.vpc.aws_subnet.private[0]: Refreshing state... [id=subnet-045007938b4772345]
+module.eks.aws_security_group.node[0]: Refreshing state... [id=sg-034666c3ade7b8e53]
+module.vpc.aws_subnet.private[1]: Refreshing state... [id=subnet-030f3e58b35384914]
+module.vpc.aws_route_table.private[0]: Refreshing state... [id=rtb-09fd6e43d1bae0cf8]
+module.vpc.aws_internet_gateway.this[0]: Refreshing state... [id=igw-0ac7158dd7b04b634]
+module.vpc.aws_subnet.public[0]: Refreshing state... [id=subnet-06cdf6149b27e2e99]
+module.vpc.aws_subnet.public[1]: Refreshing state... [id=subnet-0a07d492a7626efb4]
+module.eks.aws_security_group.cluster[0]: Refreshing state... [id=sg-0c3e3dff068197901]
+module.vpc.aws_route_table_association.private[0]: Refreshing state... [id=rtbassoc-0b83f791ac504df66]
+module.vpc.aws_route_table_association.private[1]: Refreshing state... [id=rtbassoc-03e8ab2784abf0ff7]
+module.vpc.aws_route.public_internet_gateway[0]: Refreshing state... [id=r-rtb-016cd4e7941f668001080289494]
+module.vpc.aws_eip.nat[0]: Refreshing state... [id=eipalloc-04a69e751de1b31e8]
+module.vpc.aws_route_table_association.public[0]: Refreshing state... [id=rtbassoc-0f066bd03c8381ab2]
+module.vpc.aws_route_table_association.public[1]: Refreshing state... [id=rtbassoc-03b6a55562bcad827]
+aws_lb.edge: Refreshing state... [id=arn:aws:elasticloadbalancing:us-east-1:<aws-account-id>:loadbalancer/app/yatra-pulse-alb/f7c876fe5b702a1a]
+module.eks.aws_security_group_rule.cluster["ingress_nodes_443"]: Refreshing state... [id=sgrule-3079005579]
+module.eks.aws_security_group_rule.node["ingress_self_coredns_udp"]: Refreshing state... [id=sgrule-36783385]
+module.eks.aws_security_group_rule.node["ingress_cluster_6443_webhook"]: Refreshing state... [id=sgrule-1964809638]
+module.eks.aws_security_group_rule.node["alb_to_gateway"]: Refreshing state... [id=sgrule-2520976497]
+module.eks.aws_security_group_rule.node["ingress_cluster_8443_webhook"]: Refreshing state... [id=sgrule-1715511687]
+module.eks.aws_security_group_rule.node["ingress_cluster_4443_webhook"]: Refreshing state... [id=sgrule-3160341040]
+module.eks.aws_security_group_rule.node["ingress_cluster_443"]: Refreshing state... [id=sgrule-3273214186]
+module.eks.aws_security_group_rule.node["ingress_cluster_kubelet"]: Refreshing state... [id=sgrule-1501605324]
+module.eks.aws_security_group_rule.node["ingress_cluster_10251_webhook"]: Refreshing state... [id=sgrule-1841954231]
+module.eks.aws_security_group_rule.node["ingress_self_coredns_tcp"]: Refreshing state... [id=sgrule-2792285942]
+module.eks.aws_security_group_rule.node["ingress_cluster_9443_webhook"]: Refreshing state... [id=sgrule-48337484]
+module.eks.aws_security_group_rule.node["egress_all"]: Refreshing state... [id=sgrule-163558614]
+module.eks.aws_security_group_rule.node["ingress_nodes_ephemeral"]: Refreshing state... [id=sgrule-2104742984]
+module.vpc.aws_nat_gateway.this[0]: Refreshing state... [id=nat-00259da8a79d71734]
+module.vpc.aws_route.private_nat_gateway[0]: Refreshing state... [id=r-rtb-09fd6e43d1bae0cf81080289494]
+module.eks.aws_eks_cluster.this[0]: Refreshing state... [id=yatra-pulse]
+aws_lb_listener.http: Refreshing state... [id=arn:aws:elasticloadbalancing:us-east-1:<aws-account-id>:listener/app/yatra-pulse-alb/f7c876fe5b702a1a/83e3dc3e02bc68cc]
+module.eks.data.tls_certificate.this[0]: Reading...
+module.eks.aws_eks_access_entry.this["cluster_creator"]: Refreshing state... [id=yatra-pulse:arn:aws:iam::<aws-account-id>:user/musafir-admin]
+module.eks.data.aws_eks_addon_version.this["kube-proxy"]: Reading...
+module.eks.data.aws_eks_addon_version.this["vpc-cni"]: Reading...
+module.eks.data.aws_eks_addon_version.this["eks-pod-identity-agent"]: Reading...
+module.eks.data.aws_eks_addon_version.this["aws-ebs-csi-driver"]: Reading...
+module.eks.data.aws_eks_addon_version.this["coredns"]: Reading...
+module.eks.time_sleep.this[0]: Refreshing state... [id=2026-10-11T17:00:41Z]
+module.eks.module.eks_managed_node_group["default"].module.user_data.null_resource.validate_cluster_service_cidr: Refreshing state... [id=1312471656952542322]
+module.eks.module.eks_managed_node_group["default"].data.aws_ssm_parameter.ami[0]: Reading...
+module.eks.module.eks_managed_node_group["default"].aws_launch_template.this[0]: Refreshing state... [id=lt-0d9a45d9082df7454]
+module.eks.data.aws_eks_addon_version.this["vpc-cni"]: Read complete after 1s [id=vpc-cni]
+module.eks.data.aws_eks_addon_version.this["eks-pod-identity-agent"]: Read complete after 1s [id=eks-pod-identity-agent]
+module.eks.data.aws_eks_addon_version.this["coredns"]: Read complete after 1s [id=coredns]
+module.eks.data.aws_eks_addon_version.this["kube-proxy"]: Read complete after 1s [id=kube-proxy]
+module.eks.data.tls_certificate.this[0]: Read complete after 1s [id=b1b539daa206035ae3c3e28288b0681fa1b462f3]
+module.eks.aws_iam_openid_connect_provider.oidc_provider[0]: Refreshing state... [id=arn:aws:iam::<aws-account-id>:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/E30BA9C5D5544584DCF96A71E188D07C]
+module.eks.data.aws_eks_addon_version.this["aws-ebs-csi-driver"]: Read complete after 1s [id=aws-ebs-csi-driver]
+module.eks.aws_eks_addon.before_compute["eks-pod-identity-agent"]: Refreshing state... [id=yatra-pulse:eks-pod-identity-agent]
+module.eks.aws_eks_addon.before_compute["vpc-cni"]: Refreshing state... [id=yatra-pulse:vpc-cni]
+module.eks.aws_eks_access_policy_association.this["cluster_creator_admin"]: Refreshing state... [id=yatra-pulse#arn:aws:iam::<aws-account-id>:user/musafir-admin#arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy]
+module.eks.module.eks_managed_node_group["default"].data.aws_ssm_parameter.ami[0]: Read complete after 2s [id=/aws/service/eks/optimized-ami/1.35/amazon-linux-2023/x86_64/standard/recommended/release_version]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Refreshing state... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea]
+aws_autoscaling_attachment.gateway: Refreshing state... [id=eks-default-f18a978f477e1f9c4d39fdc8ea-80d095f4-7afc-c7a0-d1d9-035db3e03648-20261011170325992100000002]
+aws_iam_role_policy.node_scheduler[0]: Refreshing state... [id=yatra-pulse-node-scheduler:update-nodegroup-size]
+module.eks.aws_eks_addon.this["coredns"]: Refreshing state... [id=yatra-pulse:coredns]
+module.eks.aws_eks_addon.this["kube-proxy"]: Refreshing state... [id=yatra-pulse:kube-proxy]
+module.eks.aws_eks_addon.this["aws-ebs-csi-driver"]: Refreshing state... [id=yatra-pulse:aws-ebs-csi-driver]
+aws_scheduler_schedule.nodes_stop[0]: Refreshing state... [id=default/yatra-pulse-nodes-stop]
+aws_scheduler_schedule.nodes_start[0]: Refreshing state... [id=default/yatra-pulse-nodes-start]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  - destroy
+
+Terraform will perform the following actions:
+
+  # aws_autoscaling_attachment.gateway will be destroyed
+  - resource "aws_autoscaling_attachment" "gateway" {
+      - autoscaling_group_name = "eks-default-f18a978f477e1f9c4d39fdc8ea-80d095f4-7afc-c7a0-d1d9-035db3e03648" -> null
+      - id                     = "eks-default-f18a978f477e1f9c4d39fdc8ea-80d095f4-7afc-c7a0-d1d9-035db3e03648-20261011170325992100000002" -> null
+      - lb_target_group_arn    = "arn:aws:elasticloadbalancing:us-east-1:<aws-account-id>:targetgroup/yatra-pulse-gw/3f62d006906cd936" -> null
+      - region                 = "us-east-1" -> null
+    }
+
+  # aws_ecr_lifecycle_policy.app["mcp"] will be destroyed
+  - resource "aws_ecr_lifecycle_policy" "app" {
+      - id          = "yatra-pulse/mcp" -> null
+      - policy      = jsonencode(
+            {
+              - rules = [
+                  - {
+                      - action       = {
+                          - type = "expire"
+                        }
+                      - description  = "Keep the last 5 images"
+                      - rulePriority = 1
+                      - selection    = {
+                          - countNumber = 5
+                          - countType   = "imageCountMoreThan"
+                          - tagStatus   = "any"
+                        }
+                    },
+                ]
+            }
+        ) -> null
+      - region      = "us-east-1" -> null
+      - registry_id = "<aws-account-id>" -> null
+      - repository  = "yatra-pulse/mcp" -> null
+    }
+
+  # aws_ecr_lifecycle_policy.app["metrics"] will be destroyed
+  - resource "aws_ecr_lifecycle_policy" "app" {
+      - id          = "yatra-pulse/metrics" -> null
+      - policy      = jsonencode(
+            {
+              - rules = [
+                  - {
+                      - action       = {
+                          - type = "expire"
+                        }
+                      - description  = "Keep the last 5 images"
+                      - rulePriority = 1
+                      - selection    = {
+                          - countNumber = 5
+                          - countType   = "imageCountMoreThan"
+                          - tagStatus   = "any"
+                        }
+                    },
+                ]
+            }
+        ) -> null
+      - region      = "us-east-1" -> null
+      - registry_id = "<aws-account-id>" -> null
+      - repository  = "yatra-pulse/metrics" -> null
+    }
+
+  # aws_ecr_lifecycle_policy.app["web"] will be destroyed
+  - resource "aws_ecr_lifecycle_policy" "app" {
+      - id          = "yatra-pulse/web" -> null
+      - policy      = jsonencode(
+            {
+              - rules = [
+                  - {
+                      - action       = {
+                          - type = "expire"
+                        }
+                      - description  = "Keep the last 5 images"
+                      - rulePriority = 1
+                      - selection    = {
+                          - countNumber = 5
+                          - countType   = "imageCountMoreThan"
+                          - tagStatus   = "any"
+                        }
+                    },
+                ]
+            }
+        ) -> null
+      - region      = "us-east-1" -> null
+      - registry_id = "<aws-account-id>" -> null
+      - repository  = "yatra-pulse/web" -> null
+    }
+
+  # aws_ecr_repository.app["mcp"] will be destroyed
+  - resource "aws_ecr_repository" "app" {
+      - arn                  = "arn:aws:ecr:us-east-1:<aws-account-id>:repository/yatra-pulse/mcp" -> null
+      - force_delete         = true -> null
+      - id                   = "yatra-pulse/mcp" -> null
+      - image_tag_mutability = "MUTABLE" -> null
+      - name                 = "yatra-pulse/mcp" -> null
+      - region               = "us-east-1" -> null
+      - registry_id          = "<aws-account-id>" -> null
+      - repository_url       = "<aws-account-id>.dkr.ecr.us-east-1.amazonaws.com/yatra-pulse/mcp" -> null
+      - tags                 = {} -> null
+      - tags_all             = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+
+      - encryption_configuration {
+          - encryption_type = "AES256" -> null
+            # (1 unchanged attribute hidden)
+        }
+
+      - image_scanning_configuration {
+          - scan_on_push = true -> null
+        }
+    }
+
+  # aws_ecr_repository.app["metrics"] will be destroyed
+  - resource "aws_ecr_repository" "app" {
+      - arn                  = "arn:aws:ecr:us-east-1:<aws-account-id>:repository/yatra-pulse/metrics" -> null
+      - force_delete         = true -> null
+      - id                   = "yatra-pulse/metrics" -> null
+      - image_tag_mutability = "MUTABLE" -> null
+      - name                 = "yatra-pulse/metrics" -> null
+      - region               = "us-east-1" -> null
+      - registry_id          = "<aws-account-id>" -> null
+      - repository_url       = "<aws-account-id>.dkr.ecr.us-east-1.amazonaws.com/yatra-pulse/metrics" -> null
+      - tags                 = {} -> null
+      - tags_all             = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+
+      - encryption_configuration {
+          - encryption_type = "AES256" -> null
+            # (1 unchanged attribute hidden)
+        }
+
+      - image_scanning_configuration {
+          - scan_on_push = true -> null
+        }
+    }
+
+  # aws_ecr_repository.app["web"] will be destroyed
+  - resource "aws_ecr_repository" "app" {
+      - arn                  = "arn:aws:ecr:us-east-1:<aws-account-id>:repository/yatra-pulse/web" -> null
+      - force_delete         = true -> null
+      - id                   = "yatra-pulse/web" -> null
+      - image_tag_mutability = "MUTABLE" -> null
+      - name                 = "yatra-pulse/web" -> null
+      - region               = "us-east-1" -> null
+      - registry_id          = "<aws-account-id>" -> null
+      - repository_url       = "<aws-account-id>.dkr.ecr.us-east-1.amazonaws.com/yatra-pulse/web" -> null
+      - tags                 = {} -> null
+      - tags_all             = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+
+      - encryption_configuration {
+          - encryption_type = "AES256" -> null
+            # (1 unchanged attribute hidden)
+        }
+
+      - image_scanning_configuration {
+          - scan_on_push = true -> null
+        }
+    }
+
+  # aws_iam_role.ebs_csi will be destroyed
+  - resource "aws_iam_role" "ebs_csi" {
+      - arn                   = "arn:aws:iam::<aws-account-id>:role/yatra-pulse-ebs-csi" -> null
+      - assume_role_policy    = jsonencode(
+            {
+              - Statement = [
+                  - {
+                      - Action    = [
+                          - "sts:TagSession",
+                          - "sts:AssumeRole",
+                        ]
+                      - Effect    = "Allow"
+                      - Principal = {
+                          - Service = "pods.eks.amazonaws.com"
+                        }
+                    },
+                ]
+              - Version   = "2012-10-17"
+            }
+        ) -> null
+      - create_date           = "2026-10-11T16:49:02Z" -> null
+      - force_detach_policies = false -> null
+      - id                    = "yatra-pulse-ebs-csi" -> null
+      - managed_policy_arns   = [
+          - "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy",
+        ] -> null
+      - max_session_duration  = 3600 -> null
+      - name                  = "yatra-pulse-ebs-csi" -> null
+      - path                  = "/" -> null
+      - tags                  = {} -> null
+      - tags_all              = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+      - unique_id             = "AROA3URGRQMLW72EPA3B3" -> null
+        # (3 unchanged attributes hidden)
+    }
+
+  # aws_iam_role.node_scheduler[0] will be destroyed
+  - resource "aws_iam_role" "node_scheduler" {
+      - arn                   = "arn:aws:iam::<aws-account-id>:role/yatra-pulse-node-scheduler" -> null
+      - assume_role_policy    = jsonencode(
+            {
+              - Statement = [
+                  - {
+                      - Action    = "sts:AssumeRole"
+                      - Condition = {
+                          - StringEquals = {
+                              - "aws:SourceAccount" = "<aws-account-id>"
+                            }
+                        }
+                      - Effect    = "Allow"
+                      - Principal = {
+                          - Service = "scheduler.amazonaws.com"
+                        }
+                    },
+                ]
+              - Version   = "2012-10-17"
+            }
+        ) -> null
+      - create_date           = "2026-10-11T17:11:12Z" -> null
+      - force_detach_policies = false -> null
+      - id                    = "yatra-pulse-node-scheduler" -> null
+      - managed_policy_arns   = [] -> null
+      - max_session_duration  = 3600 -> null
+      - name                  = "yatra-pulse-node-scheduler" -> null
+      - path                  = "/" -> null
+      - tags                  = {} -> null
+      - tags_all              = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+      - unique_id             = "AROA3URGRQMLTSVRMCYL7" -> null
+        # (3 unchanged attributes hidden)
+
+      - inline_policy {
+          - name   = "update-nodegroup-size" -> null
+          - policy = jsonencode(
+                {
+                  - Statement = [
+                      - {
+                          - Action   = [
+                              - "eks:UpdateNodegroupConfig",
+                              - "eks:DescribeNodegroup",
+                            ]
+                          - Effect   = "Allow"
+                          - Resource = "arn:aws:eks:us-east-1:<aws-account-id>:nodegroup/yatra-pulse/default-f18a978f477e1f9c4d39fdc8ea/80d095f4-7afc-c7a0-d1d9-035db3e03648"
+                        },
+                    ]
+                  - Version   = "2012-10-17"
+                }
+            ) -> null
+        }
+    }
+
+  # aws_iam_role_policy.node_scheduler[0] will be destroyed
+  - resource "aws_iam_role_policy" "node_scheduler" {
+      - id          = "yatra-pulse-node-scheduler:update-nodegroup-size" -> null
+      - name        = "update-nodegroup-size" -> null
+      - policy      = jsonencode(
+            {
+              - Statement = [
+                  - {
+                      - Action   = [
+                          - "eks:UpdateNodegroupConfig",
+                          - "eks:DescribeNodegroup",
+                        ]
+                      - Effect   = "Allow"
+                      - Resource = "arn:aws:eks:us-east-1:<aws-account-id>:nodegroup/yatra-pulse/default-f18a978f477e1f9c4d39fdc8ea/80d095f4-7afc-c7a0-d1d9-035db3e03648"
+                    },
+                ]
+              - Version   = "2012-10-17"
+            }
+        ) -> null
+      - role        = "yatra-pulse-node-scheduler" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # aws_iam_role_policy_attachment.ebs_csi will be destroyed
+  - resource "aws_iam_role_policy_attachment" "ebs_csi" {
+      - id         = "yatra-pulse-ebs-csi/arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy" -> null
+      - policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy" -> null
+      - role       = "yatra-pulse-ebs-csi" -> null
+    }
+
+  # aws_lb.edge will be destroyed
+  - resource "aws_lb" "edge" {
+      - arn                                                          = "arn:aws:elasticloadbalancing:us-east-1:<aws-account-id>:loadbalancer/app/yatra-pulse-alb/f7c876fe5b702a1a" -> null
+      - arn_suffix                                                   = "app/yatra-pulse-alb/f7c876fe5b702a1a" -> null
+      - client_keep_alive                                            = 3600 -> null
+      - desync_mitigation_mode                                       = "defensive" -> null
+      - dns_name                                                     = "yatra-pulse-alb-1441277353.us-east-1.elb.amazonaws.com" -> null
+      - drop_invalid_header_fields                                   = false -> null
+      - enable_cross_zone_load_balancing                             = true -> null
+      - enable_deletion_protection                                   = false -> null
+      - enable_http2                                                 = true -> null
+      - enable_prefix_for_ipv6_source_nat                            = "off" -> null
+      - enable_tls_version_and_cipher_suite_headers                  = false -> null
+      - enable_waf_fail_open                                         = false -> null
+      - enable_xff_client_port                                       = false -> null
+      - enable_zonal_shift                                           = false -> null
+      - id                                                           = "arn:aws:elasticloadbalancing:us-east-1:<aws-account-id>:loadbalancer/app/yatra-pulse-alb/f7c876fe5b702a1a" -> null
+      - idle_timeout                                                 = 120 -> null
+      - internal                                                     = false -> null
+      - ip_address_type                                              = "ipv4" -> null
+      - load_balancer_type                                           = "application" -> null
+      - name                                                         = "yatra-pulse-alb" -> null
+      - preserve_host_header                                         = false -> null
+      - region                                                       = "us-east-1" -> null
+      - security_groups                                              = [
+          - "sg-0be7a11957794135a",
+        ] -> null
+      - subnets                                                      = [
+          - "subnet-06cdf6149b27e2e99",
+          - "subnet-0a07d492a7626efb4",
+        ] -> null
+      - tags                                                         = {} -> null
+      - tags_all                                                     = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+      - vpc_id                                                       = "vpc-03f7732e5312d00b3" -> null
+      - xff_header_processing_mode                                   = "append" -> null
+      - zone_id                                                      = "Z35SXDOTRQ7X7K" -> null
+        # (3 unchanged attributes hidden)
+
+      - access_logs {
+          - enabled = false -> null
+            # (2 unchanged attributes hidden)
+        }
+
+      - connection_logs {
+          - enabled = false -> null
+            # (2 unchanged attributes hidden)
+        }
+
+      - health_check_logs {
+          - enabled = false -> null
+            # (2 unchanged attributes hidden)
+        }
+
+      - subnet_mapping {
+          - subnet_id            = "subnet-06cdf6149b27e2e99" -> null
+            # (4 unchanged attributes hidden)
+        }
+      - subnet_mapping {
+          - subnet_id            = "subnet-0a07d492a7626efb4" -> null
+            # (4 unchanged attributes hidden)
+        }
+    }
+
+  # aws_lb_listener.http will be destroyed
+  - resource "aws_lb_listener" "http" {
+      - arn                                                                 = "arn:aws:elasticloadbalancing:us-east-1:<aws-account-id>:listener/app/yatra-pulse-alb/f7c876fe5b702a1a/83e3dc3e02bc68cc" -> null
+      - id                                                                  = "arn:aws:elasticloadbalancing:us-east-1:<aws-account-id>:listener/app/yatra-pulse-alb/f7c876fe5b702a1a/83e3dc3e02bc68cc" -> null
+      - load_balancer_arn                                                   = "arn:aws:elasticloadbalancing:us-east-1:<aws-account-id>:loadbalancer/app/yatra-pulse-alb/f7c876fe5b702a1a" -> null
+      - port                                                                = 80 -> null
+      - protocol                                                            = "HTTP" -> null
+      - region                                                              = "us-east-1" -> null
+      - routing_http_response_server_enabled                                = true -> null
+      - tags                                                                = {} -> null
+      - tags_all                                                            = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+        # (11 unchanged attributes hidden)
+
+      - default_action {
+          - order            = 1 -> null
+          - target_group_arn = "arn:aws:elasticloadbalancing:us-east-1:<aws-account-id>:targetgroup/yatra-pulse-gw/3f62d006906cd936" -> null
+          - type             = "forward" -> null
+        }
+    }
+
+  # aws_lb_target_group.gateway will be destroyed
+  - resource "aws_lb_target_group" "gateway" {
+      - arn                                = "arn:aws:elasticloadbalancing:us-east-1:<aws-account-id>:targetgroup/yatra-pulse-gw/3f62d006906cd936" -> null
+      - arn_suffix                         = "targetgroup/yatra-pulse-gw/3f62d006906cd936" -> null
+      - deregistration_delay               = "300" -> null
+      - id                                 = "arn:aws:elasticloadbalancing:us-east-1:<aws-account-id>:targetgroup/yatra-pulse-gw/3f62d006906cd936" -> null
+      - ip_address_type                    = "ipv4" -> null
+      - lambda_multi_value_headers_enabled = false -> null
+      - load_balancer_arns                 = [
+          - "arn:aws:elasticloadbalancing:us-east-1:<aws-account-id>:loadbalancer/app/yatra-pulse-alb/f7c876fe5b702a1a",
+        ] -> null
+      - load_balancing_algorithm_type      = "round_robin" -> null
+      - load_balancing_anomaly_mitigation  = "off" -> null
+      - load_balancing_cross_zone_enabled  = "use_load_balancer_configuration" -> null
+      - name                               = "yatra-pulse-gw" -> null
+      - port                               = 30080 -> null
+      - protocol                           = "HTTP" -> null
+      - protocol_version                   = "HTTP1" -> null
+      - proxy_protocol_v2                  = false -> null
+      - region                             = "us-east-1" -> null
+      - slow_start                         = 0 -> null
+      - tags                               = {} -> null
+      - tags_all                           = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+      - target_control_port                = 0 -> null
+      - target_type                        = "instance" -> null
+      - vpc_id                             = "vpc-03f7732e5312d00b3" -> null
+        # (1 unchanged attribute hidden)
+
+      - health_check {
+          - enabled             = true -> null
+          - healthy_threshold   = 2 -> null
+          - interval            = 15 -> null
+          - matcher             = "200" -> null
+          - path                = "/healthz" -> null
+          - port                = "traffic-port" -> null
+          - protocol            = "HTTP" -> null
+          - timeout             = 5 -> null
+          - unhealthy_threshold = 3 -> null
+        }
+
+      - stickiness {
+          - cookie_duration = 86400 -> null
+          - enabled         = false -> null
+          - type            = "lb_cookie" -> null
+            # (1 unchanged attribute hidden)
+        }
+
+      - target_failover {}
+
+      - target_group_health {
+          - dns_failover {
+              - minimum_healthy_targets_count      = "1" -> null
+              - minimum_healthy_targets_percentage = "off" -> null
+            }
+          - unhealthy_state_routing {
+              - minimum_healthy_targets_count      = 1 -> null
+              - minimum_healthy_targets_percentage = "off" -> null
+            }
+        }
+
+      - target_health_state {}
+    }
+
+  # aws_scheduler_schedule.nodes_start[0] will be destroyed
+  - resource "aws_scheduler_schedule" "nodes_start" {
+      - action_after_completion      = "NONE" -> null
+      - arn                          = "arn:aws:scheduler:us-east-1:<aws-account-id>:schedule/default/yatra-pulse-nodes-start" -> null
+      - description                  = "Scale Yatra Pulse EKS nodes back up (working hours)" -> null
+      - group_name                   = "default" -> null
+      - id                           = "default/yatra-pulse-nodes-start" -> null
+      - name                         = "yatra-pulse-nodes-start" -> null
+      - region                       = "us-east-1" -> null
+      - schedule_expression          = "cron(0 7 * * ? *)" -> null
+      - schedule_expression_timezone = "Asia/Kolkata" -> null
+      - state                        = "ENABLED" -> null
+        # (4 unchanged attributes hidden)
+
+      - flexible_time_window {
+          - maximum_window_in_minutes = 0 -> null
+          - mode                      = "OFF" -> null
+        }
+
+      - target {
+          - arn      = "arn:aws:scheduler:::aws-sdk:eks:updateNodegroupConfig" -> null
+          - input    = jsonencode(
+                {
+                  - ClusterName   = "yatra-pulse"
+                  - NodegroupName = "default-f18a978f477e1f9c4d39fdc8ea"
+                  - ScalingConfig = {
+                      - DesiredSize = 2
+                      - MaxSize     = 3
+                      - MinSize     = 2
+                    }
+                }
+            ) -> null
+          - role_arn = "arn:aws:iam::<aws-account-id>:role/yatra-pulse-node-scheduler" -> null
+
+          - retry_policy {
+              - maximum_event_age_in_seconds = 86400 -> null
+              - maximum_retry_attempts       = 3 -> null
+            }
+        }
+    }
+
+  # aws_scheduler_schedule.nodes_stop[0] will be destroyed
+  - resource "aws_scheduler_schedule" "nodes_stop" {
+      - action_after_completion      = "NONE" -> null
+      - arn                          = "arn:aws:scheduler:us-east-1:<aws-account-id>:schedule/default/yatra-pulse-nodes-stop" -> null
+      - description                  = "Scale Yatra Pulse EKS nodes to 0 (idle hours)" -> null
+      - group_name                   = "default" -> null
+      - id                           = "default/yatra-pulse-nodes-stop" -> null
+      - name                         = "yatra-pulse-nodes-stop" -> null
+      - region                       = "us-east-1" -> null
+      - schedule_expression          = "cron(0 22 * * ? *)" -> null
+      - schedule_expression_timezone = "Asia/Kolkata" -> null
+      - state                        = "ENABLED" -> null
+        # (4 unchanged attributes hidden)
+
+      - flexible_time_window {
+          - maximum_window_in_minutes = 0 -> null
+          - mode                      = "OFF" -> null
+        }
+
+      - target {
+          - arn      = "arn:aws:scheduler:::aws-sdk:eks:updateNodegroupConfig" -> null
+          - input    = jsonencode(
+                {
+                  - ClusterName   = "yatra-pulse"
+                  - NodegroupName = "default-f18a978f477e1f9c4d39fdc8ea"
+                  - ScalingConfig = {
+                      - DesiredSize = 0
+                      - MaxSize     = 3
+                      - MinSize     = 0
+                    }
+                }
+            ) -> null
+          - role_arn = "arn:aws:iam::<aws-account-id>:role/yatra-pulse-node-scheduler" -> null
+
+          - retry_policy {
+              - maximum_event_age_in_seconds = 86400 -> null
+              - maximum_retry_attempts       = 3 -> null
+            }
+        }
+    }
+
+  # aws_security_group.alb will be destroyed
+  - resource "aws_security_group" "alb" {
+      - arn                    = "arn:aws:ec2:us-east-1:<aws-account-id>:security-group/sg-0be7a11957794135a" -> null
+      - description            = "ALB: HTTP from CloudFront only" -> null
+      - egress                 = [
+          - {
+              - cidr_blocks      = [
+                  - "10.42.0.0/16",
+                ]
+              - description      = "To the edge gateway on the nodes"
+              - from_port        = 30080
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = []
+              - self             = false
+              - to_port          = 30080
+            },
+        ] -> null
+      - id                     = "sg-0be7a11957794135a" -> null
+      - ingress                = [
+          - {
+              - cidr_blocks      = [
+                  - "0.0.0.0/0",
+                ]
+              - description      = "HTTP from the internet (no CloudFront)"
+              - from_port        = 80
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = []
+              - self             = false
+              - to_port          = 80
+            },
+        ] -> null
+      - name                   = "yatra-pulse-alb" -> null
+      - owner_id               = "<aws-account-id>" -> null
+      - region                 = "us-east-1" -> null
+      - revoke_rules_on_delete = false -> null
+      - tags                   = {} -> null
+      - tags_all               = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+      - vpc_id                 = "vpc-03f7732e5312d00b3" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # module.eks.aws_cloudwatch_log_group.this[0] will be destroyed
+  - resource "aws_cloudwatch_log_group" "this" {
+      - arn                         = "arn:aws:logs:us-east-1:<aws-account-id>:log-group:/aws/eks/yatra-pulse/cluster" -> null
+      - deletion_protection_enabled = false -> null
+      - id                          = "/aws/eks/yatra-pulse/cluster" -> null
+      - log_group_class             = "STANDARD" -> null
+      - name                        = "/aws/eks/yatra-pulse/cluster" -> null
+      - region                      = "us-east-1" -> null
+      - retention_in_days           = 90 -> null
+      - skip_destroy                = false -> null
+      - tags                        = {
+          - "Name" = "/aws/eks/yatra-pulse/cluster"
+        } -> null
+      - tags_all                    = {
+          - "ManagedBy" = "terraform"
+          - "Name"      = "/aws/eks/yatra-pulse/cluster"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+        # (2 unchanged attributes hidden)
+    }
+
+  # module.eks.aws_eks_access_entry.this["cluster_creator"] will be destroyed
+  - resource "aws_eks_access_entry" "this" {
+      - access_entry_arn  = "arn:aws:eks:us-east-1:<aws-account-id>:access-entry/yatra-pulse/user/<aws-account-id>/musafir-admin/3cd095f4-30ba-33b7-a30d-fb9eadae5d84" -> null
+      - cluster_name      = "yatra-pulse" -> null
+      - created_at        = "2026-10-11T17:00:12Z" -> null
+      - id                = "yatra-pulse:arn:aws:iam::<aws-account-id>:user/musafir-admin" -> null
+      - kubernetes_groups = [] -> null
+      - modified_at       = "2026-10-11T17:00:12Z" -> null
+      - principal_arn     = "arn:aws:iam::<aws-account-id>:user/musafir-admin" -> null
+      - region            = "us-east-1" -> null
+      - tags              = {} -> null
+      - tags_all          = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+      - type              = "STANDARD" -> null
+      - user_name         = "arn:aws:iam::<aws-account-id>:user/musafir-admin" -> null
+    }
+
+  # module.eks.aws_eks_access_policy_association.this["cluster_creator_admin"] will be destroyed
+  - resource "aws_eks_access_policy_association" "this" {
+      - associated_at = "2026-10-11 17:00:13.471 +0000 UTC" -> null
+      - cluster_name  = "yatra-pulse" -> null
+      - id            = "yatra-pulse#arn:aws:iam::<aws-account-id>:user/musafir-admin#arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy" -> null
+      - modified_at   = "2026-10-11 17:00:13.471 +0000 UTC" -> null
+      - policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy" -> null
+      - principal_arn = "arn:aws:iam::<aws-account-id>:user/musafir-admin" -> null
+      - region        = "us-east-1" -> null
+
+      - access_scope {
+          - namespaces = [] -> null
+          - type       = "cluster" -> null
+        }
+    }
+
+  # module.eks.aws_eks_addon.before_compute["eks-pod-identity-agent"] will be destroyed
+  - resource "aws_eks_addon" "before_compute" {
+      - addon_name                  = "eks-pod-identity-agent" -> null
+      - addon_version               = "v1.4.0-eksbuild.3" -> null
+      - arn                         = "arn:aws:eks:us-east-1:<aws-account-id>:addon/yatra-pulse/eks-pod-identity-agent/f8d095f4-322b-f70c-04cc-4b6179a0bd60" -> null
+      - cluster_name                = "yatra-pulse" -> null
+      - created_at                  = "2026-10-11T17:00:12Z" -> null
+      - id                          = "yatra-pulse:eks-pod-identity-agent" -> null
+      - modified_at                 = "2026-10-11T17:00:29Z" -> null
+      - preserve                    = true -> null
+      - region                      = "us-east-1" -> null
+      - resolve_conflicts_on_create = "NONE" -> null
+      - resolve_conflicts_on_update = "OVERWRITE" -> null
+      - tags                        = {} -> null
+      - tags_all                    = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+        # (2 unchanged attributes hidden)
+
+      - namespace_config {
+          - namespace = "kube-system" -> null
+        }
+
+      - timeouts {}
+    }
+
+  # module.eks.aws_eks_addon.before_compute["vpc-cni"] will be destroyed
+  - resource "aws_eks_addon" "before_compute" {
+      - addon_name                  = "vpc-cni" -> null
+      - addon_version               = "v1.23.2-eksbuild.1" -> null
+      - arn                         = "arn:aws:eks:us-east-1:<aws-account-id>:addon/yatra-pulse/vpc-cni/06d095f4-327a-984b-e7e9-47eedb0b9dba" -> null
+      - cluster_name                = "yatra-pulse" -> null
+      - created_at                  = "2026-10-11T17:00:13Z" -> null
+      - id                          = "yatra-pulse:vpc-cni" -> null
+      - modified_at                 = "2026-10-11T17:00:20Z" -> null
+      - preserve                    = true -> null
+      - region                      = "us-east-1" -> null
+      - resolve_conflicts_on_create = "NONE" -> null
+      - resolve_conflicts_on_update = "OVERWRITE" -> null
+      - tags                        = {} -> null
+      - tags_all                    = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+        # (2 unchanged attributes hidden)
+
+      - namespace_config {
+          - namespace = "kube-system" -> null
+        }
+
+      - timeouts {}
+    }
+
+  # module.eks.aws_eks_addon.this["aws-ebs-csi-driver"] will be destroyed
+  - resource "aws_eks_addon" "this" {
+      - addon_name                  = "aws-ebs-csi-driver" -> null
+      - addon_version               = "v1.66.0-eksbuild.1" -> null
+      - arn                         = "arn:aws:eks:us-east-1:<aws-account-id>:addon/yatra-pulse/aws-ebs-csi-driver/7ed095f5-a558-b264-76f4-190686b932a4" -> null
+      - cluster_name                = "yatra-pulse" -> null
+      - created_at                  = "2026-10-11T17:03:23Z" -> null
+      - id                          = "yatra-pulse:aws-ebs-csi-driver" -> null
+      - modified_at                 = "2026-10-11T17:04:24Z" -> null
+      - preserve                    = true -> null
+      - region                      = "us-east-1" -> null
+      - resolve_conflicts_on_create = "NONE" -> null
+      - resolve_conflicts_on_update = "OVERWRITE" -> null
+      - tags                        = {} -> null
+      - tags_all                    = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+        # (2 unchanged attributes hidden)
+
+      - namespace_config {
+          - namespace = "kube-system" -> null
+        }
+
+      - pod_identity_association {
+          - role_arn        = "arn:aws:iam::<aws-account-id>:role/yatra-pulse-ebs-csi" -> null
+          - service_account = "ebs-csi-controller-sa" -> null
+        }
+
+      - timeouts {}
+    }
+
+  # module.eks.aws_eks_addon.this["coredns"] will be destroyed
+  - resource "aws_eks_addon" "this" {
+      - addon_name                  = "coredns" -> null
+      - addon_version               = "v1.14.7-eksbuild.11" -> null
+      - arn                         = "arn:aws:eks:us-east-1:<aws-account-id>:addon/yatra-pulse/coredns/f4d095f5-a555-1e37-839b-061dc4d63273" -> null
+      - cluster_name                = "yatra-pulse" -> null
+      - created_at                  = "2026-10-11T17:03:22Z" -> null
+      - id                          = "yatra-pulse:coredns" -> null
+      - modified_at                 = "2026-10-11T17:04:16Z" -> null
+      - preserve                    = true -> null
+      - region                      = "us-east-1" -> null
+      - resolve_conflicts_on_create = "NONE" -> null
+      - resolve_conflicts_on_update = "OVERWRITE" -> null
+      - tags                        = {} -> null
+      - tags_all                    = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+        # (2 unchanged attributes hidden)
+
+      - namespace_config {
+          - namespace = "kube-system" -> null
+        }
+
+      - timeouts {}
+    }
+
+  # module.eks.aws_eks_addon.this["kube-proxy"] will be destroyed
+  - resource "aws_eks_addon" "this" {
+      - addon_name                  = "kube-proxy" -> null
+      - addon_version               = "v1.35.3-eksbuild.49" -> null
+      - arn                         = "arn:aws:eks:us-east-1:<aws-account-id>:addon/yatra-pulse/kube-proxy/60d095f5-a556-77d6-3182-fbff13846dca" -> null
+      - cluster_name                = "yatra-pulse" -> null
+      - created_at                  = "2026-10-11T17:03:23Z" -> null
+      - id                          = "yatra-pulse:kube-proxy" -> null
+      - modified_at                 = "2026-10-11T17:03:50Z" -> null
+      - preserve                    = true -> null
+      - region                      = "us-east-1" -> null
+      - resolve_conflicts_on_create = "NONE" -> null
+      - resolve_conflicts_on_update = "OVERWRITE" -> null
+      - tags                        = {} -> null
+      - tags_all                    = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+        # (2 unchanged attributes hidden)
+
+      - namespace_config {
+          - namespace = "kube-system" -> null
+        }
+
+      - timeouts {}
+    }
+
+  # module.eks.aws_eks_cluster.this[0] will be destroyed
+  - resource "aws_eks_cluster" "this" {
+      - arn                           = "arn:aws:eks:us-east-1:<aws-account-id>:cluster/yatra-pulse" -> null
+      - bootstrap_self_managed_addons = false -> null
+      - certificate_authority         = [
+          - {
+              - data = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURNakNDQWhxZ0F3SUJBZ0lSQU9DWWxPY05RR3ZrQmdPbkJ2c3k1Und3RFFZSktvWklodmNOQVFFTEJRQXcKSnpFUU1BNEdBMVVFQ2hNSFFWZFRJRVZMVXpFVE1CRUdBMVVFQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TmpFdwpNVEV4TmpVd01EZGFGdzB6TVRFd01UQXhOalV3TURkYU1DY3hFREFPQmdOVkJBb1RCMEZYVXlCRlMxTXhFekFSCkJnTlZCQU1UQ210MVltVnlibVYwWlhNd2dnRWlNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUJEd0F3Z2dFS0FvSUIKQVFEWFl3bVIxUTNoeHJ3K2JFdkttQnUzZGVZc1BSTUR0NEFwZENWVXpDV3hqS0VtczM5aWx4Y2MvdFFZNFlqYQovUDdOcC8vR1VjZTdwcUtPVi9UT3d1M1NyVnZ4MzhJOTkvZDR1QUtZNGQ0OUU0L3g5QVp2QU5LWnlMNnJDQmY0ClJQUGd1YVRmTEFyK2tSK08xYWs3NUcyN1ZKYmE3QVlycHRLY01JZGNpRnFSOUFqOW1iaDVDMU5aaVNlRDFGOEQKT2RPWDZHWDhOdzJueDdUN3k4eHdmeUIxS0hJV1JXS3dScDJEVDEzRUR0K2djVU4rUGFIaEpNTzViYUVDbnhDQwpydElKeUc4S1Fad3U5YUNFaFQ3M0tDUVpZUzNKYjhlc3BDSHNWL0ZtV0xsQUtxSTVXUjJpL2F2YzJQRVZ1NFhUCm9ibGVQUlJKb3R1WSs5TDZ0dm5RcW9jL0FnTUJBQUdqV1RCWE1BNEdBMVVkRHdFQi93UUVBd0lDcERBUEJnTlYKSFJNQkFmOEVCVEFEQVFIL01CMEdBMVVkRGdRV0JCUkdyOTJsT3VWdldBM2VtVk8zdlZ5NTREVW8wREFWQmdOVgpIUkVFRGpBTWdncHJkV0psY201bGRHVnpNQTBHQ1NxR1NJYjNEUUVCQ3dVQUE0SUJBUUJWOVFqc1RibEdmejNzCnhzeUFDVkVWOUo5bzErZWhJTTRoQThJRUNYaWs4ZDlmTUxZR3NwM1I2NTRJbjhuMktoNlRzRTRyQXU0Y2Z6K3AKWk1GejhJLys3R2ZtSXBqNTIrMEFsL1dQakwwMFV1RVJhVjlsRXpKTUZTVG1zOWNHUlVoT3JuWVpYK00zRUJSegp3aVEwTndRcEVTc05xdUF1Lyt6M3AyM3RjQyt1Wm1Ebmw1OWptZVNiT2lYT3dHWXRkL0Zra0E3MG16VXZOOU9jClQreFJadTNGK09qUGZta1NaYSsrQ0dHRmN3citYQnZYVUFUemFVajVCYmhCSUxpQ1hva0orbEMzTG9mZ0ZDTFQKZDQ3clRZY29xdjFPQ3pkNFAybm5CT0RhV0pUVkQyRnM4M05CN3EyWVhlU01yNHVIanU4Ti9oSm8zVXFLUWhmaAplM2JnT3B6cAotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg=="
+            },
+        ] -> null
+      - created_at                    = "2026-10-11T16:49:31Z" -> null
+      - deletion_protection           = false -> null
+      - enabled_cluster_log_types     = [
+          - "api",
+          - "audit",
+          - "authenticator",
+        ] -> null
+      - endpoint                      = "https://E30BA9C5D5544584DCF96A71E188D07C.gr7.us-east-1.eks.amazonaws.com" -> null
+      - id                            = "yatra-pulse" -> null
+      - identity                      = [
+          - {
+              - oidc = [
+                  - {
+                      - issuer = "https://oidc.eks.us-east-1.amazonaws.com/id/E30BA9C5D5544584DCF96A71E188D07C"
+                    },
+                ]
+            },
+        ] -> null
+      - name                          = "yatra-pulse" -> null
+      - platform_version              = "eks.24" -> null
+      - region                        = "us-east-1" -> null
+      - role_arn                      = "arn:aws:iam::<aws-account-id>:role/yatra-pulse-cluster-c9f0ec4d778ae8cd41e34da107" -> null
+      - status                        = "ACTIVE" -> null
+      - tags                          = {} -> null
+      - tags_all                      = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+      - version                       = "1.35" -> null
+
+      - access_config {
+          - authentication_mode                         = "API_AND_CONFIG_MAP" -> null
+          - bootstrap_cluster_creator_admin_permissions = false -> null
+        }
+
+      - compute_config {
+          - enabled       = false -> null
+          - node_pools    = [] -> null
+            # (1 unchanged attribute hidden)
+        }
+
+      - control_plane_scaling_config {
+          - tier = "standard" -> null
+        }
+
+      - kube_api_server_config {
+          - event_ttl = "60m" -> null
+
+          - service_node_port_range {
+              - max_port = 32767 -> null
+              - min_port = 30000 -> null
+            }
+        }
+
+      - kube_controller_manager_config {
+          - horizontal_pod_autoscaler_controller_config {
+              - horizontal_pod_autoscaler_sync_period = "15s" -> null
+            }
+          - pod_gc_controller_config {
+              - terminated_pod_gc_threshold = 12500 -> null
+            }
+        }
+
+      - kube_scheduler_config {
+          - node_resources_fit {
+              - scoring_strategy {
+                  - type = "LeastAllocated" -> null
+
+                  - resource {
+                      - name   = "cpu" -> null
+                      - weight = 1 -> null
+                    }
+                  - resource {
+                      - name   = "memory" -> null
+                      - weight = 1 -> null
+                    }
+                }
+            }
+        }
+
+      - kubernetes_network_config {
+          - ip_family         = "ipv4" -> null
+          - service_ipv4_cidr = "172.20.0.0/16" -> null
+            # (1 unchanged attribute hidden)
+
+          - elastic_load_balancing {
+              - enabled = false -> null
+            }
+        }
+
+      - storage_config {
+          - block_storage {
+              - enabled = false -> null
+            }
+        }
+
+      - upgrade_policy {
+          - support_type = "EXTENDED" -> null
+        }
+
+      - vpc_config {
+          - cluster_security_group_id = "sg-0ce68c60e2eb77a1d" -> null
+          - control_plane_egress_mode = "AWS_MANAGED" -> null
+          - endpoint_private_access   = true -> null
+          - endpoint_public_access    = true -> null
+          - public_access_cidrs       = [
+              - "0.0.0.0/0",
+            ] -> null
+          - security_group_ids        = [
+              - "sg-0c3e3dff068197901",
+            ] -> null
+          - subnet_ids                = [
+              - "subnet-030f3e58b35384914",
+              - "subnet-045007938b4772345",
+            ] -> null
+          - vpc_id                    = "vpc-03f7732e5312d00b3" -> null
+        }
+    }
+
+  # module.eks.aws_iam_openid_connect_provider.oidc_provider[0] will be destroyed
+  - resource "aws_iam_openid_connect_provider" "oidc_provider" {
+      - arn             = "arn:aws:iam::<aws-account-id>:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/E30BA9C5D5544584DCF96A71E188D07C" -> null
+      - client_id_list  = [
+          - "sts.amazonaws.com",
+        ] -> null
+      - id              = "arn:aws:iam::<aws-account-id>:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/E30BA9C5D5544584DCF96A71E188D07C" -> null
+      - tags            = {
+          - "Name" = "yatra-pulse-eks-irsa"
+        } -> null
+      - tags_all        = {
+          - "ManagedBy" = "terraform"
+          - "Name"      = "yatra-pulse-eks-irsa"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+      - thumbprint_list = [
+          - "06b25927c42a721631c1efd9431e648fa62e1e39",
+        ] -> null
+      - url             = "oidc.eks.us-east-1.amazonaws.com/id/E30BA9C5D5544584DCF96A71E188D07C" -> null
+    }
+
+  # module.eks.aws_iam_role.this[0] will be destroyed
+  - resource "aws_iam_role" "this" {
+      - arn                   = "arn:aws:iam::<aws-account-id>:role/yatra-pulse-cluster-c9f0ec4d778ae8cd41e34da107" -> null
+      - assume_role_policy    = jsonencode(
+            {
+              - Statement = [
+                  - {
+                      - Action    = [
+                          - "sts:TagSession",
+                          - "sts:AssumeRole",
+                        ]
+                      - Effect    = "Allow"
+                      - Principal = {
+                          - Service = "eks.amazonaws.com"
+                        }
+                      - Sid       = "EKSClusterAssumeRole"
+                    },
+                ]
+              - Version   = "2012-10-17"
+            }
+        ) -> null
+      - create_date           = "2026-10-11T16:49:02Z" -> null
+      - force_detach_policies = true -> null
+      - id                    = "yatra-pulse-cluster-c9f0ec4d778ae8cd41e34da107" -> null
+      - managed_policy_arns   = [
+          - "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy",
+        ] -> null
+      - max_session_duration  = 3600 -> null
+      - name                  = "yatra-pulse-cluster-c9f0ec4d778ae8cd41e34da107" -> null
+      - name_prefix           = "yatra-pulse-cluster-" -> null
+      - path                  = "/" -> null
+      - tags                  = {} -> null
+      - tags_all              = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+      - unique_id             = "AROA3URGRQML4LG7USY7T" -> null
+        # (2 unchanged attributes hidden)
+    }
+
+  # module.eks.aws_iam_role_policy_attachment.this["AmazonEKSClusterPolicy"] will be destroyed
+  - resource "aws_iam_role_policy_attachment" "this" {
+      - id         = "yatra-pulse-cluster-c9f0ec4d778ae8cd41e34da107/arn:aws:iam::aws:policy/AmazonEKSClusterPolicy" -> null
+      - policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy" -> null
+      - role       = "yatra-pulse-cluster-c9f0ec4d778ae8cd41e34da107" -> null
+    }
+
+  # module.eks.aws_security_group.cluster[0] will be destroyed
+  - resource "aws_security_group" "cluster" {
+      - arn                    = "arn:aws:ec2:us-east-1:<aws-account-id>:security-group/sg-0c3e3dff068197901" -> null
+      - description            = "EKS cluster security group" -> null
+      - egress                 = [] -> null
+      - id                     = "sg-0c3e3dff068197901" -> null
+      - ingress                = [
+          - {
+              - cidr_blocks      = []
+              - description      = "Node groups to cluster API"
+              - from_port        = 443
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = [
+                  - "sg-034666c3ade7b8e53",
+                ]
+              - self             = false
+              - to_port          = 443
+            },
+        ] -> null
+      - name                   = "yatra-pulse-cluster-cf097d52649f3246f389c63962" -> null
+      - name_prefix            = "yatra-pulse-cluster-" -> null
+      - owner_id               = "<aws-account-id>" -> null
+      - region                 = "us-east-1" -> null
+      - revoke_rules_on_delete = false -> null
+      - tags                   = {
+          - "Name" = "yatra-pulse-cluster"
+        } -> null
+      - tags_all               = {
+          - "ManagedBy" = "terraform"
+          - "Name"      = "yatra-pulse-cluster"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+      - vpc_id                 = "vpc-03f7732e5312d00b3" -> null
+    }
+
+  # module.eks.aws_security_group.node[0] will be destroyed
+  - resource "aws_security_group" "node" {
+      - arn                    = "arn:aws:ec2:us-east-1:<aws-account-id>:security-group/sg-034666c3ade7b8e53" -> null
+      - description            = "EKS node shared security group" -> null
+      - egress                 = [
+          - {
+              - cidr_blocks      = [
+                  - "0.0.0.0/0",
+                ]
+              - description      = "Allow all egress"
+              - from_port        = 0
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "-1"
+              - security_groups  = []
+              - self             = false
+              - to_port          = 0
+            },
+        ] -> null
+      - id                     = "sg-034666c3ade7b8e53" -> null
+      - ingress                = [
+          - {
+              - cidr_blocks      = []
+              - description      = "ALB to edge gateway NodePort"
+              - from_port        = 30080
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = [
+                  - "sg-0be7a11957794135a",
+                ]
+              - self             = false
+              - to_port          = 30080
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Cluster API to node 10251/tcp webhook"
+              - from_port        = 10251
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = [
+                  - "sg-0c3e3dff068197901",
+                ]
+              - self             = false
+              - to_port          = 10251
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Cluster API to node 4443/tcp webhook"
+              - from_port        = 4443
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = [
+                  - "sg-0c3e3dff068197901",
+                ]
+              - self             = false
+              - to_port          = 4443
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Cluster API to node 6443/tcp webhook"
+              - from_port        = 6443
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = [
+                  - "sg-0c3e3dff068197901",
+                ]
+              - self             = false
+              - to_port          = 6443
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Cluster API to node 8443/tcp webhook"
+              - from_port        = 8443
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = [
+                  - "sg-0c3e3dff068197901",
+                ]
+              - self             = false
+              - to_port          = 8443
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Cluster API to node 9443/tcp webhook"
+              - from_port        = 9443
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = [
+                  - "sg-0c3e3dff068197901",
+                ]
+              - self             = false
+              - to_port          = 9443
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Cluster API to node groups"
+              - from_port        = 443
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = [
+                  - "sg-0c3e3dff068197901",
+                ]
+              - self             = false
+              - to_port          = 443
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Cluster API to node kubelets"
+              - from_port        = 10250
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = [
+                  - "sg-0c3e3dff068197901",
+                ]
+              - self             = false
+              - to_port          = 10250
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Node to node CoreDNS UDP"
+              - from_port        = 53
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "udp"
+              - security_groups  = []
+              - self             = true
+              - to_port          = 53
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Node to node CoreDNS"
+              - from_port        = 53
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = []
+              - self             = true
+              - to_port          = 53
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Node to node ingress on ephemeral ports"
+              - from_port        = 1025
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = []
+              - self             = true
+              - to_port          = 65535
+            },
+        ] -> null
+      - name                   = "yatra-pulse-node-b7a90dc41374e5574a782fddf6" -> null
+      - name_prefix            = "yatra-pulse-node-" -> null
+      - owner_id               = "<aws-account-id>" -> null
+      - region                 = "us-east-1" -> null
+      - revoke_rules_on_delete = false -> null
+      - tags                   = {
+          - "Name"                              = "yatra-pulse-node"
+          - "kubernetes.io/cluster/yatra-pulse" = "owned"
+        } -> null
+      - tags_all               = {
+          - "ManagedBy"                         = "terraform"
+          - "Name"                              = "yatra-pulse-node"
+          - "Project"                           = "yatra-pulse"
+          - "Teardown"                          = "deploy/aws/teardown.sh"
+          - "kubernetes.io/cluster/yatra-pulse" = "owned"
+        } -> null
+      - vpc_id                 = "vpc-03f7732e5312d00b3" -> null
+    }
+
+  # module.eks.aws_security_group_rule.cluster["ingress_nodes_443"] will be destroyed
+  - resource "aws_security_group_rule" "cluster" {
+      - description              = "Node groups to cluster API" -> null
+      - from_port                = 443 -> null
+      - id                       = "sgrule-3079005579" -> null
+      - protocol                 = "tcp" -> null
+      - region                   = "us-east-1" -> null
+      - security_group_id        = "sg-0c3e3dff068197901" -> null
+      - security_group_rule_id   = "sgr-0fde23070ab449f1e" -> null
+      - self                     = false -> null
+      - source_security_group_id = "sg-034666c3ade7b8e53" -> null
+      - to_port                  = 443 -> null
+      - type                     = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["alb_to_gateway"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description              = "ALB to edge gateway NodePort" -> null
+      - from_port                = 30080 -> null
+      - id                       = "sgrule-2520976497" -> null
+      - protocol                 = "tcp" -> null
+      - region                   = "us-east-1" -> null
+      - security_group_id        = "sg-034666c3ade7b8e53" -> null
+      - security_group_rule_id   = "sgr-0cf36b4040386bccd" -> null
+      - self                     = false -> null
+      - source_security_group_id = "sg-0be7a11957794135a" -> null
+      - to_port                  = 30080 -> null
+      - type                     = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["egress_all"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - cidr_blocks            = [
+          - "0.0.0.0/0",
+        ] -> null
+      - description            = "Allow all egress" -> null
+      - from_port              = 0 -> null
+      - id                     = "sgrule-163558614" -> null
+      - protocol               = "-1" -> null
+      - region                 = "us-east-1" -> null
+      - security_group_id      = "sg-034666c3ade7b8e53" -> null
+      - security_group_rule_id = "sgr-03a880556a19b2f57" -> null
+      - self                   = false -> null
+      - to_port                = 0 -> null
+      - type                   = "egress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_cluster_10251_webhook"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description              = "Cluster API to node 10251/tcp webhook" -> null
+      - from_port                = 10251 -> null
+      - id                       = "sgrule-1841954231" -> null
+      - protocol                 = "tcp" -> null
+      - region                   = "us-east-1" -> null
+      - security_group_id        = "sg-034666c3ade7b8e53" -> null
+      - security_group_rule_id   = "sgr-09021ae4b0de0ff5a" -> null
+      - self                     = false -> null
+      - source_security_group_id = "sg-0c3e3dff068197901" -> null
+      - to_port                  = 10251 -> null
+      - type                     = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_cluster_443"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description              = "Cluster API to node groups" -> null
+      - from_port                = 443 -> null
+      - id                       = "sgrule-3273214186" -> null
+      - protocol                 = "tcp" -> null
+      - region                   = "us-east-1" -> null
+      - security_group_id        = "sg-034666c3ade7b8e53" -> null
+      - security_group_rule_id   = "sgr-0c2ba6edc44f328a0" -> null
+      - self                     = false -> null
+      - source_security_group_id = "sg-0c3e3dff068197901" -> null
+      - to_port                  = 443 -> null
+      - type                     = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_cluster_4443_webhook"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description              = "Cluster API to node 4443/tcp webhook" -> null
+      - from_port                = 4443 -> null
+      - id                       = "sgrule-3160341040" -> null
+      - protocol                 = "tcp" -> null
+      - region                   = "us-east-1" -> null
+      - security_group_id        = "sg-034666c3ade7b8e53" -> null
+      - security_group_rule_id   = "sgr-091e9983a8bfb2a7c" -> null
+      - self                     = false -> null
+      - source_security_group_id = "sg-0c3e3dff068197901" -> null
+      - to_port                  = 4443 -> null
+      - type                     = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_cluster_6443_webhook"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description              = "Cluster API to node 6443/tcp webhook" -> null
+      - from_port                = 6443 -> null
+      - id                       = "sgrule-1964809638" -> null
+      - protocol                 = "tcp" -> null
+      - region                   = "us-east-1" -> null
+      - security_group_id        = "sg-034666c3ade7b8e53" -> null
+      - security_group_rule_id   = "sgr-06177846700a1127b" -> null
+      - self                     = false -> null
+      - source_security_group_id = "sg-0c3e3dff068197901" -> null
+      - to_port                  = 6443 -> null
+      - type                     = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_cluster_8443_webhook"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description              = "Cluster API to node 8443/tcp webhook" -> null
+      - from_port                = 8443 -> null
+      - id                       = "sgrule-1715511687" -> null
+      - protocol                 = "tcp" -> null
+      - region                   = "us-east-1" -> null
+      - security_group_id        = "sg-034666c3ade7b8e53" -> null
+      - security_group_rule_id   = "sgr-0f4b809e8c7ccfa3d" -> null
+      - self                     = false -> null
+      - source_security_group_id = "sg-0c3e3dff068197901" -> null
+      - to_port                  = 8443 -> null
+      - type                     = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_cluster_9443_webhook"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description              = "Cluster API to node 9443/tcp webhook" -> null
+      - from_port                = 9443 -> null
+      - id                       = "sgrule-48337484" -> null
+      - protocol                 = "tcp" -> null
+      - region                   = "us-east-1" -> null
+      - security_group_id        = "sg-034666c3ade7b8e53" -> null
+      - security_group_rule_id   = "sgr-0bf0931d39e63cff8" -> null
+      - self                     = false -> null
+      - source_security_group_id = "sg-0c3e3dff068197901" -> null
+      - to_port                  = 9443 -> null
+      - type                     = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_cluster_kubelet"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description              = "Cluster API to node kubelets" -> null
+      - from_port                = 10250 -> null
+      - id                       = "sgrule-1501605324" -> null
+      - protocol                 = "tcp" -> null
+      - region                   = "us-east-1" -> null
+      - security_group_id        = "sg-034666c3ade7b8e53" -> null
+      - security_group_rule_id   = "sgr-034757865a2a0c304" -> null
+      - self                     = false -> null
+      - source_security_group_id = "sg-0c3e3dff068197901" -> null
+      - to_port                  = 10250 -> null
+      - type                     = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_nodes_ephemeral"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description            = "Node to node ingress on ephemeral ports" -> null
+      - from_port              = 1025 -> null
+      - id                     = "sgrule-2104742984" -> null
+      - protocol               = "tcp" -> null
+      - region                 = "us-east-1" -> null
+      - security_group_id      = "sg-034666c3ade7b8e53" -> null
+      - security_group_rule_id = "sgr-00da2e8ba9ea76e38" -> null
+      - self                   = true -> null
+      - to_port                = 65535 -> null
+      - type                   = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_self_coredns_tcp"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description            = "Node to node CoreDNS" -> null
+      - from_port              = 53 -> null
+      - id                     = "sgrule-2792285942" -> null
+      - protocol               = "tcp" -> null
+      - region                 = "us-east-1" -> null
+      - security_group_id      = "sg-034666c3ade7b8e53" -> null
+      - security_group_rule_id = "sgr-03e66815e8096d916" -> null
+      - self                   = true -> null
+      - to_port                = 53 -> null
+      - type                   = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_self_coredns_udp"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description            = "Node to node CoreDNS UDP" -> null
+      - from_port              = 53 -> null
+      - id                     = "sgrule-36783385" -> null
+      - protocol               = "udp" -> null
+      - region                 = "us-east-1" -> null
+      - security_group_id      = "sg-034666c3ade7b8e53" -> null
+      - security_group_rule_id = "sgr-0c5d84fee18bae0cb" -> null
+      - self                   = true -> null
+      - to_port                = 53 -> null
+      - type                   = "ingress" -> null
+    }
+
+  # module.eks.time_sleep.this[0] will be destroyed
+  - resource "time_sleep" "this" {
+      - create_duration = "30s" -> null
+      - id              = "2026-10-11T17:00:41Z" -> null
+      - triggers        = {
+          - "certificate_authority_data" = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURNakNDQWhxZ0F3SUJBZ0lSQU9DWWxPY05RR3ZrQmdPbkJ2c3k1Und3RFFZSktvWklodmNOQVFFTEJRQXcKSnpFUU1BNEdBMVVFQ2hNSFFWZFRJRVZMVXpFVE1CRUdBMVVFQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TmpFdwpNVEV4TmpVd01EZGFGdzB6TVRFd01UQXhOalV3TURkYU1DY3hFREFPQmdOVkJBb1RCMEZYVXlCRlMxTXhFekFSCkJnTlZCQU1UQ210MVltVnlibVYwWlhNd2dnRWlNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUJEd0F3Z2dFS0FvSUIKQVFEWFl3bVIxUTNoeHJ3K2JFdkttQnUzZGVZc1BSTUR0NEFwZENWVXpDV3hqS0VtczM5aWx4Y2MvdFFZNFlqYQovUDdOcC8vR1VjZTdwcUtPVi9UT3d1M1NyVnZ4MzhJOTkvZDR1QUtZNGQ0OUU0L3g5QVp2QU5LWnlMNnJDQmY0ClJQUGd1YVRmTEFyK2tSK08xYWs3NUcyN1ZKYmE3QVlycHRLY01JZGNpRnFSOUFqOW1iaDVDMU5aaVNlRDFGOEQKT2RPWDZHWDhOdzJueDdUN3k4eHdmeUIxS0hJV1JXS3dScDJEVDEzRUR0K2djVU4rUGFIaEpNTzViYUVDbnhDQwpydElKeUc4S1Fad3U5YUNFaFQ3M0tDUVpZUzNKYjhlc3BDSHNWL0ZtV0xsQUtxSTVXUjJpL2F2YzJQRVZ1NFhUCm9ibGVQUlJKb3R1WSs5TDZ0dm5RcW9jL0FnTUJBQUdqV1RCWE1BNEdBMVVkRHdFQi93UUVBd0lDcERBUEJnTlYKSFJNQkFmOEVCVEFEQVFIL01CMEdBMVVkRGdRV0JCUkdyOTJsT3VWdldBM2VtVk8zdlZ5NTREVW8wREFWQmdOVgpIUkVFRGpBTWdncHJkV0psY201bGRHVnpNQTBHQ1NxR1NJYjNEUUVCQ3dVQUE0SUJBUUJWOVFqc1RibEdmejNzCnhzeUFDVkVWOUo5bzErZWhJTTRoQThJRUNYaWs4ZDlmTUxZR3NwM1I2NTRJbjhuMktoNlRzRTRyQXU0Y2Z6K3AKWk1GejhJLys3R2ZtSXBqNTIrMEFsL1dQakwwMFV1RVJhVjlsRXpKTUZTVG1zOWNHUlVoT3JuWVpYK00zRUJSegp3aVEwTndRcEVTc05xdUF1Lyt6M3AyM3RjQyt1Wm1Ebmw1OWptZVNiT2lYT3dHWXRkL0Zra0E3MG16VXZOOU9jClQreFJadTNGK09qUGZta1NaYSsrQ0dHRmN3citYQnZYVUFUemFVajVCYmhCSUxpQ1hva0orbEMzTG9mZ0ZDTFQKZDQ3clRZY29xdjFPQ3pkNFAybm5CT0RhV0pUVkQyRnM4M05CN3EyWVhlU01yNHVIanU4Ti9oSm8zVXFLUWhmaAplM2JnT3B6cAotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg=="
+          - "endpoint"                   = "https://E30BA9C5D5544584DCF96A71E188D07C.gr7.us-east-1.eks.amazonaws.com"
+          - "kubernetes_version"         = "1.35"
+          - "name"                       = "yatra-pulse"
+          - "service_cidr"               = "172.20.0.0/16"
+        } -> null
+    }
+
+  # module.vpc.aws_default_network_acl.this[0] will be destroyed
+  - resource "aws_default_network_acl" "this" {
+      - arn                    = "arn:aws:ec2:us-east-1:<aws-account-id>:network-acl/acl-09604c094ff2e4697" -> null
+      - default_network_acl_id = "acl-09604c094ff2e4697" -> null
+      - id                     = "acl-09604c094ff2e4697" -> null
+      - owner_id               = "<aws-account-id>" -> null
+      - region                 = "us-east-1" -> null
+      - subnet_ids             = [
+          - "subnet-030f3e58b35384914",
+          - "subnet-045007938b4772345",
+          - "subnet-06cdf6149b27e2e99",
+          - "subnet-0a07d492a7626efb4",
+        ] -> null
+      - tags                   = {
+          - "Name" = "yatra-pulse-default"
+        } -> null
+      - tags_all               = {
+          - "ManagedBy" = "terraform"
+          - "Name"      = "yatra-pulse-default"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+      - vpc_id                 = "vpc-03f7732e5312d00b3" -> null
+
+      - egress {
+          - action          = "allow" -> null
+          - from_port       = 0 -> null
+          - icmp_code       = 0 -> null
+          - icmp_type       = 0 -> null
+          - ipv6_cidr_block = "::/0" -> null
+          - protocol        = "-1" -> null
+          - rule_no         = 101 -> null
+          - to_port         = 0 -> null
+            # (1 unchanged attribute hidden)
+        }
+      - egress {
+          - action          = "allow" -> null
+          - cidr_block      = "0.0.0.0/0" -> null
+          - from_port       = 0 -> null
+          - icmp_code       = 0 -> null
+          - icmp_type       = 0 -> null
+          - protocol        = "-1" -> null
+          - rule_no         = 100 -> null
+          - to_port         = 0 -> null
+            # (1 unchanged attribute hidden)
+        }
+
+      - ingress {
+          - action          = "allow" -> null
+          - from_port       = 0 -> null
+          - icmp_code       = 0 -> null
+          - icmp_type       = 0 -> null
+          - ipv6_cidr_block = "::/0" -> null
+          - protocol        = "-1" -> null
+          - rule_no         = 101 -> null
+          - to_port         = 0 -> null
+            # (1 unchanged attribute hidden)
+        }
+      - ingress {
+          - action          = "allow" -> null
+          - cidr_block      = "0.0.0.0/0" -> null
+          - from_port       = 0 -> null
+          - icmp_code       = 0 -> null
+          - icmp_type       = 0 -> null
+          - protocol        = "-1" -> null
+          - rule_no         = 100 -> null
+          - to_port         = 0 -> null
+            # (1 unchanged attribute hidden)
+        }
+    }
+
+  # module.vpc.aws_default_route_table.default[0] will be destroyed
+  - resource "aws_default_route_table" "default" {
+      - arn                    = "arn:aws:ec2:us-east-1:<aws-account-id>:route-table/rtb-0cb7ec32e2e73b1fc" -> null
+      - default_route_table_id = "rtb-0cb7ec32e2e73b1fc" -> null
+      - id                     = "rtb-0cb7ec32e2e73b1fc" -> null
+      - owner_id               = "<aws-account-id>" -> null
+      - propagating_vgws       = [] -> null
+      - region                 = "us-east-1" -> null
+      - route                  = [] -> null
+      - tags                   = {
+          - "Name" = "yatra-pulse-default"
+        } -> null
+      - tags_all               = {
+          - "ManagedBy" = "terraform"
+          - "Name"      = "yatra-pulse-default"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+      - vpc_id                 = "vpc-03f7732e5312d00b3" -> null
+
+      - timeouts {
+          - create = "5m" -> null
+          - update = "5m" -> null
+        }
+    }
+
+  # module.vpc.aws_default_security_group.this[0] will be destroyed
+  - resource "aws_default_security_group" "this" {
+      - arn                    = "arn:aws:ec2:us-east-1:<aws-account-id>:security-group/sg-07bc8c39f822a3c2d" -> null
+      - description            = "default VPC security group" -> null
+      - egress                 = [] -> null
+      - id                     = "sg-07bc8c39f822a3c2d" -> null
+      - ingress                = [] -> null
+      - name                   = "default" -> null
+      - owner_id               = "<aws-account-id>" -> null
+      - region                 = "us-east-1" -> null
+      - revoke_rules_on_delete = false -> null
+      - tags                   = {
+          - "Name" = "yatra-pulse-default"
+        } -> null
+      - tags_all               = {
+          - "ManagedBy" = "terraform"
+          - "Name"      = "yatra-pulse-default"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+      - vpc_id                 = "vpc-03f7732e5312d00b3" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # module.vpc.aws_eip.nat[0] will be destroyed
+  - resource "aws_eip" "nat" {
+      - allocation_id            = "eipalloc-04a69e751de1b31e8" -> null
+      - arn                      = "arn:aws:ec2:us-east-1:<aws-account-id>:elastic-ip/eipalloc-04a69e751de1b31e8" -> null
+      - association_id           = "eipassoc-027a93b6e13ff73bf" -> null
+      - domain                   = "vpc" -> null
+      - id                       = "eipalloc-04a69e751de1b31e8" -> null
+      - network_border_group     = "us-east-1" -> null
+      - network_interface        = "eni-02afa51014fbff888" -> null
+      - private_dns              = "ip-10-42-0-50.ec2.internal" -> null
+      - private_ip               = "10.42.0.50" -> null
+      - public_dns               = "ec2-54-210-78-235.compute-1.amazonaws.com" -> null
+      - public_ip                = "54.210.78.235" -> null
+      - public_ipv4_pool         = "amazon" -> null
+      - region                   = "us-east-1" -> null
+      - tags                     = {
+          - "Name" = "yatra-pulse-us-east-1a"
+        } -> null
+      - tags_all                 = {
+          - "ManagedBy" = "terraform"
+          - "Name"      = "yatra-pulse-us-east-1a"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+        # (6 unchanged attributes hidden)
+    }
+
+  # module.vpc.aws_internet_gateway.this[0] will be destroyed
+  - resource "aws_internet_gateway" "this" {
+      - arn      = "arn:aws:ec2:us-east-1:<aws-account-id>:internet-gateway/igw-0ac7158dd7b04b634" -> null
+      - id       = "igw-0ac7158dd7b04b634" -> null
+      - owner_id = "<aws-account-id>" -> null
+      - region   = "us-east-1" -> null
+      - tags     = {
+          - "Name" = "yatra-pulse"
+        } -> null
+      - tags_all = {
+          - "ManagedBy" = "terraform"
+          - "Name"      = "yatra-pulse"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+      - vpc_id   = "vpc-03f7732e5312d00b3" -> null
+    }
+
+  # module.vpc.aws_nat_gateway.this[0] will be destroyed
+  - resource "aws_nat_gateway" "this" {
+      - allocation_id                      = "eipalloc-04a69e751de1b31e8" -> null
+      - association_id                     = "eipassoc-027a93b6e13ff73bf" -> null
+      - availability_mode                  = "zonal" -> null
+      - connectivity_type                  = "public" -> null
+      - id                                 = "nat-00259da8a79d71734" -> null
+      - network_interface_id               = "eni-02afa51014fbff888" -> null
+      - private_ip                         = "10.42.0.50" -> null
+      - public_ip                          = "54.210.78.235" -> null
+      - region                             = "us-east-1" -> null
+      - regional_nat_gateway_address       = [] -> null
+      - secondary_allocation_ids           = [] -> null
+      - secondary_private_ip_address_count = 0 -> null
+      - secondary_private_ip_addresses     = [] -> null
+      - subnet_id                          = "subnet-06cdf6149b27e2e99" -> null
+      - tags                               = {
+          - "Name" = "yatra-pulse-us-east-1a"
+        } -> null
+      - tags_all                           = {
+          - "ManagedBy" = "terraform"
+          - "Name"      = "yatra-pulse-us-east-1a"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+      - vpc_id                             = "vpc-03f7732e5312d00b3" -> null
+    }
+
+  # module.vpc.aws_route.private_nat_gateway[0] will be destroyed
+  - resource "aws_route" "private_nat_gateway" {
+      - destination_cidr_block      = "0.0.0.0/0" -> null
+      - id                          = "r-rtb-09fd6e43d1bae0cf81080289494" -> null
+      - nat_gateway_id              = "nat-00259da8a79d71734" -> null
+      - origin                      = "CreateRoute" -> null
+      - region                      = "us-east-1" -> null
+      - route_table_id              = "rtb-09fd6e43d1bae0cf8" -> null
+      - state                       = "active" -> null
+        # (14 unchanged attributes hidden)
+
+      - timeouts {
+          - create = "5m" -> null
+        }
+    }
+
+  # module.vpc.aws_route.public_internet_gateway[0] will be destroyed
+  - resource "aws_route" "public_internet_gateway" {
+      - destination_cidr_block      = "0.0.0.0/0" -> null
+      - gateway_id                  = "igw-0ac7158dd7b04b634" -> null
+      - id                          = "r-rtb-016cd4e7941f668001080289494" -> null
+      - origin                      = "CreateRoute" -> null
+      - region                      = "us-east-1" -> null
+      - route_table_id              = "rtb-016cd4e7941f66800" -> null
+      - state                       = "active" -> null
+        # (14 unchanged attributes hidden)
+
+      - timeouts {
+          - create = "5m" -> null
+        }
+    }
+
+  # module.vpc.aws_route_table.private[0] will be destroyed
+  - resource "aws_route_table" "private" {
+      - arn              = "arn:aws:ec2:us-east-1:<aws-account-id>:route-table/rtb-09fd6e43d1bae0cf8" -> null
+      - id               = "rtb-09fd6e43d1bae0cf8" -> null
+      - owner_id         = "<aws-account-id>" -> null
+      - propagating_vgws = [] -> null
+      - region           = "us-east-1" -> null
+      - route            = [
+          - {
+              - cidr_block                 = "0.0.0.0/0"
+              - nat_gateway_id             = "nat-00259da8a79d71734"
+                # (12 unchanged attributes hidden)
+            },
+        ] -> null
+      - tags             = {
+          - "Name" = "yatra-pulse-private"
+        } -> null
+      - tags_all         = {
+          - "ManagedBy" = "terraform"
+          - "Name"      = "yatra-pulse-private"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+      - vpc_id           = "vpc-03f7732e5312d00b3" -> null
+    }
+
+  # module.vpc.aws_route_table.public[0] will be destroyed
+  - resource "aws_route_table" "public" {
+      - arn              = "arn:aws:ec2:us-east-1:<aws-account-id>:route-table/rtb-016cd4e7941f66800" -> null
+      - id               = "rtb-016cd4e7941f66800" -> null
+      - owner_id         = "<aws-account-id>" -> null
+      - propagating_vgws = [] -> null
+      - region           = "us-east-1" -> null
+      - route            = [
+          - {
+              - cidr_block                 = "0.0.0.0/0"
+              - gateway_id                 = "igw-0ac7158dd7b04b634"
+                # (12 unchanged attributes hidden)
+            },
+        ] -> null
+      - tags             = {
+          - "Name" = "yatra-pulse-public"
+        } -> null
+      - tags_all         = {
+          - "ManagedBy" = "terraform"
+          - "Name"      = "yatra-pulse-public"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+      - vpc_id           = "vpc-03f7732e5312d00b3" -> null
+    }
+
+  # module.vpc.aws_route_table_association.private[0] will be destroyed
+  - resource "aws_route_table_association" "private" {
+      - id             = "rtbassoc-0b83f791ac504df66" -> null
+      - region         = "us-east-1" -> null
+      - route_table_id = "rtb-09fd6e43d1bae0cf8" -> null
+      - subnet_id      = "subnet-045007938b4772345" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # module.vpc.aws_route_table_association.private[1] will be destroyed
+  - resource "aws_route_table_association" "private" {
+      - id             = "rtbassoc-03e8ab2784abf0ff7" -> null
+      - region         = "us-east-1" -> null
+      - route_table_id = "rtb-09fd6e43d1bae0cf8" -> null
+      - subnet_id      = "subnet-030f3e58b35384914" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # module.vpc.aws_route_table_association.public[0] will be destroyed
+  - resource "aws_route_table_association" "public" {
+      - id             = "rtbassoc-0f066bd03c8381ab2" -> null
+      - region         = "us-east-1" -> null
+      - route_table_id = "rtb-016cd4e7941f66800" -> null
+      - subnet_id      = "subnet-06cdf6149b27e2e99" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # module.vpc.aws_route_table_association.public[1] will be destroyed
+  - resource "aws_route_table_association" "public" {
+      - id             = "rtbassoc-03b6a55562bcad827" -> null
+      - region         = "us-east-1" -> null
+      - route_table_id = "rtb-016cd4e7941f66800" -> null
+      - subnet_id      = "subnet-0a07d492a7626efb4" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # module.vpc.aws_subnet.private[0] will be destroyed
+  - resource "aws_subnet" "private" {
+      - arn                                            = "arn:aws:ec2:us-east-1:<aws-account-id>:subnet/subnet-045007938b4772345" -> null
+      - assign_ipv6_address_on_creation                = false -> null
+      - availability_zone                              = "us-east-1a" -> null
+      - availability_zone_id                           = "use1-az1" -> null
+      - cidr_block                                     = "10.42.10.0/24" -> null
+      - enable_dns64                                   = false -> null
+      - enable_lni_at_device_index                     = 0 -> null
+      - enable_resource_name_dns_a_record_on_launch    = false -> null
+      - enable_resource_name_dns_aaaa_record_on_launch = false -> null
+      - id                                             = "subnet-045007938b4772345" -> null
+      - ipv6_native                                    = false -> null
+      - map_customer_owned_ip_on_launch                = false -> null
+      - map_public_ip_on_launch                        = false -> null
+      - owner_id                                       = "<aws-account-id>" -> null
+      - private_dns_hostname_type_on_launch            = "ip-name" -> null
+      - region                                         = "us-east-1" -> null
+      - tags                                           = {
+          - "Name"                            = "yatra-pulse-private-us-east-1a"
+          - "kubernetes.io/role/internal-elb" = "1"
+        } -> null
+      - tags_all                                       = {
+          - "ManagedBy"                       = "terraform"
+          - "Name"                            = "yatra-pulse-private-us-east-1a"
+          - "Project"                         = "yatra-pulse"
+          - "Teardown"                        = "deploy/aws/teardown.sh"
+          - "kubernetes.io/role/internal-elb" = "1"
+        } -> null
+      - vpc_id                                         = "vpc-03f7732e5312d00b3" -> null
+        # (4 unchanged attributes hidden)
+    }
+
+  # module.vpc.aws_subnet.private[1] will be destroyed
+  - resource "aws_subnet" "private" {
+      - arn                                            = "arn:aws:ec2:us-east-1:<aws-account-id>:subnet/subnet-030f3e58b35384914" -> null
+      - assign_ipv6_address_on_creation                = false -> null
+      - availability_zone                              = "us-east-1b" -> null
+      - availability_zone_id                           = "use1-az2" -> null
+      - cidr_block                                     = "10.42.11.0/24" -> null
+      - enable_dns64                                   = false -> null
+      - enable_lni_at_device_index                     = 0 -> null
+      - enable_resource_name_dns_a_record_on_launch    = false -> null
+      - enable_resource_name_dns_aaaa_record_on_launch = false -> null
+      - id                                             = "subnet-030f3e58b35384914" -> null
+      - ipv6_native                                    = false -> null
+      - map_customer_owned_ip_on_launch                = false -> null
+      - map_public_ip_on_launch                        = false -> null
+      - owner_id                                       = "<aws-account-id>" -> null
+      - private_dns_hostname_type_on_launch            = "ip-name" -> null
+      - region                                         = "us-east-1" -> null
+      - tags                                           = {
+          - "Name"                            = "yatra-pulse-private-us-east-1b"
+          - "kubernetes.io/role/internal-elb" = "1"
+        } -> null
+      - tags_all                                       = {
+          - "ManagedBy"                       = "terraform"
+          - "Name"                            = "yatra-pulse-private-us-east-1b"
+          - "Project"                         = "yatra-pulse"
+          - "Teardown"                        = "deploy/aws/teardown.sh"
+          - "kubernetes.io/role/internal-elb" = "1"
+        } -> null
+      - vpc_id                                         = "vpc-03f7732e5312d00b3" -> null
+        # (4 unchanged attributes hidden)
+    }
+
+  # module.vpc.aws_subnet.public[0] will be destroyed
+  - resource "aws_subnet" "public" {
+      - arn                                            = "arn:aws:ec2:us-east-1:<aws-account-id>:subnet/subnet-06cdf6149b27e2e99" -> null
+      - assign_ipv6_address_on_creation                = false -> null
+      - availability_zone                              = "us-east-1a" -> null
+      - availability_zone_id                           = "use1-az1" -> null
+      - cidr_block                                     = "10.42.0.0/24" -> null
+      - enable_dns64                                   = false -> null
+      - enable_lni_at_device_index                     = 0 -> null
+      - enable_resource_name_dns_a_record_on_launch    = false -> null
+      - enable_resource_name_dns_aaaa_record_on_launch = false -> null
+      - id                                             = "subnet-06cdf6149b27e2e99" -> null
+      - ipv6_native                                    = false -> null
+      - map_customer_owned_ip_on_launch                = false -> null
+      - map_public_ip_on_launch                        = false -> null
+      - owner_id                                       = "<aws-account-id>" -> null
+      - private_dns_hostname_type_on_launch            = "ip-name" -> null
+      - region                                         = "us-east-1" -> null
+      - tags                                           = {
+          - "Name"                   = "yatra-pulse-public-us-east-1a"
+          - "kubernetes.io/role/elb" = "1"
+        } -> null
+      - tags_all                                       = {
+          - "ManagedBy"              = "terraform"
+          - "Name"                   = "yatra-pulse-public-us-east-1a"
+          - "Project"                = "yatra-pulse"
+          - "Teardown"               = "deploy/aws/teardown.sh"
+          - "kubernetes.io/role/elb" = "1"
+        } -> null
+      - vpc_id                                         = "vpc-03f7732e5312d00b3" -> null
+        # (4 unchanged attributes hidden)
+    }
+
+  # module.vpc.aws_subnet.public[1] will be destroyed
+  - resource "aws_subnet" "public" {
+      - arn                                            = "arn:aws:ec2:us-east-1:<aws-account-id>:subnet/subnet-0a07d492a7626efb4" -> null
+      - assign_ipv6_address_on_creation                = false -> null
+      - availability_zone                              = "us-east-1b" -> null
+      - availability_zone_id                           = "use1-az2" -> null
+      - cidr_block                                     = "10.42.1.0/24" -> null
+      - enable_dns64                                   = false -> null
+      - enable_lni_at_device_index                     = 0 -> null
+      - enable_resource_name_dns_a_record_on_launch    = false -> null
+      - enable_resource_name_dns_aaaa_record_on_launch = false -> null
+      - id                                             = "subnet-0a07d492a7626efb4" -> null
+      - ipv6_native                                    = false -> null
+      - map_customer_owned_ip_on_launch                = false -> null
+      - map_public_ip_on_launch                        = false -> null
+      - owner_id                                       = "<aws-account-id>" -> null
+      - private_dns_hostname_type_on_launch            = "ip-name" -> null
+      - region                                         = "us-east-1" -> null
+      - tags                                           = {
+          - "Name"                   = "yatra-pulse-public-us-east-1b"
+          - "kubernetes.io/role/elb" = "1"
+        } -> null
+      - tags_all                                       = {
+          - "ManagedBy"              = "terraform"
+          - "Name"                   = "yatra-pulse-public-us-east-1b"
+          - "Project"                = "yatra-pulse"
+          - "Teardown"               = "deploy/aws/teardown.sh"
+          - "kubernetes.io/role/elb" = "1"
+        } -> null
+      - vpc_id                                         = "vpc-03f7732e5312d00b3" -> null
+        # (4 unchanged attributes hidden)
+    }
+
+  # module.vpc.aws_vpc.this[0] will be destroyed
+  - resource "aws_vpc" "this" {
+      - arn                                  = "arn:aws:ec2:us-east-1:<aws-account-id>:vpc/vpc-03f7732e5312d00b3" -> null
+      - assign_generated_ipv6_cidr_block     = false -> null
+      - cidr_block                           = "10.42.0.0/16" -> null
+      - default_network_acl_id               = "acl-09604c094ff2e4697" -> null
+      - default_route_table_id               = "rtb-0cb7ec32e2e73b1fc" -> null
+      - default_security_group_id            = "sg-07bc8c39f822a3c2d" -> null
+      - dhcp_options_id                      = "dopt-0d5d18785b571ec6e" -> null
+      - enable_dns_hostnames                 = true -> null
+      - enable_dns_support                   = true -> null
+      - enable_network_address_usage_metrics = false -> null
+      - id                                   = "vpc-03f7732e5312d00b3" -> null
+      - instance_tenancy                     = "default" -> null
+      - ipv6_netmask_length                  = 0 -> null
+      - main_route_table_id                  = "rtb-0cb7ec32e2e73b1fc" -> null
+      - owner_id                             = "<aws-account-id>" -> null
+      - region                               = "us-east-1" -> null
+      - tags                                 = {
+          - "Name" = "yatra-pulse"
+        } -> null
+      - tags_all                             = {
+          - "ManagedBy" = "terraform"
+          - "Name"      = "yatra-pulse"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+        # (4 unchanged attributes hidden)
+    }
+
+  # module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0] will be destroyed
+  - resource "aws_eks_node_group" "this" {
+      - ami_type               = "AL2023_x86_64_STANDARD" -> null
+      - arn                    = "arn:aws:eks:us-east-1:<aws-account-id>:nodegroup/yatra-pulse/default-f18a978f477e1f9c4d39fdc8ea/80d095f4-7afc-c7a0-d1d9-035db3e03648" -> null
+      - capacity_type          = "ON_DEMAND" -> null
+      - cluster_name           = "yatra-pulse" -> null
+      - disk_size              = 0 -> null
+      - id                     = "yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea" -> null
+      - instance_types         = [
+          - "t3.large",
+        ] -> null
+      - labels                 = {} -> null
+      - node_group_name        = "default-f18a978f477e1f9c4d39fdc8ea" -> null
+      - node_group_name_prefix = "default-" -> null
+      - node_role_arn          = "arn:aws:iam::<aws-account-id>:role/default-eks-node-group-ffbefc1890fdf7d43b8d9bfc54" -> null
+      - region                 = "us-east-1" -> null
+      - release_version        = "1.35.8-20261003" -> null
+      - resources              = [
+          - {
+              - autoscaling_groups              = [
+                  - {
+                      - name = "eks-default-f18a978f477e1f9c4d39fdc8ea-80d095f4-7afc-c7a0-d1d9-035db3e03648"
+                    },
+                ]
+                # (1 unchanged attribute hidden)
+            },
+        ] -> null
+      - status                 = "ACTIVE" -> null
+      - subnet_ids             = [
+          - "subnet-030f3e58b35384914",
+          - "subnet-045007938b4772345",
+        ] -> null
+      - tags                   = {
+          - "Name" = "default"
+        } -> null
+      - tags_all               = {
+          - "ManagedBy" = "terraform"
+          - "Name"      = "default"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+      - version                = "1.35" -> null
+
+      - launch_template {
+          - id      = "lt-0d9a45d9082df7454" -> null
+          - name    = "default-89a1994fdea904aed722984684" -> null
+          - version = "1" -> null
+        }
+
+      - scaling_config {
+          - desired_size = 2 -> null
+          - max_size     = 3 -> null
+          - min_size     = 2 -> null
+        }
+
+      - update_config {
+          - max_unavailable            = 0 -> null
+          - max_unavailable_percentage = 33 -> null
+            # (1 unchanged attribute hidden)
+        }
+    }
+
+  # module.eks.module.eks_managed_node_group["default"].aws_iam_role.this[0] will be destroyed
+  - resource "aws_iam_role" "this" {
+      - arn                   = "arn:aws:iam::<aws-account-id>:role/default-eks-node-group-ffbefc1890fdf7d43b8d9bfc54" -> null
+      - assume_role_policy    = jsonencode(
+            {
+              - Statement = [
+                  - {
+                      - Action    = "sts:AssumeRole"
+                      - Effect    = "Allow"
+                      - Principal = {
+                          - Service = "ec2.amazonaws.com"
+                        }
+                      - Sid       = "EKSNodeAssumeRole"
+                    },
+                ]
+              - Version   = "2012-10-17"
+            }
+        ) -> null
+      - create_date           = "2026-10-11T16:49:02Z" -> null
+      - description           = "EKS managed node group IAM role" -> null
+      - force_detach_policies = true -> null
+      - id                    = "default-eks-node-group-ffbefc1890fdf7d43b8d9bfc54" -> null
+      - managed_policy_arns   = [
+          - "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+          - "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
+          - "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
+        ] -> null
+      - max_session_duration  = 3600 -> null
+      - name                  = "default-eks-node-group-ffbefc1890fdf7d43b8d9bfc54" -> null
+      - name_prefix           = "default-eks-node-group-" -> null
+      - path                  = "/" -> null
+      - tags                  = {} -> null
+      - tags_all              = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+      - unique_id             = "AROA3URGRQML2ROX5F47J" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEC2ContainerRegistryReadOnly"] will be destroyed
+  - resource "aws_iam_role_policy_attachment" "this" {
+      - id         = "default-eks-node-group-ffbefc1890fdf7d43b8d9bfc54/arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly" -> null
+      - policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly" -> null
+      - role       = "default-eks-node-group-ffbefc1890fdf7d43b8d9bfc54" -> null
+    }
+
+  # module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKSWorkerNodePolicy"] will be destroyed
+  - resource "aws_iam_role_policy_attachment" "this" {
+      - id         = "default-eks-node-group-ffbefc1890fdf7d43b8d9bfc54/arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy" -> null
+      - policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy" -> null
+      - role       = "default-eks-node-group-ffbefc1890fdf7d43b8d9bfc54" -> null
+    }
+
+  # module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKS_CNI_Policy"] will be destroyed
+  - resource "aws_iam_role_policy_attachment" "this" {
+      - id         = "default-eks-node-group-ffbefc1890fdf7d43b8d9bfc54/arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy" -> null
+      - policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy" -> null
+      - role       = "default-eks-node-group-ffbefc1890fdf7d43b8d9bfc54" -> null
+    }
+
+  # module.eks.module.eks_managed_node_group["default"].aws_launch_template.this[0] will be destroyed
+  - resource "aws_launch_template" "this" {
+      - arn                                  = "arn:aws:ec2:us-east-1:<aws-account-id>:launch-template/lt-0d9a45d9082df7454" -> null
+      - default_version                      = 1 -> null
+      - description                          = "Custom launch template for default EKS managed node group" -> null
+      - disable_api_stop                     = false -> null
+      - disable_api_termination              = false -> null
+      - id                                   = "lt-0d9a45d9082df7454" -> null
+      - latest_version                       = 1 -> null
+      - name                                 = "default-89a1994fdea904aed722984684" -> null
+      - name_prefix                          = "default-" -> null
+      - region                               = "us-east-1" -> null
+      - security_group_names                 = [] -> null
+      - tags                                 = {} -> null
+      - tags_all                             = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "yatra-pulse"
+          - "Teardown"  = "deploy/aws/teardown.sh"
+        } -> null
+      - update_default_version               = true -> null
+      - vpc_security_group_ids               = [
+          - "sg-034666c3ade7b8e53",
+        ] -> null
+        # (8 unchanged attributes hidden)
+
+      - metadata_options {
+          - http_endpoint               = "enabled" -> null
+          - http_put_response_hop_limit = 1 -> null
+          - http_tokens                 = "required" -> null
+            # (2 unchanged attributes hidden)
+        }
+
+      - tag_specifications {
+          - resource_type = "instance" -> null
+          - tags          = {
+              - "Name" = "default"
+            } -> null
+        }
+      - tag_specifications {
+          - resource_type = "network-interface" -> null
+          - tags          = {
+              - "Name" = "default"
+            } -> null
+        }
+      - tag_specifications {
+          - resource_type = "volume" -> null
+          - tags          = {
+              - "Name" = "default"
+            } -> null
+        }
+    }
+
+  # module.eks.module.eks_managed_node_group["default"].module.user_data.null_resource.validate_cluster_service_cidr will be destroyed
+  - resource "null_resource" "validate_cluster_service_cidr" {
+      - id = "1312471656952542322" -> null
+    }
+
+Plan: 0 to add, 0 to change, 71 to destroy.
+
+Changes to Outputs:
+  - alb_dns_name               = "yatra-pulse-alb-1441277353.us-east-1.elb.amazonaws.com" -> null
+  - cloudfront_distribution_id = "" -> null
+  - cloudfront_url             = "" -> null
+  - cluster_name               = "yatra-pulse" -> null
+  - ecr_registry               = "<aws-account-id>.dkr.ecr.us-east-1.amazonaws.com" -> null
+  - ecr_repositories           = {
+      - mcp     = "<aws-account-id>.dkr.ecr.us-east-1.amazonaws.com/yatra-pulse/mcp"
+      - metrics = "<aws-account-id>.dkr.ecr.us-east-1.amazonaws.com/yatra-pulse/metrics"
+      - web     = "<aws-account-id>.dkr.ecr.us-east-1.amazonaws.com/yatra-pulse/web"
+    } -> null
+  - gateway_node_port          = 30080 -> null
+  - idle_schedule              = "nodes stop cron(0 22 * * ? *) and start cron(0 7 * * ? *) (Asia/Kolkata)" -> null
+  - node_group_name            = "default-f18a978f477e1f9c4d39fdc8ea" -> null
+  - public_url                 = "http://yatra-pulse-alb-1441277353.us-east-1.elb.amazonaws.com" -> null
+  - region                     = "us-east-1" -> null
+aws_ecr_lifecycle_policy.app["web"]: Destroying... [id=yatra-pulse/web]
+module.vpc.aws_route_table_association.private[1]: Destroying... [id=rtbassoc-03e8ab2784abf0ff7]
+module.vpc.aws_route_table_association.public[1]: Destroying... [id=rtbassoc-03b6a55562bcad827]
+aws_ecr_lifecycle_policy.app["mcp"]: Destroying... [id=yatra-pulse/mcp]
+aws_autoscaling_attachment.gateway: Destroying... [id=eks-default-f18a978f477e1f9c4d39fdc8ea-80d095f4-7afc-c7a0-d1d9-035db3e03648-20261011170325992100000002]
+module.vpc.aws_default_route_table.default[0]: Destroying... [id=rtb-0cb7ec32e2e73b1fc]
+module.vpc.aws_route.private_nat_gateway[0]: Destroying... [id=r-rtb-09fd6e43d1bae0cf81080289494]
+module.eks.aws_eks_addon.this["coredns"]: Destroying... [id=yatra-pulse:coredns]
+module.eks.aws_eks_addon.before_compute["eks-pod-identity-agent"]: Destroying... [id=yatra-pulse:eks-pod-identity-agent]
+aws_lb_listener.http: Destroying... [id=arn:aws:elasticloadbalancing:us-east-1:<aws-account-id>:listener/app/yatra-pulse-alb/f7c876fe5b702a1a/83e3dc3e02bc68cc]
+module.vpc.aws_default_route_table.default[0]: Destruction complete after 0s
+module.vpc.aws_default_security_group.this[0]: Destroying... [id=sg-07bc8c39f822a3c2d]
+module.vpc.aws_default_security_group.this[0]: Destruction complete after 0s
+aws_iam_role_policy_attachment.ebs_csi: Destroying... [id=yatra-pulse-ebs-csi/arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy]
+aws_ecr_lifecycle_policy.app["web"]: Destruction complete after 1s
+aws_iam_role_policy.node_scheduler[0]: Destroying... [id=yatra-pulse-node-scheduler:update-nodegroup-size]
+aws_autoscaling_attachment.gateway: Destruction complete after 1s
+aws_ecr_lifecycle_policy.app["mcp"]: Destruction complete after 1s
+aws_lb_listener.http: Destruction complete after 1s
+module.vpc.aws_route_table_association.private[0]: Destroying... [id=rtbassoc-0b83f791ac504df66]
+module.eks.aws_iam_openid_connect_provider.oidc_provider[0]: Destroying... [id=arn:aws:iam::<aws-account-id>:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/E30BA9C5D5544584DCF96A71E188D07C]
+module.eks.aws_eks_addon.before_compute["vpc-cni"]: Destroying... [id=yatra-pulse:vpc-cni]
+aws_iam_role_policy_attachment.ebs_csi: Destruction complete after 1s
+module.eks.aws_eks_addon.this["aws-ebs-csi-driver"]: Destroying... [id=yatra-pulse:aws-ebs-csi-driver]
+aws_iam_role_policy.node_scheduler[0]: Destruction complete after 1s
+module.eks.aws_eks_addon.this["kube-proxy"]: Destroying... [id=yatra-pulse:kube-proxy]
+module.vpc.aws_route_table_association.private[1]: Destruction complete after 2s
+aws_scheduler_schedule.nodes_start[0]: Destroying... [id=default/yatra-pulse-nodes-start]
+module.vpc.aws_route_table_association.public[1]: Destruction complete after 2s
+module.vpc.aws_default_network_acl.this[0]: Destroying... [id=acl-09604c094ff2e4697]
+module.vpc.aws_default_network_acl.this[0]: Destruction complete after 0s
+module.eks.aws_iam_openid_connect_provider.oidc_provider[0]: Destruction complete after 1s
+module.vpc.aws_route_table_association.public[0]: Destroying... [id=rtbassoc-0f066bd03c8381ab2]
+aws_scheduler_schedule.nodes_stop[0]: Destroying... [id=default/yatra-pulse-nodes-stop]
+module.vpc.aws_route.private_nat_gateway[0]: Destruction complete after 2s
+module.eks.aws_eks_addon.before_compute["eks-pod-identity-agent"]: Destruction complete after 2s
+module.vpc.aws_route_table_association.private[0]: Destruction complete after 1s
+aws_ecr_lifecycle_policy.app["metrics"]: Destroying... [id=yatra-pulse/metrics]
+module.vpc.aws_route.public_internet_gateway[0]: Destroying... [id=r-rtb-016cd4e7941f668001080289494]
+aws_lb.edge: Destroying... [id=arn:aws:elasticloadbalancing:us-east-1:<aws-account-id>:loadbalancer/app/yatra-pulse-alb/f7c876fe5b702a1a]
+aws_ecr_lifecycle_policy.app["metrics"]: Destruction complete after 0s
+aws_lb_target_group.gateway: Destroying... [id=arn:aws:elasticloadbalancing:us-east-1:<aws-account-id>:targetgroup/yatra-pulse-gw/3f62d006906cd936]
+aws_scheduler_schedule.nodes_start[0]: Destruction complete after 1s
+module.vpc.aws_nat_gateway.this[0]: Destroying... [id=nat-00259da8a79d71734]
+aws_lb_target_group.gateway: Destruction complete after 0s
+module.vpc.aws_route_table.private[0]: Destroying... [id=rtb-09fd6e43d1bae0cf8]
+module.eks.aws_eks_addon.this["coredns"]: Destruction complete after 3s
+aws_scheduler_schedule.nodes_stop[0]: Destruction complete after 1s
+aws_ecr_repository.app["mcp"]: Destroying... [id=yatra-pulse/mcp]
+module.vpc.aws_route_table_association.public[0]: Destruction complete after 1s
+aws_ecr_repository.app["metrics"]: Destroying... [id=yatra-pulse/metrics]
+aws_ecr_repository.app["web"]: Destroying... [id=yatra-pulse/web]
+module.vpc.aws_route.public_internet_gateway[0]: Destruction complete after 1s
+aws_iam_role.node_scheduler[0]: Destroying... [id=yatra-pulse-node-scheduler]
+module.eks.aws_eks_addon.before_compute["vpc-cni"]: Destruction complete after 3s
+aws_ecr_repository.app["mcp"]: Destruction complete after 1s
+module.eks.aws_eks_access_policy_association.this["cluster_creator_admin"]: Destroying... [id=yatra-pulse#arn:aws:iam::<aws-account-id>:user/musafir-admin#arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy]
+module.vpc.aws_route_table.public[0]: Destroying... [id=rtb-016cd4e7941f66800]
+aws_ecr_repository.app["metrics"]: Destruction complete after 1s
+aws_ecr_repository.app["web"]: Destruction complete after 1s
+module.eks.aws_eks_access_policy_association.this["cluster_creator_admin"]: Destruction complete after 0s
+module.eks.aws_eks_access_entry.this["cluster_creator"]: Destroying... [id=yatra-pulse:arn:aws:iam::<aws-account-id>:user/musafir-admin]
+aws_iam_role.node_scheduler[0]: Destruction complete after 1s
+module.vpc.aws_route_table.private[0]: Destruction complete after 1s
+module.eks.aws_eks_access_entry.this["cluster_creator"]: Destruction complete after 1s
+module.vpc.aws_route_table.public[0]: Destruction complete after 1s
+module.eks.aws_eks_addon.this["kube-proxy"]: Destruction complete after 3s
+module.eks.aws_eks_addon.this["aws-ebs-csi-driver"]: Destruction complete after 10s
+module.eks.module.eks_managed_node_group["default"].module.user_data.null_resource.validate_cluster_service_cidr: Destroying... [id=1312471656952542322]
+aws_iam_role.ebs_csi: Destroying... [id=yatra-pulse-ebs-csi]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea]
+module.eks.module.eks_managed_node_group["default"].module.user_data.null_resource.validate_cluster_service_cidr: Destruction complete after 0s
+aws_iam_role.ebs_csi: Destruction complete after 1s
+aws_lb.edge: Still destroying... [id=arn:aws:elasticloadbalancing:us-east-1:...r/app/yatra-pulse-alb/f7c876fe5b702a1a, 00m10s elapsed]
+module.vpc.aws_nat_gateway.this[0]: Still destroying... [id=nat-00259da8a79d71734, 00m10s elapsed]
+aws_lb.edge: Destruction complete after 19s
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 00m10s elapsed]
+module.vpc.aws_nat_gateway.this[0]: Still destroying... [id=nat-00259da8a79d71734, 00m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 00m20s elapsed]
+module.vpc.aws_nat_gateway.this[0]: Still destroying... [id=nat-00259da8a79d71734, 00m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 00m30s elapsed]
+module.vpc.aws_nat_gateway.this[0]: Still destroying... [id=nat-00259da8a79d71734, 00m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 00m40s elapsed]
+module.vpc.aws_nat_gateway.this[0]: Still destroying... [id=nat-00259da8a79d71734, 00m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 00m50s elapsed]
+module.vpc.aws_nat_gateway.this[0]: Still destroying... [id=nat-00259da8a79d71734, 01m00s elapsed]
+module.vpc.aws_nat_gateway.this[0]: Destruction complete after 1m2s
+module.vpc.aws_eip.nat[0]: Destroying... [id=eipalloc-04a69e751de1b31e8]
+module.vpc.aws_subnet.public[1]: Destroying... [id=subnet-0a07d492a7626efb4]
+module.vpc.aws_subnet.public[0]: Destroying... [id=subnet-06cdf6149b27e2e99]
+module.vpc.aws_subnet.public[1]: Destruction complete after 1s
+module.vpc.aws_subnet.public[0]: Destruction complete after 2s
+module.vpc.aws_eip.nat[0]: Destruction complete after 2s
+module.vpc.aws_internet_gateway.this[0]: Destroying... [id=igw-0ac7158dd7b04b634]
+module.vpc.aws_internet_gateway.this[0]: Destruction complete after 1s
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 01m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 01m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 01m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 01m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 01m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 01m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 02m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 02m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 02m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 02m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 02m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 02m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 03m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 03m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 03m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 03m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 03m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 03m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 04m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 04m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 04m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 04m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 04m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 04m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 05m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 05m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 05m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 05m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 05m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 05m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 06m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 06m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 06m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 06m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 06m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 06m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 07m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 07m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 07m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 07m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 07m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 07m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 08m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea, 08m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Destruction complete after 8m13s
+module.eks.module.eks_managed_node_group["default"].aws_launch_template.this[0]: Destroying... [id=lt-0d9a45d9082df7454]
+module.eks.module.eks_managed_node_group["default"].aws_launch_template.this[0]: Destruction complete after 1s
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKS_CNI_Policy"]: Destroying... [id=default-eks-node-group-ffbefc1890fdf7d43b8d9bfc54/arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKSWorkerNodePolicy"]: Destroying... [id=default-eks-node-group-ffbefc1890fdf7d43b8d9bfc54/arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEC2ContainerRegistryReadOnly"]: Destroying... [id=default-eks-node-group-ffbefc1890fdf7d43b8d9bfc54/arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly]
+module.eks.time_sleep.this[0]: Destroying... [id=2026-10-11T17:00:41Z]
+module.eks.time_sleep.this[0]: Destruction complete after 0s
+module.eks.aws_eks_cluster.this[0]: Destroying... [id=yatra-pulse]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKSWorkerNodePolicy"]: Destruction complete after 1s
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKS_CNI_Policy"]: Destruction complete after 1s
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEC2ContainerRegistryReadOnly"]: Destruction complete after 1s
+module.eks.module.eks_managed_node_group["default"].aws_iam_role.this[0]: Destroying... [id=default-eks-node-group-ffbefc1890fdf7d43b8d9bfc54]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role.this[0]: Destruction complete after 1s
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=yatra-pulse, 00m10s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=yatra-pulse, 00m20s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=yatra-pulse, 00m30s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=yatra-pulse, 00m40s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=yatra-pulse, 00m50s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=yatra-pulse, 01m00s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=yatra-pulse, 01m10s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=yatra-pulse, 01m20s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=yatra-pulse, 01m30s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=yatra-pulse, 01m40s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=yatra-pulse, 01m50s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=yatra-pulse, 02m00s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=yatra-pulse, 02m10s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=yatra-pulse, 02m20s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=yatra-pulse, 02m30s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=yatra-pulse, 02m40s elapsed]
+module.eks.aws_eks_cluster.this[0]: Destruction complete after 2m48s
+module.eks.aws_security_group_rule.node["ingress_nodes_ephemeral"]: Destroying... [id=sgrule-2104742984]
+module.vpc.aws_subnet.private[0]: Destroying... [id=subnet-045007938b4772345]
+module.eks.aws_security_group_rule.cluster["ingress_nodes_443"]: Destroying... [id=sgrule-3079005579]
+module.eks.aws_security_group_rule.node["ingress_cluster_9443_webhook"]: Destroying... [id=sgrule-48337484]
+module.eks.aws_security_group_rule.node["ingress_self_coredns_udp"]: Destroying... [id=sgrule-36783385]
+module.eks.aws_security_group_rule.node["ingress_cluster_6443_webhook"]: Destroying... [id=sgrule-1964809638]
+module.eks.aws_security_group_rule.node["ingress_cluster_4443_webhook"]: Destroying... [id=sgrule-3160341040]
+module.eks.aws_security_group_rule.node["ingress_cluster_8443_webhook"]: Destroying... [id=sgrule-1715511687]
+module.eks.aws_cloudwatch_log_group.this[0]: Destroying... [id=/aws/eks/yatra-pulse/cluster]
+module.eks.aws_security_group_rule.node["alb_to_gateway"]: Destroying... [id=sgrule-2520976497]
+module.eks.aws_cloudwatch_log_group.this[0]: Destruction complete after 1s
+module.eks.aws_security_group_rule.node["ingress_self_coredns_tcp"]: Destroying... [id=sgrule-2792285942]
+module.eks.aws_security_group_rule.node["ingress_nodes_ephemeral"]: Destruction complete after 2s
+module.eks.aws_security_group_rule.cluster["ingress_nodes_443"]: Destruction complete after 2s
+module.eks.aws_security_group_rule.node["ingress_cluster_443"]: Destroying... [id=sgrule-3273214186]
+module.eks.aws_security_group_rule.node["ingress_cluster_10251_webhook"]: Destroying... [id=sgrule-1841954231]
+module.vpc.aws_subnet.private[0]: Destruction complete after 2s
+module.eks.aws_security_group_rule.node["egress_all"]: Destroying... [id=sgrule-163558614]
+module.eks.aws_security_group_rule.node["ingress_self_coredns_udp"]: Destruction complete after 3s
+module.eks.aws_iam_role_policy_attachment.this["AmazonEKSClusterPolicy"]: Destroying... [id=yatra-pulse-cluster-c9f0ec4d778ae8cd41e34da107/arn:aws:iam::aws:policy/AmazonEKSClusterPolicy]
+module.eks.aws_security_group_rule.node["ingress_cluster_8443_webhook"]: Destruction complete after 4s
+module.eks.aws_security_group_rule.node["ingress_cluster_kubelet"]: Destroying... [id=sgrule-1501605324]
+module.eks.aws_iam_role_policy_attachment.this["AmazonEKSClusterPolicy"]: Destruction complete after 1s
+module.vpc.aws_subnet.private[1]: Destroying... [id=subnet-030f3e58b35384914]
+module.eks.aws_security_group_rule.node["ingress_cluster_9443_webhook"]: Destruction complete after 5s
+module.eks.aws_iam_role.this[0]: Destroying... [id=yatra-pulse-cluster-c9f0ec4d778ae8cd41e34da107]
+module.vpc.aws_subnet.private[1]: Destruction complete after 1s
+module.eks.aws_security_group_rule.node["alb_to_gateway"]: Destruction complete after 6s
+module.eks.aws_iam_role.this[0]: Destruction complete after 1s
+module.eks.aws_security_group_rule.node["ingress_cluster_4443_webhook"]: Destruction complete after 7s
+module.eks.aws_security_group_rule.node["ingress_cluster_6443_webhook"]: Destruction complete after 8s
+module.eks.aws_security_group_rule.node["ingress_self_coredns_tcp"]: Destruction complete after 8s
+module.eks.aws_security_group_rule.node["ingress_cluster_10251_webhook"]: Destruction complete after 8s
+module.eks.aws_security_group_rule.node["ingress_cluster_443"]: Destruction complete after 9s
+module.eks.aws_security_group_rule.node["egress_all"]: Destruction complete after 10s
+module.eks.aws_security_group_rule.node["ingress_cluster_kubelet"]: Destruction complete after 9s
+module.eks.aws_security_group.cluster[0]: Destroying... [id=sg-0c3e3dff068197901]
+aws_security_group.alb: Destroying... [id=sg-0be7a11957794135a]
+module.eks.aws_security_group.node[0]: Destroying... [id=sg-034666c3ade7b8e53]
+module.eks.aws_security_group.cluster[0]: Destruction complete after 1s
+aws_security_group.alb: Destruction complete after 1s
+module.eks.aws_security_group.node[0]: Destruction complete after 1s
+module.vpc.aws_vpc.this[0]: Destroying... [id=vpc-03f7732e5312d00b3]
+module.vpc.aws_vpc.this[0]: Destruction complete after 2s
+
+Destroy complete! Resources: 71 destroyed.
+
+▸ Leftover sweep
+  gone  EKS cluster
+  gone  Load balancers
+  gone  Classic ELBs (k8s)
+  gone  CloudFront
+  gone  NAT gateways
+  gone  Elastic IPs
+  gone  EBS volumes (k8s)
+  gone  EC2 instances
+  gone  VPC
+  gone  ECR repositories
+warning: this removed your active context, use "kubectl config use-context" to select a different one
+  gone  IAM roles (checked after teardown)
+  gone  IAM policies (checked after teardown)
+  gone  Scheduler (idle) (checked after teardown)
+  gone  EKS log groups (checked after teardown)
+  removed kubeconfig context yatra-pulse-aws
+TEARDOWN COMPLETE: no Yatra Pulse resources left in us-east-1

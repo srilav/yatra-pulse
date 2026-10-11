@@ -29,6 +29,7 @@ A live festival travel board for **Mysuru Dasara 2026** (11–21 October), built
 | AWS test evidence (results, API checks, cluster snapshot, teardown report) | [deploy/aws/results/](deploy/aws/results/) |
 | Interview prep: design decisions, stories, Q&A | https://srilav.github.io/yatra-pulse/resources/interview-prep.html |
 | Session transcript (how it was built) | [resources/session-transcript.md](resources/session-transcript.md) |
+| AWS session transcript (deploy, fixes, tests, teardown) | [resources/session-transcript-aws.md](resources/session-transcript-aws.md) |
 
 On GitHub Pages the schedule, itinerary, trip check, booking guide and day trips all work, with plans saved in your browser. Plan with Claude and traveller events need the claude.ai version.
 

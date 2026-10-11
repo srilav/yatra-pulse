@@ -79,7 +79,7 @@ Run on 11 October 2026 in us-east-1 (account verified for everything except Clou
 | Pulsar on gp3 EBS | Running; metrics consumer subscribed |
 | Browser scenarios (Selenium, recorded) | **16/16 passed**: `results/key-scenarios.mp4`, `results/selenium.json` |
 | API scenarios | **8/8 passed**: `smoke-20261011-232842.txt` |
-| Teardown | See `results/teardown-*.txt` |
+| Teardown | **Complete**: 71 resources destroyed; sweep found nothing left (EKS, load balancers, CloudFront, NAT, EIPs, EBS, EC2, VPC, ECR, IAM roles and policies, schedules, log groups): `results/teardown-20261011-232913.txt` |
 
 ```
 Yatra Pulse AWS smoke test · 2026-10-11T17:58:42Z · http://yatra-pulse-alb-1441277353.us-east-1.elb.amazonaws.com

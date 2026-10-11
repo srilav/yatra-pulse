@@ -2,7 +2,8 @@
 # Remove everything deploy/aws/deploy.sh created, in an order that leaves nothing billable behind:
 #   1. Kubernetes resources that create AWS resources outside Terraform (Pulsar's EBS volume)
 #   2. terraform destroy (CloudFront, ALB, EKS, node group, NAT gateway + EIP, VPC, ECR, IAM)
-#   3. a sweep for leftovers, written to deploy/aws/results/teardown-<timestamp>.txt
+#   3. a sweep for leftovers (network, compute, storage, edge, ECR, IAM, schedules, logs), written to
+#      deploy/aws/results/teardown-<timestamp>.txt
 # Requires --yes. Never touches the local kind cluster.
 set -uo pipefail
 cd "$(dirname "$0")/../.."
@@ -44,6 +45,10 @@ chk "EBS volumes (k8s)"  "$(aws ec2 describe-volumes --region $REGION --filters 
 chk "EC2 instances"      "$(aws ec2 describe-instances --region $REGION --filters Name=tag:eks:cluster-name,Values=$NAME Name=instance-state-name,Values=pending,running,stopping,stopped --query 'Reservations[].Instances[].InstanceId' --output text)"
 chk "VPC"                "$(aws ec2 describe-vpcs --region $REGION --filters Name=tag:Project,Values=$NAME --query 'Vpcs[].VpcId' --output text)"
 chk "ECR repositories"   "$(aws ecr describe-repositories --region $REGION --query "repositories[?starts_with(repositoryName,'$NAME/')].repositoryName" --output text)"
+chk "IAM roles"          "$(aws iam list-roles --query "Roles[?starts_with(RoleName,'$NAME') || starts_with(RoleName,'default-eks-node-group')].RoleName" --output text)"
+chk "IAM policies"       "$(aws iam list-policies --scope Local --query "Policies[?starts_with(PolicyName,'$NAME')].PolicyName" --output text)"
+chk "Scheduler (idle)"   "$(aws scheduler list-schedules --region $REGION --name-prefix $NAME --query 'Schedules[].Name' --output text)"
+chk "EKS log groups"     "$(aws logs describe-log-groups --region $REGION --log-group-name-prefix /aws/eks/$NAME --query 'logGroups[].logGroupName' --output text)"
 
 kubectl config get-contexts -o name 2>/dev/null | grep -qx "$CTX" && kubectl config delete-context "$CTX" >/dev/null && echo "  removed kubeconfig context $CTX"
 if [ $tf -eq 0 ] && [ $left -eq 0 ]; then echo "TEARDOWN COMPLETE: no Yatra Pulse resources left in $REGION"; else echo "TEARDOWN INCOMPLETE: see LEFT lines above"; fi
