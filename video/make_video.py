@@ -25,6 +25,7 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "video" / "out"
 WORK = OUT / "work"
 PAGE = (ROOT / "index.html").as_uri()
+ARCH = (ROOT / "resources" / "architecture.html").as_uri()
 FFMPEG = imageio_ffmpeg.get_ffmpeg_exe()
 FPS = 8
 VOICE, RATE = "Rishi", 172
@@ -120,6 +121,22 @@ SCENES = [
     dict(id="phone", phone=True, chapter="On your phone",
          say="And it works on your phone, so the plan travels with you.",
          cap="Works on your phone"),
+    dict(id="architecture", url="ARCH", target="#ai", off=10, pan="#telemetry", chapter="Architecture and agent goal",
+         say="The architecture page explains the whole system: functionality, tech stack, components, and the A I agent's goal. Plan a trip a traveller can actually follow, with every stop real, nothing clashing, and every source cited.",
+         cap="Architecture · agent goal: every stop real, no clashes, every source cited"),
+    dict(id="evaluator", card="terminal", chapter="Evaluator quality gates",
+         term=[("node eval/run.js", "node eval/run.js")],
+         say="An evaluator keeps the A I honest. It scores search on thirty-one labelled questions, trip check on ten scenarios, and A I plans for invented or clashing stops, and fails the build if quality drops.",
+         cap="Evaluator · search, trip check and plan grounding · gates in CI"),
+    dict(id="telemetry", url="http://localhost:9464/", target="body", chapter="Telemetry on Apache Pulsar",
+         pre=["cd mcp-server && TELEMETRY=pulsar node test.js", "node eval/run.js"],
+         say="Every tool call becomes an event on Apache Pulsar. A metrics consumer turns them into live metrics and service level objectives, raises alerts, and counts the clashes trip check has caught.",
+         cap="Telemetry → Apache Pulsar → metrics, SLOs and alerts"),
+    dict(id="knative", card="terminal", chapter="Knative on Kubernetes",
+         term=[("kubectl get ksvc -n yatra-pulse", "kubectl --context kind-yatra-pulse get ksvc -n yatra-pulse"),
+               ("./deploy/smoke-test.sh", "./deploy/smoke-test.sh")],
+         say="And it deploys on Kubernetes with Knative, on-prem or on any cloud. The web board and M C P server scale to zero when idle and wake on demand, while the metrics consumer stays on. Nine of nine smoke checks pass.",
+         cap="Knative on Kubernetes · on-prem or any cloud · scale to zero"),
     dict(id="end", card="end", chapter="Links",
          say="The board, its code, and an M C P server that lets Claude search the board and check your plan, are on GitHub at srilav slash yatra pulse. Happy travels!",
          cap="github.com/srilav/yatra-pulse"),
@@ -157,6 +174,19 @@ const SCHED = [
   ['20 Tue','Ayudha Puja · air show'],
   ['21 Wed','Jamboo Savari 4:10 pm · Torchlight parade'],
 ];
+if (arguments[0] === 'terminal') {
+  const lines = String(arguments[1]).split('\n');
+  const shown = lines.slice(0, Math.max(1, Math.ceil(lines.length * Math.min(1, (arguments[2] ?? 1) / 0.6))));
+  k.style.placeContent = 'stretch';
+  k.style.padding = '28px 40px 90px';
+  k.innerHTML = '<div style="background:#0E0A16;border:1px solid #3a2f55;border-radius:12px;padding:18px 22px;text-align:left;overflow:hidden;font:500 13.5px/1.55 \'JetBrains Mono\',monospace;color:#E8E2F4;white-space:pre-wrap">' +
+    '<div style="display:flex;gap:7px;margin-bottom:12px"><i style="width:11px;height:11px;border-radius:50%;background:#F0607A"></i><i style="width:11px;height:11px;border-radius:50%;background:#F2B544"></i><i style="width:11px;height:11px;border-radius:50%;background:#4CC38A"></i></div>' +
+    shown.map((l) => l.replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/^(\$ .*)$/, '<span style="color:#F2B544">$1</span>')
+      .replace(/\b(PASS(ED)?)\b/g, '<span style="color:#4CC38A">$1</span>')
+      .replace(/\b(FAIL(ED)?)\b/g, '<span style="color:#F0607A">$1</span>')).join('\n') + '</div>';
+  return;
+}
 if (arguments[0] === 'schedule') {
   k.innerHTML = '<div style="font:400 54px/1 \'Yatra One\',serif;margin-bottom:6px">Dasara 2026 <span style="color:#F2B544">schedule</span></div>' +
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 40px;text-align:left;width:1180px">' +
@@ -168,7 +198,7 @@ if (arguments[0] === 'schedule') {
 k.innerHTML = arguments[0] === 'title'
   ? bulbs + '<div style="font:400 100px/1 \'Yatra One\',serif">Yatra <span style="color:#F2B544">Pulse</span></div>' +
     '<div style="font-size:30px;color:#C9BEDD">Mysuru Dasara 2026 · 11–21 October</div>' +
-    '<div style="font-size:20px;color:#A99FBE">Live events · Schedule · Booking · Itinerary · Trip check · AI planner · Day trips</div>' + bulbs
+    '<div style="font-size:20px;color:#A99FBE">Live events · Schedule · Booking · Itinerary · Trip check · AI planner · Evaluator · Pulsar · Knative</div>' + bulbs
   : bulbs + '<div style="font:400 74px/1 \'Yatra One\',serif">Happy <span style="color:#F2B544">travels</span></div>' +
     '<div style="font:500 30px/1.4 \'JetBrains Mono\',monospace;color:#F2B544">github.com/srilav/yatra-pulse</div>' +
     '<div style="font-size:20px;color:#A99FBE">Official tickets: mysoredasara.gov.in · Helpline 1077</div>' + bulbs;
@@ -239,6 +269,20 @@ def main():
         frames = WORK / f"f{i:02d}"
         frames.mkdir()
 
+        for cmd in sc.get("pre", []):
+            subprocess.run(cmd, shell=True, cwd=ROOT, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        if sc.get("url"):
+            d.get(ARCH if sc["url"] == "ARCH" else sc["url"])
+            time.sleep(3)
+            d.execute_script("window.V = { y(sel, off) { const e = document.querySelector(sel); return e ? Math.max(0, e.getBoundingClientRect().top + scrollY - off) : 0; } };")
+        term_text = None
+        if sc.get("term"):
+            parts = []
+            for shown, cmd in sc["term"]:
+                out = subprocess.run(cmd, shell=True, cwd=ROOT, capture_output=True, text=True)
+                parts.append(f"$ {shown}\n" + (out.stdout + out.stderr).strip())
+            term_text = "\n\n".join(parts)
+
         dark = "dark" if sc.get("dark") or sc.get("phone") else "light"
         d.execute_cdp_cmd("Emulation.setEmulatedMedia", {"features": [{"name": "prefers-color-scheme", "value": dark}]})
         if sc.get("phone"):
@@ -253,7 +297,7 @@ def main():
                 phone_frame(shot, sc["cap"], frames / f"{f:05d}.png")
             d.execute_cdp_cmd("Emulation.clearDeviceMetricsOverride", {})
         else:
-            d.execute_script(CARD_JS, sc.get("card"))
+            d.execute_script(CARD_JS, sc.get("card"), term_text, 0)
             d.execute_script(CAPTION_JS, sc["cap"])
             acts = list(sc.get("acts", []))
             # actions at fraction 0 run before the camera picks its target, so it frames the result
@@ -277,6 +321,8 @@ def main():
                 else:
                     y = end + (pan_to - end) * ease((t - 0.5) / 0.4)
                 d.execute_script("scrollTo(0, arguments[0])", y)
+                if term_text is not None:
+                    d.execute_script(CARD_JS, "terminal", term_text, t)
                 d.save_screenshot(str(frames / f"{f:05d}.png"))
 
         seg = WORK / f"seg{i:02d}.mp4"
@@ -298,10 +344,10 @@ def main():
 
     stamp = lambda s: f"{int(s // 60)}:{int(s % 60):02d}"
     (OUT / "youtube.txt").write_text(f"""TITLE
-Mysuru Dasara 2026: Schedule, How to Book, Trip Planner & Clash Checker | Yatra Pulse
+Mysuru Dasara 2026: Schedule, How to Book, AI Trip Planner & Clash Checker | Yatra Pulse
 
 DESCRIPTION
-Yatra Pulse is a live travel board for Mysuru Dasara 2026 (11–21 October). This tour shows every feature: what's on now, the full 11-day schedule with source links, filters, personal picks, DJ and party nights, building an itinerary, Trip check (flags two venues at the same time and whether you can get between stops by car, two-wheeler, auto or bus), Plan with Claude, how to book official tickets, traveller-added events checked by the host, day trips, Gaya Pitru Paksha info, dark mode and phone view.
+Yatra Pulse is a live travel board for Mysuru Dasara 2026 (11–21 October). This tour shows every feature: what's on now, the full 11-day schedule with source links, filters, personal picks, DJ and party nights, building an itinerary, Trip check (flags two venues at the same time and whether you can get between stops by car, two-wheeler, auto or bus), Plan with Claude, how to book official tickets, traveller-added events checked by the host, day trips, Gaya Pitru Paksha info, dark mode and phone view. It then covers how it's built: the architecture and the AI agent's goal, the evaluator that keeps the AI honest, telemetry on Apache Pulsar with live metrics and SLOs, and deployment on Kubernetes with Knative.
 
 Official tickets: https://mysoredasara.gov.in (TicketGenie is the only authorised seller)
 Dasara helpline: 1077
@@ -313,7 +359,7 @@ Chapters
 Event times change. Confirm timings and passes with official Mysuru Dasara channels before you travel. Travel times are estimates; check live traffic on the day.
 
 TAGS
-Mysuru Dasara 2026, Mysore Dasara, Jamboo Savari, Yuva Dasara, Mysore Dasara schedule, Dasara Gold Card, Dasara tickets booking, Dasara itinerary, Mysore travel, Karnataka tourism, Srirangapatna, Gaya Pitru Paksha, AI trip planner, travel itinerary
+Mysuru Dasara 2026, Mysore Dasara, Jamboo Savari, Yuva Dasara, Mysore Dasara schedule, Dasara Gold Card, Dasara tickets booking, Dasara itinerary, Mysore travel, Karnataka tourism, Srirangapatna, Gaya Pitru Paksha, AI trip planner, travel itinerary, RAG, MCP, Apache Pulsar, Knative, Kubernetes
 """)
     shutil.rmtree(WORK)
     print(f"\nDone: {final} ({t0:.0f}s)")

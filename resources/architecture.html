@@ -97,7 +97,7 @@ a { color: var(--gold); }
       <div class="stats">
         <div class="stat"><b>21</b><small>use cases</small></div>
         <div class="stat"><b>13</b><small>UI components</small></div>
-        <div class="stat"><b>5</b><small>AI-enabled components</small></div>
+        <div class="stat"><b>5</b><small>AI-enabled components, 1 agent goal</small></div>
         <div class="stat"><b>16 + 8</b><small>Selenium + MCP checks</small></div>
         <div class="stat"><b>4</b><small>Pulsar topics</small></div>
         <div class="stat"><b>3</b><small>Knative services</small></div>
@@ -161,6 +161,23 @@ a { color: var(--gold); }
 
     <section id="ai" aria-labelledby="aiH">
       <header><span class="num">04</span><h2 id="aiH">AI-enabled components</h2><p class="lede">Every AI path is grounded in the board and checked by deterministic code before a traveller sees it.</p></header>
+      <div class="card ai" style="gap:10px">
+        <span class="tag ai">Agent goal</span>
+        <h3>Plan a Dasara trip a traveller can actually follow</h3>
+        <p>Every stop real (from the board), nothing clashing, every leg reachable by the chosen vehicle, gate deadlines respected, every stop cited with the official way to book. Two agents share the goal: the <b>trip planner</b> on the board (retrieve once, one Claude call, deterministic checks) and the <b>Dasara concierge</b> in Claude Code / Desktop over MCP (search → draft → check → revise).</p>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Success criterion</th><th>Target</th><th>Measured by</th></tr></thead>
+          <tbody>
+            <tr><td>Stops that exist on the board</td><td class="mono">100%</td><td>Key whitelist; evaluator <code>scorePlan()</code></td></tr>
+            <tr><td>Invented stops / wrong-day events</td><td class="mono">0 / 0</td><td>Evaluator plan dataset</td></tr>
+            <tr><td>Clashes or unreachable legs left unflagged</td><td class="mono">0</td><td>Trip check on every draft</td></tr>
+            <tr><td>Retrieval hit@1 · recall@3</td><td class="mono">≥ 0.80 · ≥ 0.90</td><td>31 labelled questions (now 0.97 · 1.00)</td></tr>
+            <tr><td>Stops and tips with a source</td><td class="mono">100%</td><td>Passages carry URLs; tips only from facts</td></tr>
+            <tr><td>Claude calls per board plan · MCP tool p95</td><td class="mono">1 · ≤ 250 ms</td><td>Design; metrics SLO</td></tr>
+          </tbody>
+        </table></div>
+        <p style="color:var(--muted);font-size:.92rem">The agent only reads: it never books, pays, submits traveller events or sees other people's data; the traveller decides what goes into the plan. Full specification: SPEC.md §6 (agent) and §7 (retrieval).</p>
+      </div>
       <div class="flow" aria-label="AI flow">
         <div class="lane"><span class="lanelabel">Retrieve</span><span class="node">Events · shows · DJ · trips · facts · traveller events</span><span class="arrow">→</span><span class="node ai">boardPassages()</span><span class="arrow">→</span><span class="node ai">searchBoard() BM25</span></div>
         <div class="lane"><span class="lanelabel">Generate</span><span class="node ai">Plan with Claude (sample.json)</span><span class="arrow">or</span><span class="node ai">Claude via MCP tools</span></div>
@@ -212,7 +229,7 @@ a { color: var(--gold); }
           <tr><td>Latest evaluator run passes</td><td class="mono">pass</td><td>YatraEvalFailing (page)</td></tr>
         </tbody>
       </table></div>
-      <p>Clients use Pulsar's WebSocket API with reconnect and backoff, so there are no native libraries to install. Search text isn't recorded unless <code>TELEMETRY_INCLUDE_QUERIES=1</code>. The runbook (<code>ops/RUNBOOK.md</code>) covers every alert.</p>
+      <p>Clients use Pulsar's WebSocket API with reconnect, backoff and a connect timeout, so there are no native libraries to install. The metrics consumer uses a Failover subscription, so overlapping pods during a rollout never split the counts. Search text isn't recorded unless <code>TELEMETRY_INCLUDE_QUERIES=1</code>. The runbook (<code>ops/RUNBOOK.md</code>) covers every alert.</p>
     </section>
 
     <section id="deploy" aria-labelledby="dH">

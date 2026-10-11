@@ -1,5 +1,9 @@
 # Yatra Pulse: specification
 
+**Title:** Yatra Pulse: Grounded, Feasibility-Checked AI Trip Planning for Festival Travel
+
+**Abstract:** Festival travellers face dense, fast-changing schedules spread across venues kilometres apart, and generic AI assistants invent events or propose plans that can't be followed. Yatra Pulse is a live travel board for Mysuru Dasara 2026 that pairs a source-linked schedule with a grounded AI planning agent: a BM25 retriever selects cited passages matching a traveller's style and dates, Claude drafts a day-by-day plan restricted to those passages, and a deterministic trip checker flags clashes between venues, legs that can't be travelled in time by car, two-wheeler, auto-rickshaw or bus, gate deadlines and vehicle range. The same retrieval and checks are exposed to Claude Code and Claude Desktop through an MCP server. An evaluator with labelled datasets gates quality in CI (retrieval hit@1 0.97, recall@3 1.00, trip-check and plan-grounding accuracy 100%); every tool call is traced to Apache Pulsar, where a metrics consumer computes SLOs and raises alerts; and the system deploys as three Knative services on any Kubernetes, verified end to end with scale-to-zero and a 2.2 s cold start.
+
 Yatra Pulse is a live travel board for **Mysuru Dasara 2026 (11–21 October)**. It helps a traveller who wants the culture, not just the crowd, to see what's on, plan a day-by-day itinerary that actually works on the ground, book official tickets safely, and find day trips. A Gaya panel covers Pitru Paksha for spiritual travellers.
 
 | | |

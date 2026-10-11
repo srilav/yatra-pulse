@@ -19,6 +19,12 @@ spec:
       containers:
         - image: yatra-pulse/web:1.0.0
           ports: [{ containerPort: 8080 }]
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 101
+            allowPrivilegeEscalation: false
+            capabilities: { drop: ["ALL"] }
+            seccompProfile: { type: RuntimeDefault }
           readinessProbe: { httpGet: { path: /index.html } }
           resources:
             requests: { cpu: 25m, memory: 32Mi }
@@ -44,6 +50,12 @@ spec:
       containers:
         - image: yatra-pulse/mcp:1.0.0
           ports: [{ containerPort: 8080 }]
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            capabilities: { drop: ["ALL"] }
+            seccompProfile: { type: RuntimeDefault }
           envFrom: [{ configMapRef: { name: yatra-config } }]
           readinessProbe: { httpGet: { path: /readyz } }
           livenessProbe: { httpGet: { path: /healthz }, periodSeconds: 20 }
@@ -69,6 +81,12 @@ spec:
       containers:
         - image: yatra-pulse/metrics:1.0.0
           ports: [{ containerPort: 8080 }]
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            capabilities: { drop: ["ALL"] }
+            seccompProfile: { type: RuntimeDefault }
           envFrom: [{ configMapRef: { name: yatra-config } }]
           readinessProbe: { httpGet: { path: /healthz }, periodSeconds: 10, failureThreshold: 30 }
           resources:

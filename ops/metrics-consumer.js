@@ -15,6 +15,9 @@ import { consume, Producer, TOPICS, PULSAR_WS_URL } from "./pulsar.js";
 const PORT = Number(process.env.METRICS_PORT || process.env.PORT || 9464);
 const WINDOW_MS = Number(process.env.SLO_WINDOW_MS || 15 * 60 * 1000);
 const SUBSCRIPTION = process.env.METRICS_SUBSCRIPTION || "yatra-metrics";
+// Failover: one active consumer per subscription, others on standby. Keeps counts whole when two
+// replicas overlap (a Knative rollout, a restart) instead of Shared splitting messages between them.
+const SUBSCRIPTION_TYPE = process.env.METRICS_SUBSCRIPTION_TYPE || "Failover";
 const BUCKETS = [5, 10, 25, 50, 100, 250, 500, 1000, 2500];
 
 // SLOs: the promise we make about the MCP server, checked over the rolling window.
@@ -170,10 +173,11 @@ function stats() {
 const dlq = new Producer(TOPICS.dlq);
 alertProducer = new Producer(TOPICS.alerts);
 const telemetrySub = consume(TOPICS.telemetry, SUBSCRIPTION, handleTelemetry, {
+  subscriptionType: SUBSCRIPTION_TYPE,
   onState: (s) => log(s === "connected" ? "info" : "warn", `telemetry subscription ${s}`, { topic: TOPICS.telemetry }),
   onPoison: (raw, meta) => { log("warn", "unparseable telemetry sent to DLQ", { messageId: meta.messageId }); dlq.send({ raw: raw.slice(0, 2000), messageId: meta.messageId, reason: "not JSON" }); },
 });
-const evalSub = consume(TOPICS.eval, SUBSCRIPTION, handleEval, { onState: (s) => log("info", `eval subscription ${s}`, { topic: TOPICS.eval }) });
+const evalSub = consume(TOPICS.eval, SUBSCRIPTION, handleEval, { subscriptionType: SUBSCRIPTION_TYPE, onState: (s) => log("info", `eval subscription ${s}`, { topic: TOPICS.eval }) });
 setInterval(checkSlos, 30000).unref();
 
 const DASHBOARD = new URL("./dashboard.html", import.meta.url);

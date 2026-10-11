@@ -94,6 +94,9 @@ Known miss: "Kannada film stars Shivarajkumar" ranks Somanathapura first (its te
 2. `docker compose -f ops/docker-compose.yml ps` / `logs pulsar`; restart with `up -d`.
 3. Producers and the consumer reconnect on their own with backoff (0.5 s to 30 s).
 
+### Metrics count less traffic than expected
+Two consumers on one **Shared** subscription split the messages, so each counts only part of the traffic. Found on 11 Oct twice: the laptop and cluster consumers shared `yatra-metrics`, and during a Knative rollout the old and new metrics pods overlapped. Fixes: the consumer now uses a **Failover** subscription by default (one active consumer, others on standby, `METRICS_SUBSCRIPTION_TYPE`), and each independent consumer gets its own `METRICS_SUBSCRIPTION` (the kind profile uses `yatra-metrics-cluster`). If counts look low, check `pulsar-admin topics stats` for more than one consumer on the subscription. Changing a subscription's type needs one handover: stop the old consumers (for Knative, delete the old revision), force-delete the subscription (`curl -X DELETE "localhost:8080/admin/v2/persistent/public/default/yatra-telemetry/subscription/<name>?force=true"`), then start the new consumer. Clients give up on a stalled connection after `PULSAR_CONNECT_TIMEOUT_MS` (10 s) and retry, so a stuck upgrade can no longer hang a consumer. After such a handover, delete any revision that never became Ready (`kubectl get revisions -n yatra-pulse`, then `kubectl delete revision <name>`): with min-scale 1 it keeps a standby pod running.
+
 ### Dead-letter messages
 1. `docker exec yatra-pulsar bin/pulsar-client consume -s inspect -n 0 -p Earliest persistent://public/default/yatra-telemetry-dlq`
 2. Find the producer sending non-JSON; telemetry must always be one JSON object per message.

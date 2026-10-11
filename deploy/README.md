@@ -44,7 +44,7 @@ curl -H "Host: yatra-web.yatra-pulse.yatra.local"     http://localhost:18080/
 curl -H "Host: yatra-metrics.yatra-pulse.yatra.local" http://localhost:18080/stats
 ```
 
-Remove everything: `kind delete cluster --name yatra-pulse`.
+Bring everything down (consumer, cluster, Pulsar): `./deploy/teardown-local.sh` (`--dry-run` to preview, `--purge` to also delete Pulsar data, images and local output).
 
 ## Any other cluster (on-prem or cloud)
 

@@ -10,4 +10,7 @@ data:
   PULSAR_WS_URL: "ws://pulsar.yatra-pulse.svc.cluster.local:8080/ws/v2"
   PULSAR_NAMESPACE: "public/default"
   SLO_WINDOW_MS: "900000"
+  # Each metrics consumer needs its own subscription: consumers sharing one split the messages
+  # between them, so each would count only part of the traffic.
+  METRICS_SUBSCRIPTION: "yatra-metrics"
   TELEMETRY_INCLUDE_QUERIES: "0"

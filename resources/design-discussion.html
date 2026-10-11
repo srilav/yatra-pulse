@@ -84,10 +84,15 @@ footer { color: var(--muted); font-size: .9rem; border-top: 1px solid var(--line
     <a href="#tripcheck">Trip check</a>
     <a href="#rag">Board search (RAG)</a>
     <a href="#ai">Plan with Claude</a>
+    <a href="#agent">Agent goal &amp; loop</a>
     <a href="#community">Traveller events</a>
     <a href="#booking">How to book</a>
     <a href="#trips">Day trips &amp; Gaya</a>
     <a href="#mcp">MCP server</a>
+    <a href="#evaluator">Evaluator</a>
+    <a href="#telemetry">Telemetry to Pulsar</a>
+    <a href="#metrics">Metrics, SLOs &amp; alerts</a>
+    <a href="#knative">Knative deployment</a>
     <a href="#security">Safety &amp; honesty</a>
     <a href="#testing">Testing &amp; video</a>
     <a href="#next">Limits &amp; next steps</a>
@@ -97,7 +102,7 @@ footer { color: var(--muted); font-size: .9rem; border-top: 1px solid var(--line
     <header style="display:grid;gap:10px">
       <div class="eyebrow">Design discussion · how each feature is built</div>
       <h1>Yatra <span>Pulse</span>: component by component</h1>
-      <p class="lede">For each part of the board: what it's for, the code that implements it, the decisions we made and why, and the edge cases it handles. Function names refer to <code>index.html</code>; the MCP server lives in <code>mcp-server/</code>. The visual reference is the design guide (<code>docs/design.html</code>), and the requirements are in <code>SPEC.md</code>.</p>
+      <p class="lede">For each part of Yatra Pulse, from the board to the agent, evaluator, telemetry and Knative deployment: what it's for, the code that implements it, the decisions we made and why, and the edge cases it handles. Function names refer to <code>index.html</code>; the MCP server lives in <code>mcp-server/</code>. The visual reference is the design guide (<code>docs/design.html</code>), and the requirements are in <code>SPEC.md</code>.</p>
     </header>
 
     <section id="arch" aria-labelledby="archH">
@@ -239,8 +244,20 @@ status  = gap &lt; 0 &amp;&amp; differentVenue ? "Clash"
       <div class="decision"><b>Decision: retrieve-then-generate, not tool calls</b><p>The platform supports letting Claude call page functions, but each round is another paid request that takes longer. The corpus is small enough to retrieve up front in one step, so the plan arrives in a single call, and the key whitelist guarantees no invented events. The MCP server is where the tool-calling style is used, because desktop clients do multi-step work well.</p></div>
     </section>
 
+    <section id="agent" aria-labelledby="agentH">
+      <header><span class="num">11</span><h2 id="agentH">Agent goal and loop</h2></header>
+      <p>Both AI paths serve one goal (SPEC §6): <b>plan a Dasara trip a traveller can actually follow</b>. Every stop real, nothing clashing, every leg reachable by the chosen vehicle, gate deadlines respected, every stop cited.</p>
+      <div class="parts">
+        <div class="part"><b>Two agents</b><ul><li><b>Trip planner</b> (the board): retrieve once, one <code>sample.json()</code> call, deterministic checks. <b>Dasara concierge</b> (Claude Code / Desktop over MCP): multi-step tool use guided by the <code>plan_trip</code> prompt.</li></ul></div>
+        <div class="part"><b>Loop</b><ul><li>Retrieve → draft with retrieved keys only → trip check → revise (concierge) or flag in red (planner) → present with sources; the traveller decides what to add.</li></ul></div>
+        <div class="part"><b>Success measures</b><ul><li>Grounded 100%, invented 0, unflagged problems 0, wrong-day 0 (all computed by <code>scorePlan()</code> in the evaluator); retrieval hit@1 ≥ 0.80; one Claude call per page plan.</li></ul></div>
+        <div class="part"><b>Permissions</b><ul><li>Read-only tools. The agent never books, pays, writes traveller events or reads other people's data; writing the plan needs the traveller's tap.</li></ul></div>
+      </div>
+      <div class="decision"><b>Decision: the page planner flags, it doesn't auto-revise</b><p>A revise round would be a second paid Claude call and roughly double the wait. Showing problems in red keeps the traveller in control at a fixed cost. The MCP concierge, where multi-step work is natural, is told to fix and re-check.</p></div>
+    </section>
+
     <section id="community" aria-labelledby="cmH">
-      <header><span class="num">11</span><h2 id="cmH">Traveller events</h2></header>
+      <header><span class="num">12</span><h2 id="cmH">Traveller events</h2></header>
       <div class="parts">
         <div class="part"><b>Storage</b><ul><li><code>tips/&lt;userId&gt;</code> holds one person's submissions as <code>{items: [...]}</code>: private to them and the host. <code>approved/&lt;tipId&gt;</code> holds what the host approved: readable by everyone.</li></ul></div>
         <div class="part"><b>Access rules</b><ul><li>Root: read <code>view</code>, write <code>admin</code>. <code>tips</code>: read <code>admin</code>, write <code>owner</code>. <code>tips/{self}</code>: read and write <code>interact</code> (Contributor). Viewers can browse but not submit; only the owner can change someone else's status.</li></ul></div>
@@ -252,7 +269,7 @@ status  = gap &lt; 0 &amp;&amp; differentVenue ? "Clash"
     </section>
 
     <section id="booking" aria-labelledby="bookH">
-      <header><span class="num">12</span><h2 id="bookH">How to book</h2></header>
+      <header><span class="num">13</span><h2 id="bookH">How to book</h2></header>
       <div class="parts">
         <div class="part"><b>Content</b><ul><li>Static HTML: five numbered steps (check itinerary → official site → pay → collect at Spandhana Counter with ID → on the day), a price table, helpline 1077 and getting-there tips. The same facts are in <code>KNOWLEDGE</code> for search and MCP.</li></ul></div>
         <div class="part"><b>Book tickets links</b><ul><li>Ticketed events carry <code>book</code>; their link has <code>data-book</code>. The delegated click runs <code>checkStop()</code> and shows the result before the browser opens the official site. It never blocks the link.</li></ul></div>
@@ -262,7 +279,7 @@ status  = gap &lt; 0 &amp;&amp; differentVenue ? "Clash"
     </section>
 
     <section id="trips" aria-labelledby="tripsH">
-      <header><span class="num">13</span><h2 id="tripsH">Day trips and Gaya</h2></header>
+      <header><span class="num">14</span><h2 id="tripsH">Day trips and Gaya</h2></header>
       <div class="parts">
         <div class="part"><b>Day trips</b><ul><li><code>TRIPS</code> entries have <code>at: [lat, lng]</code>, distance, tags and a reason to go, sorted by distance. Adding one uses the day picker and an 8:00 am start, which trip check uses for the return time.</li></ul></div>
         <div class="part"><b>Gaya panel</b><ul><li>Static: Pitru Paksha 2026 ended on 10 October, next around September 2027, the rites and nearby places. Also a <code>KNOWLEDGE</code> passage, so Gaya questions work in search and MCP.</li></ul></div>
@@ -270,18 +287,66 @@ status  = gap &lt; 0 &amp;&amp; differentVenue ? "Clash"
     </section>
 
     <section id="mcp" aria-labelledby="mcpH">
-      <header><span class="num">14</span><h2 id="mcpH">MCP server</h2></header>
+      <header><span class="num">15</span><h2 id="mcpH">MCP server</h2></header>
       <div class="parts">
         <div class="part"><b>Loading</b><ul><li><code>board.js</code> reads <code>../index.html</code>, slices the SHARED block, and runs it in a Node <code>vm</code> context with a stub <code>document</code>. A trailing expression returns the data and functions.</li></ul></div>
         <div class="part"><b>Tools</b><ul><li><code>search_board</code> (BM25 passages with URLs), <code>get_day</code>, <code>check_itinerary</code> (calls <code>evaluateDay</code>), <code>booking_guide</code>. Inputs are zod schemas; all tools are read-only.</li></ul></div>
         <div class="part"><b>Resources and prompt</b><ul><li><code>yatra://schedule</code> (Markdown), <code>yatra://facts</code> (JSON), and <code>plan_trip</code>, which tells Claude to search, draft, check and fix, then cite sources.</li></ul></div>
-        <div class="part"><b>Transport</b><ul><li>stdio, so Claude Code (<code>.mcp.json</code>) and Claude Desktop start it as a local process.</li></ul></div>
+        <div class="part"><b>Transport</b><ul><li>stdio (<code>server.js</code>) for Claude Code (<code>.mcp.json</code>) and Claude Desktop; Streamable HTTP (<code>http.js</code>) for containers and Knative. Both build the same server from <code>app.js</code>, and every tool call is traced to Pulsar.</li></ul></div>
       </div>
       <div class="decision"><b>Decision: execute the page's code instead of exporting JSON</b><p>A JSON export would copy the data but not the trip-check rules or the ranking, and the copies would drift. Running the shared block keeps one source of truth. The SHARED-START comment warns that nothing in that block may touch the DOM at load time.</p></div>
     </section>
 
+    <section id="evaluator" aria-labelledby="evalH">
+      <header><span class="num">16</span><h2 id="evalH">Evaluator</h2></header>
+      <div class="parts">
+        <div class="part"><b>Datasets</b><ul><li><code>eval/datasets/retrieval.json</code>: 31 traveller questions with the passages that answer them. <code>tripcheck.json</code>: 10 itineraries with the statuses trip check must (and must not) give. <code>plans.json</code>: 4 AI-shaped plans with the verdict the plan scorer must reach.</li></ul></div>
+        <div class="part"><b>Scores</b><ul><li>Retrieval hit@1, recall@3, MRR@5; trip-check accuracy; plan-evaluator accuracy; search p50/p95 over 2,000 queries.</li></ul></div>
+        <div class="part"><b>Gates</b><ul><li><code>eval/thresholds.json</code>; exit code 1 below any gate, so CI fails. Each run is written to <code>eval/results/latest.json</code> and published to Pulsar <code>yatra-eval</code>.</li></ul></div>
+        <div class="part"><b>Reuse</b><ul><li>Loads the same shared code as the MCP server (<code>board.js</code>), so it scores exactly what ships.</li></ul></div>
+      </div>
+      <div class="decision"><b>Decision: label behaviour, not just answers</b><p>Trip-check cases list statuses that must appear <em>and</em> statuses that must not, so a change that adds a false "Clash" fails as surely as one that misses a real one. Plans are scored on grounding, invention, clashes and wrong days, the four ways an AI plan can mislead a traveller.</p></div>
+      <div class="risk"><p><b>What it caught:</b> the metrics showed "concert" searches returning nothing; the MCP test for it was passing on an empty list. Fix: category words (<code>CAT_WORDS</code>) in passages, and the test now requires a result. One known miss remains and is reported on every run ("stars" ranks the star-shaped Somanathapura temple first).</p></div>
+    </section>
+
+    <section id="telemetry" aria-labelledby="telH">
+      <header><span class="num">17</span><h2 id="telH">Telemetry to Apache Pulsar</h2></header>
+      <div class="parts">
+        <div class="part"><b>Client</b><ul><li><code>ops/pulsar.js</code> talks to Pulsar's WebSocket API with Node's built-in WebSocket: producer with acks and reconnect (0.5 s → 30 s backoff) and a 10 s connect timeout (a stalled WebSocket upgrade once hung a consumer forever); consumer with ack, negative-ack and poison handling.</li></ul></div>
+        <div class="part"><b>Events</b><ul><li><code>telemetry.span(tool, fn)</code> wraps each MCP tool: one <code>tool_call</code> event with trace id, ok/error, latency and domain results (results, zero_result, top_score; problems, clashes; events). Plus <code>server_start</code> and <code>server_stop</code>.</li></ul></div>
+        <div class="part"><b>Never hurts the service</b><ul><li>Fire-and-forget; events from the first 5 s wait in memory for the connection; when Pulsar is unreachable they go to <code>ops/telemetry.jsonl</code>; a failing describe function is ignored. Logs are JSON on stderr because stdout carries the MCP protocol.</li></ul></div>
+        <div class="part"><b>Privacy</b><ul><li>Search text is replaced by a hash and length unless <code>TELEMETRY_INCLUDE_QUERIES=1</code>.</li></ul></div>
+      </div>
+      <div class="decision"><b>Decision: Pulsar's WebSocket API instead of a native client</b><p>The official Node client needs a C++ library on every machine and container. The WebSocket API ships with Pulsar, works from any runtime with a WebSocket, and keeps the images small and dependency-free.</p></div>
+    </section>
+
+    <section id="metrics" aria-labelledby="metH">
+      <header><span class="num">18</span><h2 id="metH">Metrics, SLOs and alerts</h2></header>
+      <div class="parts">
+        <div class="part"><b>Consumer</b><ul><li><code>ops/metrics-consumer.js</code> subscribes to <code>yatra-telemetry</code> and <code>yatra-eval</code> with a <b>Failover</b> subscription (one active consumer; a Shared one split counts between overlapping pods during a Knative rollout), keeps counters, latency histograms (5 ms to 2.5 s buckets) and a 15-minute window.</li></ul></div>
+        <div class="part"><b>Outputs</b><ul><li><code>/metrics</code> (Prometheus), <code>/healthz</code>, <code>/stats</code>, and a dashboard that polls <code>/stats</code> every 5 s.</li></ul></div>
+        <div class="part"><b>SLOs</b><ul><li>Tool calls ≥ 99% successful; p95 ≤ 250 ms; ≥ 90% of searches non-empty; latest evaluator run passing. Each needs a minimum of data before it can breach.</li></ul></div>
+        <div class="part"><b>Alerts</b><ul><li>One <code>firing</code> event on breach and one <code>resolved</code> on recovery, published to <code>yatra-alerts</code>; unparseable messages go to <code>yatra-telemetry-dlq</code>. The same rules exist as Prometheus alerts and a PrometheusRule.</li></ul></div>
+        <div class="part"><b>Game day</b><ul><li><code>ops/simulate.js</code> injects errors, slow calls, empty searches and poison messages; on 11 Oct it fired the availability alert at 82.8% and routed the poison message to the DLQ.</li></ul></div>
+      </div>
+      <div class="decision"><b>Decision: SLOs computed by the consumer itself</b><p>Alerts work with no Prometheus at all (laptop, small on-prem), and the identical rules in <code>ops/alerts.yml</code> take over where Prometheus exists.</p></div>
+    </section>
+
+    <section id="knative" aria-labelledby="knH">
+      <header><span class="num">19</span><h2 id="knH">Deployment on Knative</h2></header>
+      <div class="parts">
+        <div class="part"><b>HTTP MCP</b><ul><li><code>mcp-server/app.js</code> builds the server; <code>server.js</code> runs it over stdio, <code>http.js</code> over Streamable HTTP. Stateless: a fresh server and transport per request, <code>/healthz</code>, <code>/readyz</code>, and SIGTERM drains telemetry before exit.</li></ul></div>
+        <div class="part"><b>Images</b><ul><li>nginx-unprivileged for the web board and docs; Node 22 Alpine for MCP and metrics; all non-root.</li></ul></div>
+        <div class="part"><b>Services</b><ul><li><code>yatra-web</code> 0–5 pods, <code>yatra-mcp</code> 0–10 (target 50 concurrent, 2 min scale-down delay), <code>yatra-metrics</code> exactly 1. Pulsar as a StatefulSet, or an existing cluster via <code>PULSAR_WS_URL</code>.</li></ul></div>
+        <div class="part"><b>Profiles</b><ul><li><code>deploy/k8s</code> for real clusters; <code>deploy/kind</code> for laptops (<code>dev.local</code> images, Docker Compose Pulsar).</li></ul></div>
+        <div class="part"><b>Verified</b><ul><li>kind + Knative 1.23: 9/9 smoke checks including telemetry MCP → Pulsar → metrics; web and MCP scaled to zero after 4 idle minutes; 2.2 s cold start.</li></ul></div>
+      </div>
+      <div class="decision"><b>Decision: stateless MCP, stateful metrics</b><p>Statelessness lets Knative scale the MCP server from zero to ten and back with no session affinity. The metrics consumer holds its SLO window in memory and must stay subscribed, so it is pinned to one replica rather than given scale-to-zero.</p></div>
+      <div class="risk"><p><b>Found while deploying:</b> Knative tried to resolve local image tags on Docker Hub (fixed with <code>dev.local</code> names), and Pulsar couldn't be scheduled next to Knative in a 1.9 GB Docker VM (laptop profile uses the Compose Pulsar; real clusters keep the StatefulSet).</p></div>
+    </section>
+
     <section id="security" aria-labelledby="secH">
-      <header><span class="num">15</span><h2 id="secH">Safety and honesty</h2></header>
+      <header><span class="num">20</span><h2 id="secH">Safety and honesty</h2></header>
       <div class="tablewrap"><table>
         <thead><tr><th>Concern</th><th>How it's handled</th></tr></thead>
         <tbody>
@@ -297,30 +362,35 @@ status  = gap &lt; 0 &amp;&amp; differentVenue ? "Clash"
     </section>
 
     <section id="testing" aria-labelledby="testH">
-      <header><span class="num">16</span><h2 id="testH">Testing and the video</h2></header>
+      <header><span class="num">21</span><h2 id="testH">Testing and the video</h2></header>
       <div class="parts">
         <div class="part"><b>Browser</b><ul><li><code>tests/run_dashboard.py</code> (Selenium): 16 checks, from page load to trip-check clashes and the booking warning. Each step lingers (<code>--pause</code>) and the window stays open at the end (<code>--hold</code>).</li></ul></div>
         <div class="part"><b>MCP</b><ul><li><code>mcp-server/test.js</code> connects as a real MCP client over stdio: 8 checks across tools, resources and the prompt.</li></ul></div>
+        <div class="part"><b>AI quality</b><ul><li><code>eval/run.js</code>: 31 search questions, 10 trip-check scenarios, 4 plan verdicts and a latency gate, in CI on every push.</li></ul></div>
+        <div class="part"><b>Operations</b><ul><li><code>ops/simulate.js</code> game day; <code>deploy/smoke-test.sh</code> checks a live Knative deployment end to end (9 checks).</li></ul></div>
         <div class="part"><b>Video</b><ul><li><code>video/make_video.py</code> drives the page in headless Chrome at 1.5× scale, runs scripted actions per scene, records frames at 8 fps, narrates with the macOS voice "Rishi", emulates dark mode and a phone with Chrome DevTools commands, and stitches 19 scenes with ffmpeg. It writes the YouTube chapters from the scene lengths.</li></ul></div>
       </div>
     </section>
 
     <section id="next" aria-labelledby="nextH">
-      <header><span class="num">17</span><h2 id="nextH">Limits and next steps</h2></header>
+      <header><span class="num">22</span><h2 id="nextH">Limits and next steps</h2></header>
       <div class="tablewrap"><table>
         <thead><tr><th>Today</th><th>Possible next step</th></tr></thead>
         <tbody>
           <tr><td>Event data refreshed by hand (last 11 Oct)</td><td>A scheduled job that re-checks sources and proposes updates for the host to approve</td></tr>
           <tr><td>Approximate venue coordinates and speeds</td><td>Verified coordinates; per-hour traffic factors for 21 October</td></tr>
           <tr><td>Neighbour-pair clash check</td><td>Full interval check across all stops of a day</td></tr>
-          <tr><td>Plan with Claude only on claude.ai</td><td>Offer the MCP prompt as the path for everyone else</td></tr>
+          <tr><td>Plan with Claude only on claude.ai</td><td>Offer the MCP prompt as the path for everyone else (already deployable over HTTP)</td></tr>
+          <tr><td>Page planner flags problems but doesn't revise</td><td>Optional second "fix it" round, at the traveller's request</td></tr>
+          <tr><td>Lexical search only; one known miss</td><td>Hybrid BM25 + embeddings when the corpus grows; cache the index</td></tr>
+          <tr><td>Single-node Pulsar in the cluster</td><td>Apache Pulsar Helm chart or managed Pulsar for production</td></tr>
           <tr><td>Saved plans keyed with the old "mm-" prefix in browser storage</td><td>Kept on purpose so existing plans survive the rename</td></tr>
           <tr><td>Dasara-only</td><td>The data model (events, venues, knowledge) generalises to other festivals</td></tr>
         </tbody>
       </table></div>
     </section>
 
-    <footer>Yatra Pulse · design discussion · written 11 October 2026 · code at github.com/srilav/yatra-pulse</footer>
+    <footer>Yatra Pulse · design discussion · updated 11 October 2026 (agent, evaluator, Pulsar, Knative) · code at github.com/srilav/yatra-pulse</footer>
   </main>
 </div>
 </body>

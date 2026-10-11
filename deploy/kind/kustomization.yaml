@@ -16,3 +16,8 @@ patches:
       - op: replace
         path: /data/PULSAR_WS_URL
         value: ws://yatra-pulsar:8080/ws/v2
+      # The laptop may also run ops/metrics-consumer.js on the same Pulsar; use a separate
+      # subscription so both see every event.
+      - op: replace
+        path: /data/METRICS_SUBSCRIPTION
+        value: yatra-metrics-cluster

@@ -17,6 +17,15 @@ const topicPath = (topic) => `persistent/${PULSAR_NAMESPACE}/${topic}`;
 const b64 = (obj) => Buffer.from(JSON.stringify(obj)).toString("base64");
 const unb64 = (s) => JSON.parse(Buffer.from(s, "base64").toString("utf8"));
 const backoff = (attempt) => Math.min(30000, 500 * 2 ** attempt);
+const CONNECT_TIMEOUT_MS = Number(process.env.PULSAR_CONNECT_TIMEOUT_MS || 10000);
+// A WebSocket upgrade can stall without ever opening or closing (seen while a subscription changed
+// type). Close it after a timeout so onclose runs and the normal reconnect takes over.
+function guard(ws) {
+  const t = setTimeout(() => { if (ws.readyState !== WebSocket.OPEN) try { ws.close(); } catch {} }, CONNECT_TIMEOUT_MS);
+  t.unref?.();
+  ws.addEventListener("open", () => clearTimeout(t));
+  ws.addEventListener("close", () => clearTimeout(t));
+}
 
 /** Producer with reconnect. send() never throws; it reports false when not connected so callers can fall back. */
 export class Producer {
@@ -37,6 +46,7 @@ export class Producer {
   connect() {
     if (this.closed) return;
     const ws = new WebSocket(this.url);
+    guard(ws);
     this.ws = ws;
     ws.onopen = () => { this.attempt = 0; this.onState("connected"); };
     ws.onmessage = (e) => {
@@ -104,6 +114,7 @@ export function consume(topic, subscription, onMessage, { onState = () => {}, on
   const connect = () => {
     if (closed) return;
     ws = new WebSocket(url);
+    guard(ws);
     ws.onopen = () => { attempt = 0; state.connected = true; onState("connected"); };
     ws.onmessage = async (e) => {
       let frame;

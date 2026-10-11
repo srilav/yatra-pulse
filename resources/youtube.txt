@@ -1,8 +1,8 @@
 TITLE
-Mysuru Dasara 2026: Schedule, How to Book, Trip Planner & Clash Checker | Yatra Pulse
+Mysuru Dasara 2026: Schedule, How to Book, AI Trip Planner & Clash Checker | Yatra Pulse
 
 DESCRIPTION
-Yatra Pulse is a live travel board for Mysuru Dasara 2026 (11–21 October). This tour shows every feature: what's on now, the full 11-day schedule with source links, filters, personal picks, DJ and party nights, building an itinerary, Trip check (flags two venues at the same time and whether you can get between stops by car, two-wheeler, auto or bus), Plan with Claude, how to book official tickets, traveller-added events checked by the host, day trips, Gaya Pitru Paksha info, dark mode and phone view.
+Yatra Pulse is a live travel board for Mysuru Dasara 2026 (11–21 October). This tour shows every feature: what's on now, the full 11-day schedule with source links, filters, personal picks, DJ and party nights, building an itinerary, Trip check (flags two venues at the same time and whether you can get between stops by car, two-wheeler, auto or bus), Plan with Claude, how to book official tickets, traveller-added events checked by the host, day trips, Gaya Pitru Paksha info, dark mode and phone view. It then covers how it's built: the architecture and the AI agent's goal, the evaluator that keeps the AI honest, telemetry on Apache Pulsar with live metrics and SLOs, and deployment on Kubernetes with Knative.
 
 Official tickets: https://mysoredasara.gov.in (TicketGenie is the only authorised seller)
 Dasara helpline: 1077
@@ -27,9 +27,13 @@ Chapters
 2:59 Gaya Pitru Paksha
 3:07 Dark mode
 3:12 On your phone
-3:17 Links
+3:17 Architecture and agent goal
+3:32 Evaluator quality gates
+3:46 Telemetry on Apache Pulsar
+3:59 Knative on Kubernetes
+4:13 Links
 
 Event times change. Confirm timings and passes with official Mysuru Dasara channels before you travel. Travel times are estimates; check live traffic on the day.
 
 TAGS
-Mysuru Dasara 2026, Mysore Dasara, Jamboo Savari, Yuva Dasara, Mysore Dasara schedule, Dasara Gold Card, Dasara tickets booking, Dasara itinerary, Mysore travel, Karnataka tourism, Srirangapatna, Gaya Pitru Paksha, AI trip planner, travel itinerary
+Mysuru Dasara 2026, Mysore Dasara, Jamboo Savari, Yuva Dasara, Mysore Dasara schedule, Dasara Gold Card, Dasara tickets booking, Dasara itinerary, Mysore travel, Karnataka tourism, Srirangapatna, Gaya Pitru Paksha, AI trip planner, travel itinerary, RAG, MCP, Apache Pulsar, Knative, Kubernetes

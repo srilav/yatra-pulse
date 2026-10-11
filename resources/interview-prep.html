@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Yatra Pulse Interview Prep</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Mukta:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: study guide. Sticky contents; decisions as a table; stories as cards; questions as
+   expandable answers so you can test yourself. Same palette and type as the app. */
+:root {
+  --bg: #F5F3F8; --surface: #FFFFFF; --ink: #241A33; --muted: #675E7C; --line: #E2DCEC;
+  --gold: #A9690F; --gold-soft: #F7EAD0; --bulb: #F2B544; --kumkum: #B3263E; --live: #1D7F54; --chip: #EEEAF4;
+  --f-display: "Yatra One", "Mukta", Georgia, serif;
+  --f-body: "Mukta", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #140F1F; --surface: #1D1630; --ink: #F1ECF8; --muted: #A99FBE; --line: #312849; --gold: #F2B544; --gold-soft: #3A2C17; --bulb: #FFC857; --kumkum: #F0607A; --live: #4CC38A; --chip: #2A2140; color-scheme: dark;
+} }
+:root[data-theme="dark"] { --bg: #140F1F; --surface: #1D1630; --ink: #F1ECF8; --muted: #A99FBE; --line: #312849; --gold: #F2B544; --gold-soft: #3A2C17; --bulb: #FFC857; --kumkum: #F0607A; --live: #4CC38A; --chip: #2A2140; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 1.02rem; line-height: 1.6; }
+.bulbs { height: 10px; background-image: radial-gradient(circle, var(--bulb) 0 3px, transparent 3.5px); background-size: 18px 10px; }
+.page { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 64px; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 40px; align-items: start; }
+@media (max-width: 900px) { .page { grid-template-columns: minmax(0, 1fr); } }
+nav.toc { position: sticky; top: calc(16px + env(safe-area-inset-top, 0px)); display: grid; gap: 2px; font-size: .92rem; }
+@media (max-width: 900px) { nav.toc { position: static; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } }
+nav.toc a { color: var(--muted); text-decoration: none; padding: 4px 8px; border-radius: 6px; }
+nav.toc a:hover, nav.toc a:focus-visible { color: var(--ink); background: var(--chip); outline: none; }
+main { display: grid; gap: 48px; min-width: 0; }
+h1, h2, h3 { margin: 0; text-wrap: balance; line-height: 1.2; }
+h1 { font-family: var(--f-display); font-weight: 400; font-size: clamp(2rem, 5vw, 2.9rem); } h1 span { color: var(--gold); }
+h2 { font-family: var(--f-display); font-weight: 400; font-size: 1.7rem; }
+h3 { font-size: 1.04rem; }
+p { margin: 0; max-width: 74ch; }
+.lede { color: var(--muted); font-size: 1.08rem; }
+.eyebrow { font-size: .74rem; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); font-weight: 700; }
+section { display: grid; gap: 16px; scroll-margin-top: 16px; }
+section > header { display: grid; gap: 4px; padding-top: 18px; border-top: 1px solid var(--line); }
+.num { font-family: var(--f-mono); font-size: .8rem; color: var(--gold); }
+.abstract { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--gold); border-radius: 10px; padding: 16px 18px; display: grid; gap: 10px; }
+.pitch { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.box { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.box ol, .box ul { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+.tablewrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+th { text-align: left; font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); padding: 0 10px 8px 0; vertical-align: bottom; }
+td { padding: 9px 10px 9px 0; border-top: 1px solid var(--line); vertical-align: top; }
+td:first-child { font-weight: 700; min-width: 150px; }
+.stories { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+.story { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 6px; align-content: start; }
+.story dl { margin: 0; display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 4px 10px; font-size: .92rem; }
+.story dt { color: var(--muted); font-size: .74rem; text-transform: uppercase; letter-spacing: .07em; font-weight: 700; padding-top: 3px; }
+.story dd { margin: 0; }
+.qa { display: grid; gap: 8px; }
+.qa h3 { margin-top: 10px; color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; }
+details { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; }
+details[open] { border-color: var(--gold); }
+summary { cursor: pointer; font-weight: 700; list-style: none; }
+summary::-webkit-details-marker { display: none; }
+summary::before { content: "＋ "; color: var(--gold); }
+details[open] summary::before { content: "－ "; }
+details p { margin-top: 8px; color: var(--ink); }
+.controls { display: flex; gap: 8px; flex-wrap: wrap; }
+button { font: inherit; font-size: .88rem; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 4px 14px; cursor: pointer; }
+button:hover, button:focus-visible { border-color: var(--gold); outline: none; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; }
+.stat b { display: block; font-family: var(--f-mono); font-size: 1.3rem; color: var(--gold); }
+.stat small { color: var(--muted); }
+code { font-family: var(--f-mono); font-size: .82em; background: var(--chip); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+a { color: var(--gold); }
+footer { color: var(--muted); font-size: .9rem; border-top: 1px solid var(--line); padding-top: 14px; }
+</style>
+</head>
+<body>
+<div class="bulbs" aria-hidden="true"></div>
+<div class="page">
+  <nav class="toc" aria-label="Contents">
+    <span class="eyebrow" style="padding:4px 8px">Contents</span>
+    <a href="#abstract">1 · Title &amp; abstract</a>
+    <a href="#pitch">2 · Pitches</a>
+    <a href="#walkthrough">3 · Architecture walkthrough</a>
+    <a href="#decisions">4 · Design decisions</a>
+    <a href="#stories">5 · Problems I solved</a>
+    <a href="#questions">6 · Practice questions</a>
+    <a href="#numbers">7 · Numbers to know</a>
+    <a href="#limits">8 · Limits &amp; next steps</a>
+    <a href="#honesty">9 · How it was built</a>
+  </nav>
+
+  <main>
+    <header style="display:grid;gap:10px">
+      <div class="eyebrow">Interview preparation · based on the Yatra Pulse project</div>
+      <h1>Yatra <span>Pulse</span>: design decision walkthrough</h1>
+      <p class="lede">Everything you need to present this project and defend its design: the abstract, a 30-second and a 2-minute pitch, the architecture in five steps, every major decision with alternatives and trade-offs, real debugging stories, practice questions with model answers, and the numbers to quote.</p>
+    </header>
+
+    <section id="abstract" aria-labelledby="absH">
+      <header><span class="num">01</span><h2 id="absH">Title, abstract and summary</h2></header>
+      <div class="abstract">
+        <div class="eyebrow">Title</div>
+        <h3 style="font-size:1.2rem">Yatra Pulse: Grounded, Feasibility-Checked AI Trip Planning for Festival Travel</h3>
+        <div class="eyebrow">Abstract</div>
+        <p>Festival travellers face dense, fast-changing schedules spread across venues kilometres apart, and generic AI assistants will happily invent events or propose plans that can't be followed. Yatra Pulse is a live travel board for Mysuru Dasara 2026 that combines a source-linked event schedule with a grounded AI planning agent. Every event, day trip and booking fact becomes a cited passage; a BM25 retriever selects the passages that match a traveller's style and dates; Claude drafts a day-by-day plan restricted to those passages; and a deterministic trip checker rejects nothing silently but flags clashes between venues, legs that can't be travelled in time by car, two-wheeler, auto-rickshaw or bus, gate deadlines and vehicle range. The same retrieval and checking code is exposed to Claude Code and Claude Desktop through a Model Context Protocol (MCP) server. Quality is enforced by an evaluator with labelled datasets (retrieval hit@1 0.97, recall@3 1.00, trip-check and plan-grounding accuracy 100%) gated in CI; every tool call is traced to Apache Pulsar, where a metrics consumer computes SLOs and raises alerts; and the system deploys as three Knative services on any Kubernetes cluster, verified end to end on kind with scale-to-zero and a 2.2 s cold start.</p>
+        <div class="eyebrow">Summary</div>
+        <ul style="margin:0;padding-left:20px;display:grid;gap:4px">
+          <li><b>Product:</b> 21 use cases: live schedule, filters, picks, itinerary, trip check, AI planner, booking guide, host-approved traveller events, day trips, Gaya panel; dark mode and phone.</li>
+          <li><b>AI:</b> one agent goal ("a plan a traveller can actually follow"), RAG over 37 passages, key whitelist, trip check on every draft, tips only from retrieved facts.</li>
+          <li><b>Interfaces:</b> claude.ai artifact, GitHub Pages, MCP over stdio and Streamable HTTP.</li>
+          <li><b>Quality:</b> 16 Selenium checks, 8 MCP protocol checks, evaluator with 45 labelled cases, CI gates.</li>
+          <li><b>Operations:</b> Pulsar telemetry with file fallback, Prometheus metrics, 4 SLOs, alerts, DLQ, runbook, game day.</li>
+          <li><b>Deployment:</b> Knative on Kubernetes (on-prem or any cloud), 9/9 smoke checks, scale to zero.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="pitch" aria-labelledby="pitchH">
+      <header><span class="num">02</span><h2 id="pitchH">Pitches</h2></header>
+      <div class="pitch">
+        <div class="box"><span class="eyebrow">30 seconds</span>
+          <p>"I built Yatra Pulse, a travel board for Mysuru Dasara with an AI trip planner that can't make things up. It retrieves only real events from the board, Claude drafts a plan from those, and a deterministic checker flags clashes and legs you can't travel in time. I exposed the same tools to Claude through MCP, measured quality with an evaluator in CI, traced every call to Apache Pulsar with SLOs and alerts, and deployed it on Knative so it scales to zero."</p></div>
+        <div class="box"><span class="eyebrow">2 minutes: structure</span>
+          <ol>
+            <li><b>Problem:</b> dense festival schedule, venues far apart, AI assistants hallucinate and ignore travel time.</li>
+            <li><b>Goal:</b> a plan a traveller can actually follow: real, clash-free, reachable, cited.</li>
+            <li><b>Approach:</b> retrieve → generate within a whitelist → verify deterministically.</li>
+            <li><b>Proof:</b> evaluator numbers; trip check catches the real 17 Oct clash.</li>
+            <li><b>Production thinking:</b> MCP for reuse, Pulsar telemetry and SLOs, Knative deployment.</li>
+            <li><b>What I learned:</b> two bugs only metrics could find; one rollout bug only deployment could find.</li>
+          </ol></div>
+      </div>
+    </section>
+
+    <section id="walkthrough" aria-labelledby="wH">
+      <header><span class="num">03</span><h2 id="wH">Architecture walkthrough (whiteboard in five steps)</h2></header>
+      <ol style="margin:0;padding-left:22px;display:grid;gap:8px;max-width:78ch">
+        <li><b>Data:</b> events, nightly shows, DJ nights, day trips and booking facts live in one shared block of <code>index.html</code>, each with a source URL and, for venues, coordinates.</li>
+        <li><b>Board:</b> plain HTML/CSS/JS renders the schedule every minute in IST; the itinerary saves to the claude.ai database or the browser.</li>
+        <li><b>Agent:</b> retrieve with BM25 → one Claude call with only retrieved keys → drop unknown keys → trip check → show problems and sources. The traveller decides.</li>
+        <li><b>MCP:</b> the same shared code runs in a Node MCP server (stdio for desktop, Streamable HTTP for the cluster) with search, day schedule, trip check and booking tools.</li>
+        <li><b>Operate:</b> each tool call → Pulsar <code>yatra-telemetry</code> → metrics consumer → Prometheus, SLOs, alerts; evaluator runs → <code>yatra-eval</code>; all deployed as Knative services.</li>
+      </ol>
+    </section>
+
+    <section id="decisions" aria-labelledby="dH">
+      <header><span class="num">04</span><h2 id="dH">Design decisions</h2><p class="lede">For each: what you chose, what else you considered, why, what it costs, and when you'd revisit it. Interviewers care most about the last two columns.</p></header>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Decision</th><th>Alternatives</th><th>Why</th><th>Cost / trade-off</th><th>Revisit when</th></tr></thead>
+        <tbody>
+          <tr><td>One HTML file, no framework</td><td>React/Next.js, build pipeline</td><td>Publishes as a single artifact, opens from disk, serves from nginx; ~15 events don't need a virtual DOM</td><td>Full re-renders; all handlers delegated; manual templating with escaping</td><td>Many contributors or complex client state</td></tr>
+          <tr><td>All times with a fixed +05:30 offset</td><td>Viewer's local time</td><td>Travellers plan from anywhere but attend in India; no DST surprises</td><td>Times always shown in IST</td><td>Multi-country festivals</td></tr>
+          <tr><td>Retrieve → generate in a whitelist → verify</td><td>Free-form generation; tool-calling loop in the page</td><td>Guarantees no invented events; one call is cheaper and faster than several rounds</td><td>Page planner flags problems instead of auto-revising</td><td>If users want "fix it" — add an opt-in second round</td></tr>
+          <tr><td>BM25 retrieval</td><td>Embeddings / vector DB, hybrid</td><td>~40 short passages full of proper nouns; instant, offline, identical in page and server; no model to host</td><td>Synonyms by hand; one known false match ("stars")</td><td>Corpus in the thousands or paraphrase-heavy queries → hybrid BM25 + embeddings</td></tr>
+          <tr><td>Deterministic trip check as the guardrail</td><td>Ask the LLM to check its own plan</td><td>Same answer every time, testable, explainable; catches what an LLM misses</td><td>Estimates: straight-line × 1.4, fixed festival speeds</td><td>Add a maps API with live traffic when keys and network are available</td></tr>
+          <tr><td>Haversine × 1.4 and per-vehicle speeds</td><td>Google Maps / OSRM routing</td><td>Artifact sandbox blocks outside calls; no API keys or per-request cost; right for the decisions that matter</td><td>Approximate; every leg links Google Maps for live traffic</td><td>Server-side planning with a routing service</td></tr>
+          <tr><td>MCP server reusing the page's code (vm)</td><td>Export JSON; rewrite logic in the server</td><td>One source of truth for data, rules and ranking; no drift</td><td>Shared block must never touch the DOM at load</td><td>If the board moves to a real backend</td></tr>
+          <tr><td>Stateless Streamable HTTP for MCP</td><td>Sessions with sticky routing</td><td>Any pod answers any request; Knative can scale 0 → 10</td><td>Fresh server per request (cheap here)</td><td>Long-running, stateful MCP workflows</td></tr>
+          <tr><td>Apache Pulsar via its WebSocket API</td><td>Native Pulsar client; Kafka; direct Prometheus</td><td>No C++ library in images; durable topics, subscriptions and DLQ; replay for new consumers</td><td>Own client code: reconnect, timeouts, acks</td><td>High throughput → native client</td></tr>
+          <tr><td>Telemetry that can't hurt the service</td><td>Synchronous logging to the broker</td><td>Fire-and-forget, startup buffer, file fallback, failures swallowed</td><td>Events can land in a file while Pulsar is down</td><td>Add a replay tool for the fallback file</td></tr>
+          <tr><td>Failover subscription for metrics</td><td>Shared subscription</td><td>One active consumer keeps counts whole during rollouts and restarts</td><td>No parallel consumption (not needed)</td><td>Partition topics if one consumer can't keep up</td></tr>
+          <tr><td>SLOs computed by the consumer itself</td><td>Rely only on Prometheus alerting</td><td>Alerts work on a laptop or small on-prem with no Prometheus</td><td>Rules exist twice (consumer + alerts.yml)</td><td>Standardise on one alerting stack</td></tr>
+          <tr><td>Evaluator with labelled datasets in CI</td><td>Manual spot checks; LLM-as-judge</td><td>Deterministic, cheap, blocks regressions; tests "must not" as well as "must"</td><td>Datasets need upkeep when data changes</td><td>Add LLM-judged plan quality for subjective aspects</td></tr>
+          <tr><td>Knative scale-to-zero (web, MCP); metrics pinned to 1</td><td>Plain Deployments with HPA</td><td>Pay nothing when idle; revisions and traffic splitting free</td><td>2.2 s cold start; metrics can't scale out</td><td>Latency-critical traffic → min-scale 1</td></tr>
+          <tr><td>Host approval for traveller events</td><td>Auto-publish with automated checks</td><td>A page can't verify that an event exists</td><td>Host workload; delay before publication</td><td>Trusted contributors or verified organisers</td></tr>
+          <tr><td>Privacy by default</td><td>Log raw queries</td><td>Queries can be personal; hash and length are enough for most analysis</td><td>Harder to debug empty searches (opt-in flag exists)</td><td>Never by default</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="stories" aria-labelledby="sH">
+      <header><span class="num">05</span><h2 id="sH">Problems I solved (STAR stories)</h2><p class="lede">Real issues from building this project. Each shows a different skill.</p></header>
+      <div class="stories">
+        <article class="story"><h3>Metrics revealed a test that lied</h3><dl>
+          <dt>Situation</dt><dd>MCP tests all passed.</dd>
+          <dt>Task</dt><dd>Wire metrics and check them against real traffic.</dd>
+          <dt>Action</dt><dd>Noticed 2 of 6 searches returned nothing; traced to "concert" vs passages saying "Type: music"; the test asserted "every result is on day 14", true for an empty list.</dd>
+          <dt>Result</dt><dd>Added category words to passages; test now requires a result; no evaluator regression. <b>Skill:</b> observability finds what tests miss.</dd></dl></article>
+        <article class="story"><h3>Pulsar shared subscription split my metrics</h3><dl>
+          <dt>Situation</dt><dd>Knative smoke test: telemetry counted 3 calls instead of 4.</dd>
+          <dt>Task</dt><dd>Explain the missing events.</dd>
+          <dt>Action</dt><dd>Found two consumers on one Shared subscription (laptop and cluster), then again during a rollout (old and new pods). Gave each consumer its own subscription and switched to Failover.</dd>
+          <dt>Result</dt><dd>9/9 checks; counts whole during rollouts. <b>Skill:</b> messaging semantics.</dd></dl></article>
+        <article class="story"><h3>A connection that never failed</h3><dl>
+          <dt>Situation</dt><dd>New metrics pod never became Ready after the subscription-type change.</dd>
+          <dt>Task</dt><dd>Find why reconnect logic didn't help.</dd>
+          <dt>Action</dt><dd>Reproduced from the host: the WebSocket upgrade stalled, firing neither open nor close, so backoff never ran. Added a 10 s connect timeout to producer and consumer.</dd>
+          <dt>Result</dt><dd>Consumers recover from stuck upgrades. <b>Skill:</b> failure modes beyond "error".</dd></dl></article>
+        <article class="story"><h3>Knative couldn't find local images</h3><dl>
+          <dt>Situation</dt><dd>Revisions stuck at RevisionMissing on kind.</dd>
+          <dt>Task</dt><dd>Deploy locally built images.</dd>
+          <dt>Action</dt><dd>Read the revision message: Knative resolves tags to digests on Docker Hub (401). Used <code>dev.local/</code> names, which Knative skips, in a kind-only overlay.</dd>
+          <dt>Result</dt><dd>Same app manifests for laptop and cloud. <b>Skill:</b> reading platform behaviour.</dd></dl></article>
+        <article class="story"><h3>Resource limits on a laptop cluster</h3><dl>
+          <dt>Situation</dt><dd>Pulsar pod Pending: insufficient memory.</dd>
+          <dt>Task</dt><dd>Run the full stack on a 1.9 GB Docker VM.</dd>
+          <dt>Action</dt><dd>Split manifests into app and Pulsar; the laptop profile points at an existing Pulsar, exactly like a managed Pulsar in production.</dd>
+          <dt>Result</dt><dd>Deployment verified; the production path unchanged. <b>Skill:</b> designing for environments.</dd></dl></article>
+        <article class="story"><h3>A video caught a mobile bug</h3><dl>
+          <dt>Situation</dt><dd>The recorded phone scene showed a shrunken desktop layout.</dd>
+          <dt>Task</dt><dd>Fix the video.</dd>
+          <dt>Action</dt><dd>Realised the standalone page had no viewport meta (the artifact host adds one), so real phones on GitHub Pages would have broken too.</dd>
+          <dt>Result</dt><dd>Fixed the product, not just the video. <b>Skill:</b> treat every artefact as a test.</dd></dl></article>
+        <article class="story"><h3>Grounding the AI planner</h3><dl>
+          <dt>Situation</dt><dd>First planner sent the whole board and trusted the output.</dd>
+          <dt>Task</dt><dd>Make it impossible to invent events and cheap to run.</dd>
+          <dt>Action</dt><dd>Added retrieval, a key whitelist, tips only from facts, and trip check on the draft; built an evaluator for invented, clashing and wrong-day stops.</dd>
+          <dt>Result</dt><dd>Grounded 100% by construction; measured in CI. <b>Skill:</b> AI safety by design.</dd></dl></article>
+      </div>
+    </section>
+
+    <section id="questions" aria-labelledby="qH">
+      <header><span class="num">06</span><h2 id="qH">Practice questions</h2><p class="lede">Say your answer out loud first, then open the model answer.</p>
+        <div class="controls"><button type="button" id="openAll">Open all answers</button><button type="button" id="closeAll">Close all</button></div></header>
+      <div class="qa">
+        <h3>Product and goals</h3>
+        <details><summary>What problem does Yatra Pulse solve, and for whom?</summary><p>Festival travellers in Mysuru during Dasara: a dense 11-day schedule across venues 5–15 km apart, ticket windows and gate deadlines. It shows what's on, builds a plan you can actually follow, and points to the official way to book. Secondary users: the host who curates traveller events, and developers who query it from Claude via MCP.</p></details>
+        <details><summary>What is the agent's goal, and how do you know it's met?</summary><p>"Plan a trip a traveller can actually follow": every stop real, nothing clashing, every leg reachable, gates respected, every stop cited. Measured by the evaluator's plan scorer (grounded 100%, invented 0, wrong-day 0), trip check on every draft (0 unflagged problems), and retrieval hit@1 ≥ 0.8 (0.97 today).</p></details>
+        <details><summary>Why not just ask ChatGPT or Claude directly?</summary><p>A general assistant doesn't know this year's schedule, invents plausible events, and doesn't compute travel time between venues. Yatra Pulse constrains generation to retrieved, sourced data and checks feasibility deterministically, so the answer is both current and followable.</p></details>
+        <h3>AI, RAG and agents</h3>
+        <details><summary>Walk me through the RAG pipeline.</summary><p>Each item becomes one passage with a key, day and URL (37 today). Query = style words + traveller note; BM25 (k1 1.4, b 0.75) ranks with day and kind filters; the planner takes 4 events per day, 3 nightly shows, 4 trips, 3 facts. Claude must answer with those keys; unknown keys are dropped; tips only from facts; the draft is trip-checked.</p></details>
+        <details><summary>Why BM25 and not a vector database?</summary><p>Small corpus of proper nouns where lexical match is strong; runs in the browser in under a millisecond with no model or network (the sandbox blocks network anyway); same results in page and MCP server. Measured: hit@1 0.97. I'd add embeddings in a hybrid when the corpus grows or queries become paraphrase-heavy; the known miss ("stars" → star-shaped temple) is exactly the kind of error hybrid ranking fixes.</p></details>
+        <details><summary>How do you prevent hallucinations?</summary><p>By construction rather than by prompting alone: whitelist of retrieved keys (anything else is dropped before display), tips only from retrieved facts, unannounced times never filled in, deterministic trip check, sources shown. The evaluator tests that invented stops are caught.</p></details>
+        <details><summary>Why does the page planner use one Claude call instead of an agent loop?</summary><p>Each tool round is another paid request and adds latency. With a small corpus, retrieving up front gives the model everything in one call; checks are deterministic code. The MCP concierge, where multi-step work is natural, does search → draft → check → revise.</p></details>
+        <details><summary>What is MCP and why use it here?</summary><p>Model Context Protocol: a standard way to give AI clients tools, resources and prompts. It lets Claude Code or Desktop use the same search and trip check as the board, so answers are grounded outside the web page too. I serve it over stdio for desktop clients and Streamable HTTP for Kubernetes.</p></details>
+        <h3>Evaluation and testing</h3>
+        <details><summary>How do you evaluate the AI parts?</summary><p>Labelled datasets: 31 retrieval questions (hit@1, recall@3, MRR@5), 10 trip-check scenarios with must and must-not statuses, 4 plans for the plan scorer, plus a latency gate. Thresholds in a file; CI fails below them; each run is published to Pulsar so the dashboard shows the latest score.</p></details>
+        <details><summary>What's your testing strategy end to end?</summary><p>Selenium for the real browser (16 checks), an MCP client over the real protocol (8), the evaluator for AI quality, a game day for alerting, and a smoke test against a live Knative deployment (9). CI runs MCP tests, the evaluator and image builds on every push.</p></details>
+        <details><summary>Tell me about a test that was wrong.</summary><p>The "search with a day filter" MCP test asserted all results were on day 14; it passed with zero results. Metrics showed empty searches; I fixed the data (category words) and the test now requires a result. Lesson: assertions over collections must also assert non-empty.</p></details>
+        <h3>Observability and operations</h3>
+        <details><summary>Why Apache Pulsar for telemetry?</summary><p>Durable topics decouple producers from consumers, subscriptions let new consumers replay, and a dead-letter topic isolates bad data. The WebSocket API avoided native client libraries in the images. Kafka would also work; Pulsar's subscription types (Failover) solved my rollout problem neatly.</p></details>
+        <details><summary>What are your SLOs and why those?</summary><p>≥ 99% tool calls succeed (a failure means Claude answers without the board), p95 ≤ 250 ms (tools run inside a conversation), ≥ 90% searches non-empty (empty pushes Claude to answer from memory), and evaluator passing (quality). 15-minute window with minimum data before breach; alerts fire once and resolve once.</p></details>
+        <details><summary>How do you make sure telemetry doesn't take the service down?</summary><p>Fire-and-forget sends, a short in-memory buffer at startup, file fallback when Pulsar is unreachable, describe-function errors swallowed, logs on stderr (stdout is the MCP protocol), connect timeouts and backoff. A tool call never waits on the broker.</p></details>
+        <details><summary>Shared vs Failover vs Key_Shared subscriptions?</summary><p>Shared: messages round-robin across consumers (scale out, but each sees a subset). Failover: one active consumer, others standby (order and whole counts). Key_Shared: per-key ordering across consumers. My metrics consumer needs whole counts, so Failover; I learnt this when a Knative rollout overlapped two consumers.</p></details>
+        <h3>Kubernetes and Knative</h3>
+        <details><summary>Why Knative rather than plain Deployments?</summary><p>Scale to zero for idle services, request-based autoscaling, immutable revisions and traffic splitting out of the box, and the same manifests on any cluster. Verified: web and MCP scaled to zero after 4 idle minutes; 2.2 s cold start.</p></details>
+        <details><summary>Why is the metrics consumer pinned to one replica?</summary><p>It holds the SLO window in memory and must stay subscribed to receive telemetry; scale-to-zero would drop events and windows. With Failover subscriptions, overlapping pods during rollouts are safe.</p></details>
+        <details><summary>How would you run this on-prem vs in the cloud?</summary><p>Same Knative manifests. On-prem: k3s/RKE2/OpenShift with the Knative Operator or OpenShift Serverless, Pulsar via Helm on local storage. Cloud: GKE/EKS/AKS with Knative, Pulsar via Helm or a managed service; point <code>PULSAR_WS_URL</code> at it. Images in any registry via kustomize.</p></details>
+        <details><summary>How did you secure the containers?</summary><p>Non-root images, runAsNonRoot with explicit UIDs, no privilege escalation, all capabilities dropped, RuntimeDefault seccomp, memory limits, read-only tools, no secrets in config.</p></details>
+        <h3>Scaling and trade-offs</h3>
+        <details><summary>What breaks first at 100× traffic?</summary><p>The metrics consumer (single, in-memory) and per-call BM25 index rebuilds. Fixes: cache the index, partition telemetry and aggregate per partition or move aggregation to Prometheus, run Pulsar via its Helm chart, raise MCP max-scale.</p></details>
+        <details><summary>What would you change if you started again?</summary><p>Put data in a small JSON store with a schema from day one instead of inside the HTML, design subscription types up front, add a connect timeout to every network client by default, and add a property-based test for trip check across random itineraries.</p></details>
+      </div>
+    </section>
+
+    <section id="numbers" aria-labelledby="nH">
+      <header><span class="num">07</span><h2 id="nH">Numbers to know</h2></header>
+      <div class="stats">
+        <div class="stat"><b>21</b><small>use cases</small></div>
+        <div class="stat"><b>15 · 37</b><small>events · retrieval passages</small></div>
+        <div class="stat"><b>0.97 · 1.00</b><small>hit@1 · recall@3 (31 questions)</small></div>
+        <div class="stat"><b>10/10 · 4/4</b><small>trip-check · plan cases</small></div>
+        <div class="stat"><b>0.8 ms</b><small>search p95</small></div>
+        <div class="stat"><b>16 · 8 · 9</b><small>Selenium · MCP · smoke checks</small></div>
+        <div class="stat"><b>4</b><small>SLOs (99%, 250 ms, 90%, eval)</small></div>
+        <div class="stat"><b>4</b><small>Pulsar topics</small></div>
+        <div class="stat"><b>2.2 s</b><small>Knative cold start</small></div>
+        <div class="stat"><b>0 → 10</b><small>MCP pods (scale to zero)</small></div>
+      </div>
+    </section>
+
+    <section id="limits" aria-labelledby="lH">
+      <header><span class="num">08</span><h2 id="lH">Limits and next steps (say these before they ask)</h2></header>
+      <ul style="margin:0;padding-left:20px;display:grid;gap:6px;max-width:80ch">
+        <li>Event data is curated by hand (last checked 11 Oct 2026); next: a scheduled job that proposes updates for the host to approve.</li>
+        <li>Travel times are estimates from approximate coordinates; next: a routing service with live traffic where network is allowed.</li>
+        <li>Trip check compares neighbouring stops; next: full interval checks and property-based tests.</li>
+        <li>Lexical retrieval with one known miss; next: hybrid BM25 + embeddings when the corpus grows.</li>
+        <li>Single-node Pulsar on the laptop; production uses the Pulsar Helm chart or a managed service.</li>
+        <li>The page planner flags but doesn't revise; next: an opt-in "fix it" round.</li>
+      </ul>
+    </section>
+
+    <section id="honesty" aria-labelledby="hH">
+      <header><span class="num">09</span><h2 id="hH">How it was built</h2></header>
+      <p>This project was built in one session with Claude Code as an AI pair-programmer: the decisions above were discussed and chosen in that session, and every part was run and verified (tests, evaluator, deployment) rather than only written. In an interview, say so plainly, and show that you understand each decision and can change it. Good preparation: re-run <code>node eval/run.js</code>, <code>./deploy/smoke-test.sh</code> and the Selenium suite yourself, and be ready to explain the trip-check formula and the Failover fix from memory. The full session transcript is in <code>resources/session-transcript.md</code>.</p>
+    </section>
+
+    <footer>Yatra Pulse · interview preparation · 11 October 2026 · github.com/srilav/yatra-pulse</footer>
+  </main>
+</div>
+<script>
+document.getElementById("openAll").addEventListener("click", () => document.querySelectorAll("details").forEach((d) => (d.open = true)));
+document.getElementById("closeAll").addEventListener("click", () => document.querySelectorAll("details").forEach((d) => (d.open = false)));
+</script>
+</body>
+</html>

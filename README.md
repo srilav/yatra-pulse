@@ -2,6 +2,18 @@
 
 A live festival travel board for **Mysuru Dasara 2026** (11–21 October), built for travellers who want the culture, not just the crowd.
 
+**Grounded, feasibility-checked AI trip planning for festival travel**
+
+> Festival travellers face dense, fast-changing schedules spread across venues kilometres apart, and generic AI assistants invent events or propose plans that can't be followed. Yatra Pulse is a live travel board for Mysuru Dasara 2026 that pairs a source-linked schedule with a grounded AI planning agent: a BM25 retriever selects cited passages matching a traveller's style and dates, Claude drafts a day-by-day plan restricted to those passages, and a deterministic trip checker flags clashes between venues, legs that can't be travelled in time by car, two-wheeler, auto-rickshaw or bus, gate deadlines and vehicle range. The same retrieval and checks are exposed to Claude Code and Claude Desktop through an MCP server. An evaluator with labelled datasets gates quality in CI (retrieval hit@1 0.97, recall@3 1.00, trip-check and plan-grounding accuracy 100%); every tool call is traced to Apache Pulsar, where a metrics consumer computes SLOs and raises alerts; and the system deploys as three Knative services on any Kubernetes, verified end to end with scale-to-zero and a 2.2 s cold start.
+
+| | |
+|---|---|
+| Product | 21 use cases: live schedule, itinerary, trip check, AI planner, booking guide, traveller events, day trips |
+| AI | One agent goal, RAG over 37 cited passages, key whitelist, trip check on every draft |
+| Quality | 16 Selenium + 8 MCP checks, evaluator with 45 labelled cases, CI gates |
+| Operations | Apache Pulsar telemetry, Prometheus metrics, 4 SLOs, alerts, runbook |
+| Deployment | Knative on Kubernetes, on-prem or any cloud; 9/9 smoke checks |
+
 ## Open it
 
 | Page | Link |
@@ -12,6 +24,8 @@ A live festival travel board for **Mysuru Dasara 2026** (11–21 October), built
 | How each feature is built | https://srilav.github.io/yatra-pulse/resources/design-discussion.html |
 | Design guide | https://srilav.github.io/yatra-pulse/docs/design.html |
 | Video walkthrough | https://www.youtube.com/watch?v=VNpOtIx-vuU |
+| Interview prep: design decisions, stories, Q&A | https://srilav.github.io/yatra-pulse/resources/interview-prep.html |
+| Session transcript (how it was built) | [resources/session-transcript.md](resources/session-transcript.md) |
 
 On GitHub Pages the schedule, itinerary, trip check, booking guide and day trips all work, with plans saved in your browser. Plan with Claude and traveller events need the claude.ai version.
 
@@ -21,7 +35,7 @@ On GitHub Pages the schedule, itinerary, trip check, booking guide and day trips
 
 ▶️ **Watch on YouTube: https://www.youtube.com/watch?v=VNpOtIx-vuU**
 
-A 3½-minute narrated tour of every feature, with chapters on YouTube: live board, schedule, filters, picks, itinerary, Trip check (clashes, travel time by vehicle), Plan with Claude, booking, traveller events, day trips, Gaya, dark mode and phone. The MP4 is also in [`resources/yatra-pulse.mp4`](resources/yatra-pulse.mp4). YouTube title, description, chapters and tags are in [`resources/youtube.txt`](resources/youtube.txt).
+A 4½-minute narrated tour of every feature plus the architecture, evaluator, Pulsar telemetry and Knative deployment, with chapters: live board, schedule, filters, picks, itinerary, Trip check (clashes, travel time by vehicle), Plan with Claude, booking, traveller events, day trips, Gaya, dark mode and phone. The MP4 is also in [`resources/yatra-pulse.mp4`](resources/yatra-pulse.mp4). YouTube title, description, chapters and tags are in [`resources/youtube.txt`](resources/youtube.txt).
 
 To regenerate it (macOS, uses the `say` voice "Rishi"):
 
@@ -74,6 +88,7 @@ Three Knative services (web board, MCP server over HTTP, metrics consumer) plus 
 
 ```bash
 ./deploy/kind-up.sh && ./deploy/smoke-test.sh   # laptop
+./deploy/teardown-local.sh                      # bring it all down (--purge, --dry-run)
 kubectl apply -k deploy/k8s                     # any cluster with Knative (images in your registry)
 ```
 
