@@ -7,6 +7,7 @@ Yatra Pulse is a live travel board for **Mysuru Dasara 2026 (11–21 October)**.
 | Live board | https://claude.ai/artifact/1KQUyk25gdmTGtbnHSxgJX (claude.ai Artifact) |
 | Design guide | [`docs/design.html`](docs/design.html) · https://claude.ai/artifact/2PCxFoPpMJ7vepwaYKzcYE |
 | Code | `index.html` (the whole app), `mcp-server/` (MCP + RAG), `tests/`, `video/` |
+| Video walkthrough | https://www.youtube.com/watch?v=VNpOtIx-vuU |
 | Data last checked | 11 October 2026 |
 
 ---

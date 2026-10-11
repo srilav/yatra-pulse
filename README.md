@@ -6,9 +6,11 @@ Live version: https://claude.ai/artifact/1KQUyk25gdmTGtbnHSxgJX
 
 ## Video walkthrough
 
-[![Yatra Pulse video walkthrough](resources/thumbnail.png)](resources/yatra-pulse.mp4)
+[![Watch the Yatra Pulse walkthrough on YouTube](resources/thumbnail.png)](https://www.youtube.com/watch?v=VNpOtIx-vuU)
 
-A 3½-minute narrated tour of every feature: live board, schedule, filters, picks, itinerary, Trip check (clashes, travel time by vehicle), Plan with Claude, booking, traveller events, day trips, Gaya, dark mode and phone: [`resources/yatra-pulse.mp4`](resources/yatra-pulse.mp4). YouTube title, description, chapters and tags are in [`resources/youtube.txt`](resources/youtube.txt).
+▶️ **Watch on YouTube: https://www.youtube.com/watch?v=VNpOtIx-vuU**
+
+A 3½-minute narrated tour of every feature, with chapters on YouTube: live board, schedule, filters, picks, itinerary, Trip check (clashes, travel time by vehicle), Plan with Claude, booking, traveller events, day trips, Gaya, dark mode and phone. The MP4 is also in [`resources/yatra-pulse.mp4`](resources/yatra-pulse.mp4). YouTube title, description, chapters and tags are in [`resources/youtube.txt`](resources/youtube.txt).
 
 To regenerate it (macOS, uses the `say` voice "Rishi"):
 
