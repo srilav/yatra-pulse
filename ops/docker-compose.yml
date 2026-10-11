@@ -1,0 +1,25 @@
+# Local Apache Pulsar for Yatra Pulse telemetry and eval results.
+#   docker compose -f ops/docker-compose.yml up -d
+# Broker: pulsar://localhost:6650 · Admin + WebSocket API: http://localhost:8080
+services:
+  pulsar:
+    image: apachepulsar/pulsar:4.2.4
+    container_name: yatra-pulsar
+    command: bin/pulsar standalone --no-functions-worker --no-stream-storage
+    environment:
+      PULSAR_MEM: "-Xms512m -Xmx1g -XX:MaxDirectMemorySize=512m"
+      PULSAR_PREFIX_webSocketServiceEnabled: "true"
+    ports:
+      - "6650:6650"
+      - "8080:8080"
+    volumes:
+      - pulsar-data:/pulsar/data
+    healthcheck:
+      test: ["CMD", "bin/pulsar-admin", "brokers", "healthcheck"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 30s
+    restart: unless-stopped
+volumes:
+  pulsar-data:

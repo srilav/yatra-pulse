@@ -1,0 +1,26 @@
+{
+  "description": "AI-drafted plans (the shape Plan with Claude and the MCP plan_trip prompt produce) with the verdict the plan evaluator must reach.",
+  "cases": [
+    { "name": "Grounded, clash-free music plan",
+      "plan": { "days": [
+        { "day": 14, "stops": [{ "key": "trip:Somanathapura", "time": "08:00" }, { "key": "ev:14:Shankar-Ehsaan-Loy live", "time": "17:30" }] },
+        { "day": 15, "stops": [{ "key": null, "title": "Breakfast at Mylari", "time": "09:00" }, { "key": "ev:15:Sid Sriram live", "time": "17:30" }] }
+      ] },
+      "expect": { "grounded": 1, "invented": 0, "problems": 0 } },
+    { "name": "Invented event",
+      "plan": { "days": [
+        { "day": 16, "stops": [{ "key": "ev:16:Secret DJ Night", "time": "21:00" }, { "key": "ev:16:Sandalwood Nights", "time": "17:30" }] }
+      ] },
+      "expect": { "grounded": 0.5, "invented": 1, "problems": 0 } },
+    { "name": "Clash the planner should not produce",
+      "plan": { "days": [
+        { "day": 17, "stops": [{ "key": "ev:17:Drone show", "time": "16:30" }, { "key": "ev:17:Jasmine Sandlas closing night", "time": "17:30" }] }
+      ] },
+      "expect": { "grounded": 1, "invented": 0, "problems": 1 } },
+    { "name": "Event placed on the wrong day",
+      "plan": { "days": [
+        { "day": 12, "stops": [{ "key": "ev:15:Sid Sriram live", "time": "17:30" }] }
+      ] },
+      "expect": { "grounded": 1, "invented": 0, "problems": 0, "wrong_day": 1 } }
+  ]
+}

@@ -211,12 +211,22 @@ Then ask, for example: *"I'm in Mysuru 17–18 Oct and love live music. What can
 - **Claude in Chrome** (browser MCP) was used to diagnose and reconnect Chrome during setup.
 - The board itself does not call MCP connectors. The artifact runtime's `mcp` capability could let the page call a viewer's connectors (for example a calendar), but that would need each viewer's consent and connected accounts, so it is left out for now.
 
+## 7a. Evaluation, metrics and observability
+
+| Part | Where | What it does |
+|---|---|---|
+| Evaluator | `eval/run.js`, `eval/datasets/*.json`, `eval/thresholds.json` | Scores search (hit@1, recall@3, MRR@5), trip check accuracy, plan grounding (invented stops, clashes, wrong-day stops) and search latency; fails below thresholds; publishes each run to Pulsar `yatra-eval` |
+| Telemetry | `ops/telemetry.js`, `ops/pulsar.js` | One JSON event per MCP tool call to Pulsar `yatra-telemetry` via the WebSocket API; startup buffer; file fallback; never blocks a tool |
+| Metrics consumer | `ops/metrics-consumer.js`, `ops/dashboard.html` | Counters and latency histograms, Prometheus `/metrics`, `/healthz`, `/stats`, dashboard; SLOs over 15 min; alerts to `yatra-alerts`; dead-letter topic |
+| Operations | `ops/RUNBOOK.md`, `ops/alerts.yml`, `ops/simulate.js`, `.github/workflows/ci.yml` | Runbook per alert, Prometheus rules, game-day scenarios, CI gates |
+
 ## 8. Quality and testing
 
 | Suite | Command | Checks |
 |---|---|---|
 | Browser (Selenium) | `.venv/bin/python tests/run_dashboard.py --hold 10 --pause 2` | 16: load, now & next, sources, filters, itinerary add/remove, picks, traveller form checks, board search, clash, toast, gate time, travel time, vehicle range, book warning |
-| MCP | `cd mcp-server && npm test` | 8: tool list, search ranking, facts, day filter, get_day, clash, vehicle range, schedule resource |
+| MCP | `cd mcp-server && npm test` | 8: tool list, search ranking, facts, day search, get_day, clash, vehicle range, schedule resource |
+| Evaluator | `node eval/run.js` | 31 search queries, 10 trip-check scenarios, 4 plan verdicts, latency gate |
 
 Accessibility: status in words or shapes as well as color, `aria-pressed` toggles, `role="status"` messages, visible focus, reduced motion respected, no pop-up dialogs.
 

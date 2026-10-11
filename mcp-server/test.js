@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { fileURLToPath } from "node:url";
 
 const client = new Client({ name: "yatra-pulse-test", version: "1.0.0" });
-await client.connect(new StdioClientTransport({ command: process.execPath, args: [fileURLToPath(new URL("./server.js", import.meta.url))] }));
+await client.connect(new StdioClientTransport({ command: process.execPath, args: [fileURLToPath(new URL("./server.js", import.meta.url))], env: { ...process.env, TELEMETRY: process.env.TELEMETRY || "off" } }));
 const call = async (name, args = {}) => JSON.parse((await client.callTool({ name, arguments: args })).content[0].text);
 let passed = 0;
 const check = async (label, fn) => { await fn(); passed++; console.log(`PASS  ${label}`); };
@@ -25,8 +25,9 @@ await check("search_board answers a booking question from facts", async () => {
   const hits = await call("search_board", { query: "Gold Card price", kinds: ["kb"] });
   assert.match(hits[0].text, /6,961/);
 });
-await check("search_board day filter keeps undated passages only", async () => {
+await check("search_board finds a concert on a given day", async () => {
   const hits = await call("search_board", { query: "concert", day: 14, kinds: ["ev"] });
+  assert.ok(hits.length > 0, "expected at least one concert on 14 Oct");
   assert.ok(hits.every((h) => h.day === 14));
 });
 await check("get_day returns Jamboo Savari with gate time", async () => {

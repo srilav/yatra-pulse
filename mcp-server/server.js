@@ -6,8 +6,13 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import { loadBoard } from "./board.js";
+import { createTelemetry, INCLUDE_QUERIES, hashText } from "../ops/telemetry.js";
 
 const B = loadBoard();
+const tel = createTelemetry({ service: "yatra-pulse-mcp" });
+// Wrap a tool handler: one telemetry event per call with latency, ok/error and domain attributes.
+const traced = (tool, describeInput, describeResult, handler) => (args) =>
+  tel.span(tool, () => handler(args), { input: describeInput(args), describe: (r) => describeResult(JSON.parse(r.content[0].text), args) });
 const KINDS = ["ev", "nt", "dj", "trip", "kb"];
 const json = (data) => ({ content: [{ type: "text", text: JSON.stringify(data, null, 2) }] });
 const dayLabel = (d) => B.fmtD.format(B.T(d, "12:00"));
@@ -24,15 +29,18 @@ server.registerTool("search_board", {
     k: z.number().int().min(1).max(20).optional().describe("How many passages, default 6"),
   },
   annotations: { readOnlyHint: true },
-}, async ({ query, day, kinds, k }) =>
-  json(B.searchBoard(query, { day, kinds, k: k ?? 6 }).filter((p) => p.score > 0).map(({ key, kind, day, title, text, url, score }) => ({ key, kind, day, title, text, url, score }))));
+}, traced("search_board",
+  ({ query, day, kinds, k }) => ({ query_hash: hashText(query), query_len: String(query).length, ...(INCLUDE_QUERIES ? { query: String(query).slice(0, 120) } : {}), day, kinds, k }),
+  (hits) => ({ results: hits.length, zero_result: hits.length === 0, top_score: hits[0]?.score ?? 0, top_kind: hits[0]?.kind }),
+  async ({ query, day, kinds, k }) =>
+    json(B.searchBoard(query, { day, kinds, k: k ?? 6 }).filter((p) => p.score > 0).map(({ key, kind, day, title, text, url, score }) => ({ key, kind, day, title, text, url, score })))));
 
 server.registerTool("get_day", {
   title: "Schedule for one day",
   description: "All events on one day of Mysuru Dasara 2026 (11–21 October) plus the shows that run every night, with times in IST, venues, ticket links and sources.",
   inputSchema: { day: z.number().int().min(11).max(21).describe("Day of October, 11 to 21") },
   annotations: { readOnlyHint: true },
-}, async ({ day }) => json({
+}, traced("get_day", ({ day }) => ({ day }), (r) => ({ events: r.events.length }), async ({ day }) => json({
   day: dayLabel(day),
   festival_day: day - 10,
   events: B.EVENTS.filter((e) => e.d === day).map((e) => ({
@@ -40,7 +48,7 @@ server.registerTool("get_day", {
     gates_close: e.arriveBy, place: e.place, note: e.note, book: e.book, source: e.url,
   })),
   every_night: B.NIGHTLY.map((n) => ({ key: "nt:" + n.title, title: n.title, time: `${n.s}–${n.e}`, place: n.place, source: n.url })),
-}));
+})));
 
 server.registerTool("check_itinerary", {
   title: "Trip check an itinerary",
@@ -54,7 +62,11 @@ server.registerTool("check_itinerary", {
     mode: z.enum(["car", "bike", "auto", "bus"]).optional().describe("car = car or taxi, bike = two-wheeler, auto = auto-rickshaw, bus"),
   },
   annotations: { readOnlyHint: true },
-}, async ({ stops, mode }) => {
+}, traced("check_itinerary",
+  ({ stops, mode }) => ({ stops: stops.length, days: new Set(stops.map((s) => s.day)).size, mode: mode ?? "car" }),
+  (r) => ({ problems: r.summary.problems, to_watch: r.summary.to_watch, unknown_keys: r.unknown_keys.length,
+    clashes: r.days.flatMap((d) => d.legs).filter((l) => /^Clash/.test(l.text)).length }),
+  async ({ stops, mode }) => {
   const m = mode ?? "car";
   const unknown = [];
   const entries = stops.map((s) => {
@@ -75,13 +87,14 @@ server.registerTool("check_itinerary", {
     unknown_keys: unknown,
     note: "Distances are straight-line × 1.4 with Dasara traffic speeds; check live traffic with the route links.",
   });
-});
+}));
 
 server.registerTool("booking_guide", {
   title: "How to book Dasara tickets",
   description: "Official booking steps, ticket prices, gate times, getting there and the helpline, each with its source.",
   annotations: { readOnlyHint: true },
-}, async () => json(B.KNOWLEDGE.filter((k) => ["booking", "prices", "gates", "travel"].includes(k.id))));
+}, traced("booking_guide", () => ({}), (r) => ({ facts: r.length }),
+  async () => json(B.KNOWLEDGE.filter((k) => ["booking", "prices", "gates", "travel"].includes(k.id)))));
 
 server.registerResource("schedule", "yatra://schedule", {
   title: "Mysuru Dasara 2026 schedule",
@@ -124,5 +137,22 @@ server.registerPrompt("plan_trip", {
     },
   }],
 }));
+
+const startedAt = Date.now();
+tel.emit("server_start", { events: B.EVENTS.length, passages: B.boardPassages().length, telemetry_mode: tel.mode });
+tel.log("info", "server started", { events: B.EVENTS.length, telemetry: tel.mode });
+
+// Graceful shutdown: record the stop and drain pending telemetry before exiting.
+let stopping = false;
+const shutdown = async (reason) => {
+  if (stopping) return;
+  stopping = true;
+  tel.emit("server_stop", { reason, uptime_s: Math.round((Date.now() - startedAt) / 1000), telemetry: tel.counts });
+  await tel.close();
+  process.exit(0);
+};
+process.on("SIGINT", () => shutdown("SIGINT"));
+process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.stdin.on("close", () => shutdown("client_disconnected"));
 
 await server.connect(new StdioServerTransport());

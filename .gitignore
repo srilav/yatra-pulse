@@ -4,3 +4,5 @@ __pycache__/
 .DS_Store
 video/out/
 node_modules/
+eval/results/
+ops/telemetry.jsonl

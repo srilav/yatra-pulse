@@ -692,13 +692,16 @@ const STYLE_WORDS = {
   family: "family show air drone lights gardens exhibition",
 };
 
+// Words people use for each category, so "concert" or "party" finds events typed music or dj.
+const CAT_WORDS = { music: "music concert live performance", dj: "dj party night concert", ritual: "ritual puja religious", show: "show spectacle" };
+
 function boardPassages() {
   const dayText = (d) => fmtD.format(T(d, "12:00"));
   const out = [
     ...EVENTS.map((e) => ({ key: `ev:${e.d}:${e.title}`, kind: "ev", day: e.d, title: e.title, url: e.url,
-      text: `${e.title}. ${dayText(e.d)}, ${e.tba && e.s === "00:00" ? "time not announced" : `${e.s} to ${e.e}`}. ${e.place}. ${e.note} Type: ${e.cat}. ${e.tags.join(" ")}.` })),
+      text: `${e.title}. ${dayText(e.d)}, ${e.tba && e.s === "00:00" ? "time not announced" : `${e.s} to ${e.e}`}. ${e.place}. ${e.note} ${CAT_WORDS[e.cat] || e.cat}. ${e.tags.join(" ")}.` })),
     ...NIGHTLY.map((n) => ({ key: "nt:" + n.title, kind: "nt", title: n.title, url: n.url,
-      text: `${n.title}. Every night 11 to 21 October, ${n.s} to ${n.e}. ${n.place}. ${n.note} Type: ${n.cat}. ${n.tags.join(" ")}.` })),
+      text: `${n.title}. Every night 11 to 21 October, ${n.s} to ${n.e}. ${n.place}. ${n.note} ${CAT_WORDS[n.cat] || n.cat}. ${n.tags.join(" ")}.` })),
     ...DJ.map((x) => ({ key: "dj:" + x.title, kind: "dj", title: x.title, url: x.url, text: `${x.title}. ${x.meta}. ${x.note} DJ party night.` })),
     ...TRIPS.map((t) => ({ key: "trip:" + t.name, kind: "trip", title: t.name, url: t.url,
       text: `Day trip to ${t.name}, ${t.km} km from Mysuru. ${t.why} ${t.tags.join(" ")}.` })),

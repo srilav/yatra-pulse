@@ -43,6 +43,20 @@ In this folder, Claude Code picks it up from `.mcp.json`. Elsewhere: `claude mcp
 
 Full details, every component and use case: [SPEC.md](SPEC.md). How each feature is built, component by component: [resources/design-discussion.html](resources/design-discussion.html). Visual design: [docs/design.html](docs/design.html).
 
+## Evaluation, metrics and observability (Apache Pulsar)
+
+```bash
+docker compose -f ops/docker-compose.yml up -d   # Apache Pulsar 4.2.4 standalone
+node ops/metrics-consumer.js                     # metrics, SLOs, alerts → http://localhost:9464
+node eval/run.js                                 # quality gates; publishes to Pulsar
+cd mcp-server && TELEMETRY=pulsar npm test       # real tool traffic → yatra-telemetry
+```
+
+- **Evaluator** (`eval/`): labelled datasets score board search (hit@1 0.97, recall@3 1.0), trip check (10/10) and AI plan grounding (4/4), with gates in `eval/thresholds.json` and CI.
+- **Telemetry**: every MCP tool call is an event on the Pulsar topic `yatra-telemetry` (falls back to a file if Pulsar is down).
+- **Metrics consumer**: Prometheus `/metrics`, `/healthz`, a live dashboard, four SLOs, alerts on `yatra-alerts`, and a dead-letter topic.
+- **Operations**: [ops/RUNBOOK.md](ops/RUNBOOK.md) (SLOs, alerts, game day), [ops/alerts.yml](ops/alerts.yml), [CI](.github/workflows/ci.yml).
+
 ## How it runs
 
 `index.html` is a single self-contained page (HTML, CSS and plain JavaScript). It is published as a claude.ai Artifact and uses the Artifact runtime's `db`, `user` and `sample` capabilities for saved itineraries, traveller submissions and Plan with Claude. Opened directly in a browser, the schedule and itinerary work (saved in that browser), while submissions and Plan with Claude are disabled.
