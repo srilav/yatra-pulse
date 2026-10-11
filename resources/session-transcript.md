@@ -8,7 +8,7 @@ The Claude Code session in which Yatra Pulse was built, on 11 October 2026: from
 ---
 ### 🧑 User · 6
 
-> what the musafir travel to know culture , recommend near by places to visits for that culture, Gaya during pitru kal for religious and spritual person, or mysore during dasara , integrate using MCP if travel guide is available online,
+> want the musafir travel to know culture , recommend near by places to visits for that culture, Gaya during pitru kal for religious and spritual person, or mysore during dasara , integrate using MCP if travel guide is available online,
 
 - `ToolSearch` select:WebSearch,WebFetch
 - `WebSearch` Mysuru Dasara 2026 dates schedule Jamboo Savari
