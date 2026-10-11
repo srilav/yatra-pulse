@@ -45,7 +45,7 @@ Each use case lists what the user does, what the system does, and how it's verif
 | UC11 | Vehicle range | Auto-rickshaw on a trip over 40 km → **Too far** | Far trip by auto |
 | UC12 | Warn before booking | "Book tickets" runs trip check for that event first and shows the result | Book tickets warns |
 | UC13 | Copy / share the plan | Plain-text plan to the clipboard for WhatsApp or email | — |
-| UC14 | Plan with Claude | Retrieve matching events and facts (RAG) → Claude drafts → trip check reviews the draft → "Add all" | Board search |
+| UC14 | Plan with Claude | Retrieve matching events and facts (RAG) → Claude drafts → trip check reviews the draft → "Add all" (agent goal: §6) | Board search, evaluator |
 | UC15 | Learn how to book | Official site, steps, prices, collection counter, gates, helpline | — |
 | UC16 | Add a traveller event | Form with checks; saved privately until the host approves | Traveller form |
 | UC17 | Host review | Owner sees the queue; Approve publishes it, Don't add rejects it | (needs claude.ai) |
@@ -83,7 +83,7 @@ Runs on every render of the itinerary, on "+ Add to plan", on "Book tickets", on
 - **Toast** (`#toast`, `role="status"`): the result for the stop you just added or are about to book.
 
 ### 3.7 Plan with Claude
-Form: arriving day, length (1–5 days), style, pace, optional note. On submit: **retrieve** passages (§6), ask Claude via the artifact `sample` capability for JSON, **drop any key that wasn't retrieved**, **trip-check** the draft, show the plan, the trip-check result, tips (from retrieved facts only) and the sources read. "Add all to my plan" merges the stops. Hidden behind a message when not on claude.ai.
+Form: arriving day, length (1–5 days), style, pace, optional note. On submit: **retrieve** passages (§7), ask Claude via the artifact `sample` capability for JSON, **drop any key that wasn't retrieved**, **trip-check** the draft, show the plan, the trip-check result, tips (from retrieved facts only) and the sources read. "Add all to my plan" merges the stops. Hidden behind a message when not on claude.ai.
 
 ### 3.8 Timeline
 Filter chips (`.chipbtn[data-f]`), the **nightly band** (palace illumination, classical stage, exhibition), and 11 **day rows** (`.day`) with events (`.ev[data-cat]`: red rule for music/DJ, marigold for ritual). Each event: title, pill, time, venue, note, source, **Book tickets** (where ticketed), add button.
@@ -155,7 +155,132 @@ Travel = road km ÷ speed + wait + entry buffer (25 min at crowded venues, else 
 
 Estimates are for planning; every leg links Google Maps for live traffic.
 
-## 6. RAG (retrieval-augmented generation)
+## 6. Agent specification
+
+Yatra Pulse has one job for its AI: **plan a Dasara trip that a traveller can actually follow**. The same agent goal is delivered in two places.
+
+| Agent | Runs in | Style | Entry point |
+|---|---|---|---|
+| **Trip planner** | The board on claude.ai | One retrieval, one Claude call, deterministic checks | "Plan with Claude" form |
+| **Dasara concierge** | Claude Code / Claude Desktop via MCP | Multi-step tool use: search → draft → check → revise | `plan_trip` prompt, or any question |
+
+### 6.1 Goal and success criteria
+
+> Given a traveller's dates, style, pace and notes, produce a day-by-day itinerary where **every stop is real** (from the board), **nothing clashes**, **every leg is reachable** by the chosen vehicle in time, **gate deadlines are respected**, and **every stop cites its source** and the official way to book.
+
+| Criterion | Measure | Target | Where measured |
+|---|---|---|---|
+| Grounded | Share of keyed stops that exist on the board | 100% | `scorePlan().grounded`; page drops unknown keys |
+| No invention | Stops not on the board in the final plan | 0 | `scorePlan().invented` |
+| Feasible | Trip-check problems (clash, not enough time, too far) left unflagged | 0 | Trip check on every draft |
+| Correct day | Dated events placed on the wrong day | 0 | `scorePlan().wrong_day` |
+| Relevant | Retrieval hit@1 / recall@3 on labelled questions | ≥ 0.80 / ≥ 0.90 | `eval/run.js` |
+| Cited | Stops and tips with a source URL | 100% | Passages carry URLs; tips come only from facts |
+| Responsive | Claude calls per page plan; MCP tool p95 | 1; ≤ 250 ms | Page design; metrics SLO |
+
+### 6.2 Inputs and outputs
+
+| | Trip planner (page) | Concierge (MCP) |
+|---|---|---|
+| Inputs | Arrival day (11–21), length 1–5, style (spiritual, music, heritage, family), pace (relaxed, packed), note ≤ 160 chars | Natural-language request; `plan_trip(arrival_day, days, style, notes)` |
+| Context | Retrieved CHOICES (keys + text) and FACTS (title, text, url) | Tool results: passages, day schedules, trip-check results, booking facts |
+| Output | JSON `{summary, days:[{day, theme, stops:[{key \| null, time, title, why}]}], tips[]}` | A plan in prose with times, venues, booking steps and source links |
+
+### 6.3 Tools and permissions
+
+| Tool | Planner | Concierge | Effect |
+|---|---|---|---|
+| `searchBoard` / `search_board` | ✓ (before the call) | ✓ | Read-only retrieval |
+| `get_day` | – | ✓ | Read-only |
+| `evaluateDay` / `check_itinerary` | ✓ (after the call) | ✓ | Read-only check |
+| `booking_guide` | via FACTS | ✓ | Read-only |
+| Add to the traveller's plan | Only when the traveller taps "Add all to my plan" | – | Writes the traveller's own plan |
+
+The agent never books, pays, submits forms, writes traveller events or reads other people's data.
+
+### 6.4 Decision loop
+
+1. **Retrieve** passages for the request (§7).
+2. **Draft** using only retrieved keys; free-time suggestions use `key: null`.
+3. **Check** the draft with trip check for the chosen vehicle.
+4. **Revise or flag**: the concierge is instructed to fix problems and re-check; the page planner shows problems in red and leaves the decision to the traveller (it does not auto-revise, to keep it to one paid call).
+5. **Present** with sources and the official booking route; the traveller decides what to add.
+
+### 6.5 Guardrails
+
+- Key whitelist: anything not retrieved is dropped before display.
+- Respect announced times only; "time not announced" is never filled in.
+- Tips only from retrieved facts; no outside knowledge for prices, gates or venues.
+- Trip check on every draft; problems are shown, never hidden.
+- Human in the loop: the traveller adds the plan; the host approves traveller events.
+- Read-only tools; no payment or booking actions.
+- Privacy: search text isn't logged unless explicitly enabled; plans live in the traveller's own database path.
+
+### 6.6 Failure behaviour
+
+| Situation | Behaviour |
+|---|---|
+| Nothing relevant retrieved | Plan only from what was found; say what's missing rather than invent |
+| Claude declines, is rate-limited or errors | Plain message; no automatic retry; manual "+ Add to plan" still works |
+| Draft fails trip check | Problems listed; concierge revises; page planner leaves it to the traveller |
+| Not on claude.ai | Planner disabled with an explanation; MCP concierge is the alternative |
+
+## 7. Retrieval (RAG) specification
+
+**Goal:** give the agent the smallest set of passages that answers the traveller's question, each with its source, so the plan never needs outside knowledge.
+
+### 7.1 Corpus
+
+| Kind | Key | Count | Source of truth | Text includes |
+|---|---|---|---|---|
+| Dated event | `ev:<day>:<title>` | 15 | `EVENTS` | Title, date, time or "not announced", venue, note, category words, tags |
+| Nightly show | `nt:<title>` | 3 | `NIGHTLY` | Title, "every night 11–21 Oct", time, venue, note, category words |
+| DJ night | `dj:<title>` | 3 | `DJ` | Title, date and venue, note |
+| Day trip | `trip:<name>` | 9 | `TRIPS` | Name, distance from Mysuru, reason to go, tags |
+| Fact | `kb:<id>` | 7 | `KNOWLEDGE` | Booking steps, prices, gates, travel, Yuva Dasara, DJ, Gaya |
+| Traveller event | `cm:<id>` | varies | db `approved/*` | Title, venue, write-up (host-approved only) |
+
+37 passages today plus approved traveller events. One passage per item; items are short, so no further chunking.
+
+### 7.2 Queries
+
+| Caller | Query |
+|---|---|
+| Page planner | Style words (`STYLE_WORDS`) + the traveller's note; one search per day for events, plus nightly shows, day trips and facts (facts query adds "booking gates travel") |
+| MCP concierge | Claude's own query, optionally filtered by `day` and `kinds` |
+
+### 7.3 Ranking
+
+- Tokens: lower-case, accents removed, split on non-alphanumerics, stop words dropped, trailing plural "s" removed (words over 3 letters).
+- Score: BM25, k1 = 1.4, b = 0.75, idf = ln(1 + (N − df + 0.5) / (df + 0.5)); ties go to the earlier day.
+- Filters: `kinds`; `day` keeps that day's passages plus undated ones.
+- Cut-offs: page planner 4 events per day, 3 nightly, 4 trips, 3 facts; MCP default k = 6 (max 20) and only score > 0.
+
+### 7.4 No answer
+
+Nothing above zero → `search_board` returns an empty list and the concierge says it found nothing on the board; the page planner works with fewer choices. Empty searches are counted (`yatra_search_zero_results_total`), with an SLO of ≥ 90% non-empty.
+
+### 7.5 Freshness
+
+Data is curated by hand from linked sources (last checked 11 Oct 2026). To update: edit `EVENTS`/`KNOWLEDGE` in `index.html` → `node eval/run.js` → publish the artifact and push (Pages and the MCP server pick it up). Traveller events enter the corpus the moment the host approves them.
+
+### 7.6 Quality
+
+| Metric | Target | Current |
+|---|---|---|
+| Hit@1 | ≥ 0.80 | 0.968 |
+| Recall@3 | ≥ 0.90 | 1.000 |
+| MRR@5 | ≥ 0.85 | 0.984 |
+| p95 search time | ≤ 5 ms | 0.78 ms |
+
+31 labelled questions in `eval/datasets/retrieval.json`, gated in CI.
+
+### 7.7 Why BM25, and limits
+
+About 40 short passages full of proper nouns (Sid Sriram, Bannimantap, Gold Card) suit keyword ranking: instant, offline, identical in the page and the server, no model to host. Limits: lexical only, so synonyms must be added by hand (`CAT_WORDS`, `STYLE_WORDS`), and words can collide ("stars" matches "star-shaped" Somanathapura, the one known miss); the index is rebuilt per call. If the corpus grows to thousands of passages, move to hybrid BM25 + embeddings and cache the index.
+
+### 7.8 Flow
+
 
 ```mermaid
 flowchart LR
@@ -174,13 +299,12 @@ flowchart LR
 - **Ranking**: BM25 (k1 = 1.4, b = 0.75) over lower-cased, accent-folded tokens with light plural stemming and stop words. The style adds query words (e.g. *spiritual* → temple, puja, ritual, goddess).
 - **In the page**: Plan with Claude retrieves up to 4 events per day, 3 nightly shows, 4 day trips and 3 facts, sends only those, and accepts only keys it sent. Tips must come from the facts. The draft is trip-checked before it can be added.
 - **In MCP**: `search_board` returns the same passages to any MCP client; Claude writes the answer and cites the URLs.
-- **Why BM25, not embeddings**: about 50 short passages with distinctive names (Sid Sriram, Bannimantap, Gold Card). Keyword ranking finds them reliably, runs instantly in the browser with no model or network, and gives the same results in the page and the MCP server.
 
-## 7. MCP
+## 8. MCP
 
 MCP (Model Context Protocol) is used in two ways.
 
-### 7.1 Yatra Pulse MCP server (`mcp-server/`)
+### 8.1 Yatra Pulse MCP server (`mcp-server/`)
 A stdio MCP server (Node 18+, `@modelcontextprotocol/sdk` 1.30.1). It loads the shared code straight from `../index.html` with Node's `vm`, so it always uses the same data, retrieval and trip check as the page.
 
 | Kind | Name | What it does |
@@ -208,11 +332,11 @@ Claude Desktop (`claude_desktop_config.json`):
 
 Then ask, for example: *"I'm in Mysuru 17–18 Oct and love live music. What can I see, and does my plan clash?"*
 
-### 7.2 MCP tools used to build and check the project
+### 8.2 MCP tools used to build and check the project
 - **Claude in Chrome** (browser MCP) was used to diagnose and reconnect Chrome during setup.
 - The board itself does not call MCP connectors. The artifact runtime's `mcp` capability could let the page call a viewer's connectors (for example a calendar), but that would need each viewer's consent and connected accounts, so it is left out for now.
 
-## 7a. Evaluation, metrics and observability
+## 9. Evaluation, metrics and observability
 
 | Part | Where | What it does |
 |---|---|---|
@@ -221,11 +345,11 @@ Then ask, for example: *"I'm in Mysuru 17–18 Oct and love live music. What can
 | Metrics consumer | `ops/metrics-consumer.js`, `ops/dashboard.html` | Counters and latency histograms, Prometheus `/metrics`, `/healthz`, `/stats`, dashboard; SLOs over 15 min; alerts to `yatra-alerts`; dead-letter topic |
 | Operations | `ops/RUNBOOK.md`, `ops/alerts.yml`, `ops/simulate.js`, `.github/workflows/ci.yml` | Runbook per alert, Prometheus rules, game-day scenarios, CI gates |
 
-## 7b. Deployment
+## 10. Deployment
 
 Knative Serving on any Kubernetes (kind, k3s, RKE2, OpenShift, GKE, EKS, AKS). `deploy/docker/*.Dockerfile` build three non-root images; `deploy/k8s` installs the app (`app/`: namespace, ConfigMap, Knative Services) and a single-node Pulsar (`pulsar/`); `deploy/kind` is the laptop profile. The MCP server runs stateless over Streamable HTTP (`mcp-server/http.js`) with `/healthz` and `/readyz`, so Knative scales it 0–10; the web board scales 0–5; the metrics consumer stays at exactly 1. `deploy/smoke-test.sh` checks a running deployment end to end (9 checks). Details: `deploy/README.md`, `resources/architecture.html`.
 
-## 8. Quality and testing
+## 11. Quality and testing
 
 | Suite | Command | Checks |
 |---|---|---|
@@ -235,7 +359,7 @@ Knative Serving on any Kubernetes (kind, k3s, RKE2, OpenShift, GKE, EKS, AKS). `
 
 Accessibility: status in words or shapes as well as color, `aria-pressed` toggles, `role="status"` messages, visible focus, reduced motion respected, no pop-up dialogs.
 
-## 9. Limits and honesty rules
+## 12. Limits and honesty rules
 
 - Event data comes from news and official sources linked in the page, as of 11 Oct 2026. Times not announced are shown as TBA and never guessed. Drone show end (9 pm) and Jamboo Savari palace viewing end (5:30 pm) are estimates.
 - Travel times are estimates from approximate coordinates.
@@ -243,7 +367,7 @@ Accessibility: status in words or shapes as well as color, `aria-pressed` toggle
 - Traveller events need host approval; the page cannot verify an event on its own.
 - Booking happens only on the official site; the board never sells or collects payment.
 
-## 10. Files
+## 13. Files
 
 ```
 index.html                 the app (shared code between SHARED-START/END markers)
