@@ -42,12 +42,17 @@ SCENES = [
     dict(id="timeline", target="tlH", pan="timeline", action="concerts",
          say="The eleven-day timeline covers the opening at Chamundi Hill, Yuva Dasara concerts with Shankar Ehsaan Loy and Sid Sriram, the Surya Kiran air show, and the Jamboo Savari. Every event links to its source.",
          cap="11-day timeline · every event links to its source"),
+    dict(id="schedule", card="schedule",
+         say="Here is the schedule at a glance. Yuva Dasara concerts run from the thirteenth to the seventeenth. Drone shows on the seventeenth and eighteenth. The air show from the eighteenth to the twentieth. And on the twenty-first, the Jamboo Savari, followed by the torchlight parade.",
+         cap="Schedule at a glance · 11–21 Oct"),
     dict(id="picks", target="picks", action="music", say="Choose a travel style for personal picks, and find D J and party nights in Mysuru and Bengaluru.",
          cap="Picks for you · DJ & party nights"),
     dict(id="gaya", target="gayaPanel", say="Planning for Pitru Paksha? The Gaya panel covers the rites, and nearby Bodh Gaya, Rajgir and Nalanda.",
          cap="Gaya · Pitru Paksha · Bodh Gaya, Rajgir, Nalanda"),
     dict(id="community", target="cmH", say="Travellers can add fun events with an official link. The host checks each one before it appears, so the list stays genuine.",
          cap="Fun events from travellers · checked by the host"),
+    dict(id="book", target="bookH", say="How to book. Go to the official site, mysore dasara dot gov dot in, and tap Book Tickets. TicketGenie is the only authorised seller, so avoid agents. A Gold Card costs about six thousand nine hundred and sixty-one rupees, and a Jamboo Savari seat about three thousand eight hundred and thirty-one. Then collect your physical ticket at the Spandhana counter, at the Deputy Commissioner's office in Mysuru, with photo I D.",
+         cap="How to book · mysoredasara.gov.in · collect at Spandhana Counter with ID"),
     dict(id="trips", target="trH", say="Go deeper with day trips to Srirangapatna, Somanathapura, Melukote, Shravanabelagola, and more.",
          cap="Day trips from Mysuru"),
     dict(id="end", card="end", say="The board and its code are on GitHub, at srilav slash musafir mela. Happy travels, musafir!",
@@ -73,6 +78,27 @@ if (!k) { k = document.createElement('div'); k.id = 'vidcard'; document.body.app
 k.style.cssText = 'position:fixed;inset:0;z-index:9998;display:grid;place-content:center;gap:12px;text-align:center;' +
   'background:radial-gradient(ellipse at 50% 30%,#2a1f45 0%,#140F1F 70%);color:#F1ECF8;font-family:Mukta,system-ui,sans-serif';
 const bulbs = '<div style="height:11px;width:600px;margin:0 auto;background-image:radial-gradient(circle,#FFC857 0 3.5px,transparent 4px);background-size:20px 11px"></div>';
+const SCHED = [
+  ['11 Sun','Opening puja, Chamundi Hill · palace lights begin'],
+  ['12 Mon','Classical music & dance, palace stage'],
+  ['13 Tue','Yuva Dasara: Prabhu Deva, Ajaneesh Loknath'],
+  ['14 Wed','Yuva Dasara: Shankar-Ehsaan-Loy'],
+  ['15 Thu','Yuva Dasara: Sid Sriram'],
+  ['16 Fri','Yuva Dasara: Sandalwood Nights'],
+  ['17 Sat','Yuva Dasara: Jasmine Sandlas · Drone show'],
+  ['18 Sun','Surya Kiran air show · Drone show'],
+  ['19 Mon','Durga Ashtami · air show'],
+  ['20 Tue','Ayudha Puja · air show'],
+  ['21 Wed','Jamboo Savari 4:10 pm · Torchlight parade'],
+];
+if (arguments[0] === 'schedule') {
+  k.innerHTML = '<div style="font:400 54px/1 \\'Yatra One\\',serif;margin-bottom:6px">Dasara 2026 <span style="color:#F2B544">schedule</span></div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 40px;text-align:left;width:1180px">' +
+    SCHED.map(([d, t], i) => '<div style="display:flex;gap:16px;align-items:baseline;padding:8px 0;border-top:1px solid #3a2f55' + (i === 10 ? ';grid-column:span 2;color:#FFC857;font-weight:700' : '') + '">' +
+      '<span style="font:500 20px \\'JetBrains Mono\\',monospace;color:#F2B544;min-width:120px;white-space:nowrap">' + d + ' Oct</span><span style="font-size:21px;white-space:nowrap">' + t + '</span></div>').join('') +
+    '</div><div style="font-size:17px;color:#A99FBE;margin:6px 0 70px">Palace illumination every night, 7–10 pm · Yuva Dasara 5:30–10:30 pm, Uttanahalli</div>';
+  return;
+}
 k.innerHTML = arguments[0] === 'title'
   ? bulbs + '<div style="font:400 100px/1 \\'Yatra One\\',serif">Musafir <span style="color:#F2B544">Mela</span></div>' +
     '<div style="font-size:30px;color:#C9BEDD">Mysuru Dasara 2026 · 11–21 October</div>' +
@@ -192,11 +218,13 @@ def main():
     stamp = lambda s: f"{int(s // 60)}:{int(s % 60):02d}"
     chapters[0] = (0.0, "Intro")
     (OUT / "youtube.txt").write_text(f"""TITLE
-Mysuru Dasara 2026 Travel Board | Live Events, Itinerary & AI Trip Planner | Musafir Mela
+Mysuru Dasara 2026: Full Schedule, How to Book Tickets & AI Itinerary | Musafir Mela
 
 DESCRIPTION
-Musafir Mela is a live travel board for Mysuru Dasara 2026 (11–21 October): what's on now, the 11-day schedule with source links, Yuva Dasara concerts, DJ and party nights, a day-by-day itinerary, an AI trip planner that only uses real events, traveller-added events checked by the host, day trips from Mysuru, and Gaya Pitru Paksha info.
+Musafir Mela is a live travel board for Mysuru Dasara 2026 (11–21 October): what's on now, the full 11-day schedule with source links, how to book official tickets (Gold Card, Jamboo Savari, torchlight parade, drone show), Yuva Dasara concerts, DJ and party nights, a day-by-day itinerary, an AI trip planner that only uses real events, traveller-added events checked by the host, day trips from Mysuru, and Gaya Pitru Paksha info.
 
+Official tickets: https://mysoredasara.gov.in (TicketGenie is the only authorised seller)
+Dasara helpline: 1077
 Code: https://github.com/srilav/musafir-mela
 
 Chapters
@@ -205,7 +233,7 @@ Chapters
 Event times change. Confirm timings and passes with official Mysuru Dasara channels before you travel.
 
 TAGS
-Mysuru Dasara 2026, Mysore Dasara, Jamboo Savari, Yuva Dasara, Mysore travel, Karnataka tourism, Dasara itinerary, Srirangapatna, Gaya Pitru Paksha, AI trip planner, travel itinerary
+Mysuru Dasara 2026, Mysore Dasara, Jamboo Savari, Yuva Dasara, Mysore travel, Karnataka tourism, Dasara itinerary, Dasara Gold Card, Dasara tickets booking, Mysore Dasara schedule, Srirangapatna, Gaya Pitru Paksha, AI trip planner, travel itinerary
 """)
     shutil.rmtree(WORK)
     print(f"\nDone: {final} ({t0:.0f}s)")
