@@ -1,0 +1,378 @@
+
+▸ Terraform: VPC, NAT gateway, EKS, ECR, ALB, CloudFront
+module.eks.data.aws_caller_identity.current[0]: Reading...
+data.aws_caller_identity.current: Reading...
+data.aws_availability_zones.available: Reading...
+data.aws_cloudfront_cache_policy.disabled: Reading...
+data.aws_ec2_managed_prefix_list.cloudfront: Reading...
+module.eks.module.eks_managed_node_group["default"].data.aws_iam_policy_document.assume_role_policy[0]: Reading...
+module.eks.data.aws_partition.current[0]: Reading...
+data.aws_iam_policy_document.pod_identity_trust: Reading...
+module.vpc.aws_vpc.this[0]: Refreshing state... [id=vpc-03f7732e5312d00b3]
+module.eks.aws_cloudwatch_log_group.this[0]: Refreshing state... [id=/aws/eks/yatra-pulse/cluster]
+module.eks.data.aws_partition.current[0]: Read complete after 0s [id=aws]
+module.eks.module.eks_managed_node_group["default"].data.aws_iam_policy_document.assume_role_policy[0]: Read complete after 0s [id=2560088296]
+data.aws_iam_policy_document.pod_identity_trust: Read complete after 0s [id=819195744]
+data.aws_cloudfront_cache_policy.optimized: Reading...
+data.aws_cloudfront_origin_request_policy.all_viewer_except_host: Reading...
+module.eks.data.aws_iam_policy_document.assume_role_policy[0]: Reading...
+module.eks.data.aws_iam_policy_document.assume_role_policy[0]: Read complete after 0s [id=2830595799]
+aws_ecr_repository.app["metrics"]: Refreshing state... [id=yatra-pulse/metrics]
+module.eks.data.aws_caller_identity.current[0]: Read complete after 1s [id=<aws-account-id>]
+aws_ecr_repository.app["web"]: Refreshing state... [id=yatra-pulse/web]
+data.aws_caller_identity.current: Read complete after 1s [id=<aws-account-id>]
+aws_ecr_repository.app["mcp"]: Refreshing state... [id=yatra-pulse/mcp]
+data.aws_availability_zones.available: Read complete after 1s [id=us-east-1]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role.this[0]: Refreshing state... [id=default-eks-node-group-ffbefc1890fdf7d43b8d9bfc54]
+data.aws_cloudfront_cache_policy.disabled: Read complete after 2s [id=4135ea2d-6df8-44a3-9df3-4b5a84be39ad]
+aws_iam_role.ebs_csi: Refreshing state... [id=yatra-pulse-ebs-csi]
+data.aws_cloudfront_origin_request_policy.all_viewer_except_host: Read complete after 2s [id=b689b0a8-53d0-40ab-baf2-68738e2966ac]
+module.eks.aws_iam_role.this[0]: Refreshing state... [id=yatra-pulse-cluster-c9f0ec4d778ae8cd41e34da107]
+data.aws_cloudfront_cache_policy.optimized: Read complete after 2s [id=658327ea-f89d-4fab-a63d-7e88639e58f6]
+module.eks.data.aws_iam_session_context.current[0]: Reading...
+module.eks.data.aws_iam_session_context.current[0]: Read complete after 0s [id=arn:aws:iam::<aws-account-id>:user/musafir-admin]
+data.aws_iam_policy_document.scheduler_trust: Reading...
+data.aws_iam_policy_document.scheduler_trust: Read complete after 0s [id=1941880871]
+data.aws_ec2_managed_prefix_list.cloudfront: Read complete after 2s [id=pl-3b927c52]
+aws_ecr_lifecycle_policy.app["metrics"]: Refreshing state... [id=yatra-pulse/metrics]
+aws_ecr_lifecycle_policy.app["mcp"]: Refreshing state... [id=yatra-pulse/mcp]
+aws_ecr_lifecycle_policy.app["web"]: Refreshing state... [id=yatra-pulse/web]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKSWorkerNodePolicy"]: Refreshing state... [id=default-eks-node-group-ffbefc1890fdf7d43b8d9bfc54/arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKS_CNI_Policy"]: Refreshing state... [id=default-eks-node-group-ffbefc1890fdf7d43b8d9bfc54/arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEC2ContainerRegistryReadOnly"]: Refreshing state... [id=default-eks-node-group-ffbefc1890fdf7d43b8d9bfc54/arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly]
+aws_iam_role_policy_attachment.ebs_csi: Refreshing state... [id=yatra-pulse-ebs-csi/arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy]
+module.eks.aws_iam_role_policy_attachment.this["AmazonEKSClusterPolicy"]: Refreshing state... [id=yatra-pulse-cluster-c9f0ec4d778ae8cd41e34da107/arn:aws:iam::aws:policy/AmazonEKSClusterPolicy]
+module.vpc.aws_default_route_table.default[0]: Refreshing state... [id=rtb-0cb7ec32e2e73b1fc]
+module.vpc.aws_default_security_group.this[0]: Refreshing state... [id=sg-07bc8c39f822a3c2d]
+aws_security_group.alb: Refreshing state... [id=sg-0be7a11957794135a]
+module.vpc.aws_subnet.private[0]: Refreshing state... [id=subnet-045007938b4772345]
+module.vpc.aws_subnet.private[1]: Refreshing state... [id=subnet-030f3e58b35384914]
+module.vpc.aws_default_network_acl.this[0]: Refreshing state... [id=acl-09604c094ff2e4697]
+module.vpc.aws_route_table.private[0]: Refreshing state... [id=rtb-09fd6e43d1bae0cf8]
+module.eks.aws_security_group.cluster[0]: Refreshing state... [id=sg-0c3e3dff068197901]
+aws_lb_target_group.gateway: Refreshing state... [id=arn:aws:elasticloadbalancing:us-east-1:<aws-account-id>:targetgroup/yatra-pulse-gw/3f62d006906cd936]
+module.vpc.aws_route_table.public[0]: Refreshing state... [id=rtb-016cd4e7941f66800]
+module.vpc.aws_internet_gateway.this[0]: Refreshing state... [id=igw-0ac7158dd7b04b634]
+module.eks.aws_security_group.node[0]: Refreshing state... [id=sg-034666c3ade7b8e53]
+module.vpc.aws_subnet.public[1]: Refreshing state... [id=subnet-0a07d492a7626efb4]
+module.vpc.aws_subnet.public[0]: Refreshing state... [id=subnet-06cdf6149b27e2e99]
+module.vpc.aws_route_table_association.private[1]: Refreshing state... [id=rtbassoc-03e8ab2784abf0ff7]
+module.vpc.aws_route_table_association.private[0]: Refreshing state... [id=rtbassoc-0b83f791ac504df66]
+module.vpc.aws_eip.nat[0]: Refreshing state... [id=eipalloc-04a69e751de1b31e8]
+module.vpc.aws_route.public_internet_gateway[0]: Refreshing state... [id=r-rtb-016cd4e7941f668001080289494]
+module.eks.aws_security_group_rule.node["ingress_cluster_9443_webhook"]: Refreshing state... [id=sgrule-48337484]
+module.eks.aws_security_group_rule.node["alb_to_gateway"]: Refreshing state... [id=sgrule-2520976497]
+module.eks.aws_security_group_rule.node["ingress_cluster_kubelet"]: Refreshing state... [id=sgrule-1501605324]
+module.eks.aws_security_group_rule.node["ingress_cluster_10251_webhook"]: Refreshing state... [id=sgrule-1841954231]
+module.eks.aws_security_group_rule.node["ingress_nodes_ephemeral"]: Refreshing state... [id=sgrule-2104742984]
+module.eks.aws_security_group_rule.node["ingress_cluster_8443_webhook"]: Refreshing state... [id=sgrule-1715511687]
+module.eks.aws_security_group_rule.node["ingress_cluster_4443_webhook"]: Refreshing state... [id=sgrule-3160341040]
+module.eks.aws_security_group_rule.node["ingress_cluster_443"]: Refreshing state... [id=sgrule-3273214186]
+module.eks.aws_security_group_rule.node["ingress_cluster_6443_webhook"]: Refreshing state... [id=sgrule-1964809638]
+module.eks.aws_security_group_rule.node["egress_all"]: Refreshing state... [id=sgrule-163558614]
+module.eks.aws_security_group_rule.node["ingress_self_coredns_tcp"]: Refreshing state... [id=sgrule-2792285942]
+module.eks.aws_security_group_rule.node["ingress_self_coredns_udp"]: Refreshing state... [id=sgrule-36783385]
+module.eks.aws_security_group_rule.cluster["ingress_nodes_443"]: Refreshing state... [id=sgrule-3079005579]
+module.vpc.aws_route_table_association.public[0]: Refreshing state... [id=rtbassoc-0f066bd03c8381ab2]
+module.vpc.aws_route_table_association.public[1]: Refreshing state... [id=rtbassoc-03b6a55562bcad827]
+aws_lb.edge: Refreshing state... [id=arn:aws:elasticloadbalancing:us-east-1:<aws-account-id>:loadbalancer/app/yatra-pulse-alb/f7c876fe5b702a1a]
+module.vpc.aws_nat_gateway.this[0]: Refreshing state... [id=nat-00259da8a79d71734]
+module.vpc.aws_route.private_nat_gateway[0]: Refreshing state... [id=r-rtb-09fd6e43d1bae0cf81080289494]
+module.eks.aws_eks_cluster.this[0]: Refreshing state... [id=yatra-pulse]
+aws_lb_listener.http: Refreshing state... [id=arn:aws:elasticloadbalancing:us-east-1:<aws-account-id>:listener/app/yatra-pulse-alb/f7c876fe5b702a1a/83e3dc3e02bc68cc]
+module.eks.aws_eks_access_entry.this["cluster_creator"]: Refreshing state... [id=yatra-pulse:arn:aws:iam::<aws-account-id>:user/musafir-admin]
+module.eks.data.aws_eks_addon_version.this["coredns"]: Reading...
+module.eks.data.tls_certificate.this[0]: Reading...
+module.eks.data.aws_eks_addon_version.this["eks-pod-identity-agent"]: Reading...
+module.eks.data.aws_eks_addon_version.this["kube-proxy"]: Reading...
+module.eks.data.aws_eks_addon_version.this["aws-ebs-csi-driver"]: Reading...
+module.eks.data.aws_eks_addon_version.this["vpc-cni"]: Reading...
+module.eks.time_sleep.this[0]: Refreshing state... [id=2026-10-11T17:00:41Z]
+module.eks.module.eks_managed_node_group["default"].module.user_data.null_resource.validate_cluster_service_cidr: Refreshing state... [id=1312471656952542322]
+module.eks.module.eks_managed_node_group["default"].data.aws_ssm_parameter.ami[0]: Reading...
+module.eks.module.eks_managed_node_group["default"].aws_launch_template.this[0]: Refreshing state... [id=lt-0d9a45d9082df7454]
+module.eks.data.aws_eks_addon_version.this["aws-ebs-csi-driver"]: Read complete after 0s [id=aws-ebs-csi-driver]
+module.eks.data.aws_eks_addon_version.this["vpc-cni"]: Read complete after 0s [id=vpc-cni]
+module.eks.data.aws_eks_addon_version.this["eks-pod-identity-agent"]: Read complete after 0s [id=eks-pod-identity-agent]
+module.eks.data.aws_eks_addon_version.this["kube-proxy"]: Read complete after 0s [id=kube-proxy]
+module.eks.data.aws_eks_addon_version.this["coredns"]: Read complete after 0s [id=coredns]
+module.eks.aws_eks_addon.before_compute["vpc-cni"]: Refreshing state... [id=yatra-pulse:vpc-cni]
+module.eks.aws_eks_addon.before_compute["eks-pod-identity-agent"]: Refreshing state... [id=yatra-pulse:eks-pod-identity-agent]
+module.eks.aws_eks_access_policy_association.this["cluster_creator_admin"]: Refreshing state... [id=yatra-pulse#arn:aws:iam::<aws-account-id>:user/musafir-admin#arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy]
+module.eks.data.tls_certificate.this[0]: Read complete after 1s [id=b1b539daa206035ae3c3e28288b0681fa1b462f3]
+module.eks.aws_iam_openid_connect_provider.oidc_provider[0]: Refreshing state... [id=arn:aws:iam::<aws-account-id>:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/E30BA9C5D5544584DCF96A71E188D07C]
+module.eks.module.eks_managed_node_group["default"].data.aws_ssm_parameter.ami[0]: Read complete after 1s [id=/aws/service/eks/optimized-ami/1.35/amazon-linux-2023/x86_64/standard/recommended/release_version]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Refreshing state... [id=yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea]
+aws_autoscaling_attachment.gateway: Refreshing state... [id=eks-default-f18a978f477e1f9c4d39fdc8ea-80d095f4-7afc-c7a0-d1d9-035db3e03648-20261011170325992100000002]
+module.eks.aws_eks_addon.this["coredns"]: Refreshing state... [id=yatra-pulse:coredns]
+module.eks.aws_eks_addon.this["kube-proxy"]: Refreshing state... [id=yatra-pulse:kube-proxy]
+module.eks.aws_eks_addon.this["aws-ebs-csi-driver"]: Refreshing state... [id=yatra-pulse:aws-ebs-csi-driver]
+
+Note: Objects have changed outside of Terraform
+
+Terraform detected the following changes made outside of Terraform since the
+last "terraform apply" which may have affected this plan:
+
+  # module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0] has changed
+  ~ resource "aws_eks_node_group" "this" {
+        id                     = "yatra-pulse:default-f18a978f477e1f9c4d39fdc8ea"
+      + labels                 = {}
+        tags                   = {
+            "Name" = "default"
+        }
+        # (16 unchanged attributes hidden)
+
+        # (3 unchanged blocks hidden)
+    }
+
+
+Unless you have made equivalent changes to your configuration, or ignored the
+relevant attributes using ignore_changes, the following plan may include
+actions to undo or respond to these changes.
+
+─────────────────────────────────────────────────────────────────────────────
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+  ~ update in-place
+
+Terraform will perform the following actions:
+
+  # aws_iam_role.node_scheduler[0] will be created
+  + resource "aws_iam_role" "node_scheduler" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = "sts:AssumeRole"
+                      + Condition = {
+                          + StringEquals = {
+                              + "aws:SourceAccount" = "<aws-account-id>"
+                            }
+                        }
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + Service = "scheduler.amazonaws.com"
+                        }
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = "yatra-pulse-node-scheduler"
+      + name_prefix           = (known after apply)
+      + path                  = "/"
+      + tags_all              = {
+          + "ManagedBy" = "terraform"
+          + "Project"   = "yatra-pulse"
+          + "Teardown"  = "deploy/aws/teardown.sh"
+        }
+      + unique_id             = (known after apply)
+
+      + inline_policy (known after apply)
+    }
+
+  # aws_iam_role_policy.node_scheduler[0] will be created
+  + resource "aws_iam_role_policy" "node_scheduler" {
+      + id          = (known after apply)
+      + name        = "update-nodegroup-size"
+      + name_prefix = (known after apply)
+      + policy      = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action   = [
+                          + "eks:UpdateNodegroupConfig",
+                          + "eks:DescribeNodegroup",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = "arn:aws:eks:us-east-1:<aws-account-id>:nodegroup/yatra-pulse/default-f18a978f477e1f9c4d39fdc8ea/80d095f4-7afc-c7a0-d1d9-035db3e03648"
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + role        = (known after apply)
+    }
+
+  # aws_scheduler_schedule.nodes_start[0] will be created
+  + resource "aws_scheduler_schedule" "nodes_start" {
+      + action_after_completion      = (known after apply)
+      + arn                          = (known after apply)
+      + description                  = "Scale Yatra Pulse EKS nodes back up (working hours)"
+      + group_name                   = (known after apply)
+      + id                           = (known after apply)
+      + name                         = "yatra-pulse-nodes-start"
+      + name_prefix                  = (known after apply)
+      + region                       = "us-east-1"
+      + schedule_expression          = "cron(0 7 * * ? *)"
+      + schedule_expression_timezone = "Asia/Kolkata"
+      + state                        = "ENABLED"
+
+      + flexible_time_window {
+          + mode = "OFF"
+        }
+
+      + target {
+          + arn      = "arn:aws:scheduler:::aws-sdk:eks:updateNodegroupConfig"
+          + input    = jsonencode(
+                {
+                  + ClusterName   = "yatra-pulse"
+                  + NodegroupName = "default-f18a978f477e1f9c4d39fdc8ea"
+                  + ScalingConfig = {
+                      + DesiredSize = 2
+                      + MaxSize     = 3
+                      + MinSize     = 2
+                    }
+                }
+            )
+          + role_arn = (known after apply)
+
+          + retry_policy {
+              + maximum_event_age_in_seconds = 86400
+              + maximum_retry_attempts       = 3
+            }
+        }
+    }
+
+  # aws_scheduler_schedule.nodes_stop[0] will be created
+  + resource "aws_scheduler_schedule" "nodes_stop" {
+      + action_after_completion      = (known after apply)
+      + arn                          = (known after apply)
+      + description                  = "Scale Yatra Pulse EKS nodes to 0 (idle hours)"
+      + group_name                   = (known after apply)
+      + id                           = (known after apply)
+      + name                         = "yatra-pulse-nodes-stop"
+      + name_prefix                  = (known after apply)
+      + region                       = "us-east-1"
+      + schedule_expression          = "cron(0 22 * * ? *)"
+      + schedule_expression_timezone = "Asia/Kolkata"
+      + state                        = "ENABLED"
+
+      + flexible_time_window {
+          + mode = "OFF"
+        }
+
+      + target {
+          + arn      = "arn:aws:scheduler:::aws-sdk:eks:updateNodegroupConfig"
+          + input    = jsonencode(
+                {
+                  + ClusterName   = "yatra-pulse"
+                  + NodegroupName = "default-f18a978f477e1f9c4d39fdc8ea"
+                  + ScalingConfig = {
+                      + DesiredSize = 0
+                      + MaxSize     = 3
+                      + MinSize     = 0
+                    }
+                }
+            )
+          + role_arn = (known after apply)
+
+          + retry_policy {
+              + maximum_event_age_in_seconds = 86400
+              + maximum_retry_attempts       = 3
+            }
+        }
+    }
+
+  # aws_security_group.alb will be updated in-place
+  ~ resource "aws_security_group" "alb" {
+        id                     = "sg-0be7a11957794135a"
+      ~ ingress                = [
+          - {
+              - cidr_blocks      = []
+              - description      = "HTTP from CloudFront origin-facing servers"
+              - from_port        = 80
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = [
+                  - "pl-3b927c52",
+                ]
+              - protocol         = "tcp"
+              - security_groups  = []
+              - self             = false
+              - to_port          = 80
+            },
+          + {
+              + cidr_blocks      = [
+                  + "0.0.0.0/0",
+                ]
+              + description      = "HTTP from the internet (no CloudFront)"
+              + from_port        = 80
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "tcp"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 80
+            },
+        ]
+        name                   = "yatra-pulse-alb"
+        tags                   = {}
+        # (9 unchanged attributes hidden)
+    }
+
+Plan: 4 to add, 1 to change, 0 to destroy.
+
+Changes to Outputs:
+  + cloudfront_distribution_id = ""
+  + cloudfront_url             = ""
+  + idle_schedule              = "nodes stop cron(0 22 * * ? *) and start cron(0 7 * * ? *) (Asia/Kolkata)"
+  + node_group_name            = "default-f18a978f477e1f9c4d39fdc8ea"
+  + public_url                 = "http://yatra-pulse-alb-1441277353.us-east-1.elb.amazonaws.com"
+aws_iam_role.node_scheduler[0]: Creating...
+aws_security_group.alb: Modifying... [id=sg-0be7a11957794135a]
+aws_iam_role.node_scheduler[0]: Creation complete after 2s [id=yatra-pulse-node-scheduler]
+aws_security_group.alb: Modifications complete after 2s [id=sg-0be7a11957794135a]
+aws_iam_role_policy.node_scheduler[0]: Creating...
+aws_scheduler_schedule.nodes_start[0]: Creating...
+aws_scheduler_schedule.nodes_stop[0]: Creating...
+aws_iam_role_policy.node_scheduler[0]: Creation complete after 1s [id=yatra-pulse-node-scheduler:update-nodegroup-size]
+aws_scheduler_schedule.nodes_stop[0]: Creation complete after 8s [id=default/yatra-pulse-nodes-stop]
+aws_scheduler_schedule.nodes_start[0]: Creation complete after 8s [id=default/yatra-pulse-nodes-start]
+
+Apply complete! Resources: 4 added, 1 changed, 0 destroyed.
+
+Outputs:
+
+alb_dns_name = "yatra-pulse-alb-1441277353.us-east-1.elb.amazonaws.com"
+cloudfront_distribution_id = ""
+cloudfront_url = ""
+cluster_name = "yatra-pulse"
+ecr_registry = "<aws-account-id>.dkr.ecr.us-east-1.amazonaws.com"
+ecr_repositories = {
+  "mcp" = "<aws-account-id>.dkr.ecr.us-east-1.amazonaws.com/yatra-pulse/mcp"
+  "metrics" = "<aws-account-id>.dkr.ecr.us-east-1.amazonaws.com/yatra-pulse/metrics"
+  "web" = "<aws-account-id>.dkr.ecr.us-east-1.amazonaws.com/yatra-pulse/web"
+}
+gateway_node_port = 30080
+idle_schedule = "nodes stop cron(0 22 * * ? *) and start cron(0 7 * * ? *) (Asia/Kolkata)"
+node_group_name = "default-f18a978f477e1f9c4d39fdc8ea"
+public_url = "http://yatra-pulse-alb-1441277353.us-east-1.elb.amazonaws.com"
+region = "us-east-1"
+
+▸ kubeconfig context yatra-pulse-aws (kept separate from the local kind context)
+  NAME                           STATUS   ROLES    AGE     VERSION               INTERNAL-IP    EXTERNAL-IP   OS-IMAGE                        KERNEL-VERSION                     CONTAINER-RUNTIME
+  ip-10-42-10-95.ec2.internal    Ready    <none>   9m29s   v1.35.8-eks-3b4a6ca   10.42.10.95    <none>        Amazon Linux 2023.12.20260930   6.12.110-135.202.amzn2023.x86_64   containerd://2.2.7+unknown
+  ip-10-42-11-161.ec2.internal   Ready    <none>   9m12s   v1.35.8-eks-3b4a6ca   10.42.11.161   <none>        Amazon Linux 2023.12.20260930   6.12.110-135.202.amzn2023.x86_64   containerd://2.2.7+unknown
+
+▸ Knative Serving knative-v1.23.0 with Kourier (ClusterIP: the ALB and edge gateway are the only entry)
+
+▸ Build and push images to ECR (<aws-account-id>.dkr.ecr.us-east-1.amazonaws.com)
+
+Logging in with your password grants your terminal complete access to your account. 
+For better security, log in with a limited-privilege personal access token. Learn more at https://docs.docker.com/go/access-tokens/
+  pushed <aws-account-id>.dkr.ecr.us-east-1.amazonaws.com/yatra-pulse/web:1.0.0
+  pushed <aws-account-id>.dkr.ecr.us-east-1.amazonaws.com/yatra-pulse/mcp:1.0.0
+  pushed <aws-account-id>.dkr.ecr.us-east-1.amazonaws.com/yatra-pulse/metrics:1.0.0
+
+▸ Deploy app, Pulsar and edge gateway (deploy/aws/k8s)
+Waiting for 1 pods to be ready...
+error: timed out waiting for the condition
+exit=1

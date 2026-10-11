@@ -33,3 +33,9 @@ variable "gateway_node_port" {
   type        = number
   default     = 30080
 }
+
+variable "enable_cloudfront" {
+  description = "Put CloudFront in front of the ALB. Needs an AWS account verified for CloudFront; when false, the ALB is public on HTTP."
+  type        = bool
+  default     = true
+}

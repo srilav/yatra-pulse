@@ -84,12 +84,14 @@ cd mcp-server && TELEMETRY=pulsar npm test       # real tool traffic → yatra-t
 
 ## Deploy on Kubernetes with Knative (on-prem or any cloud)
 
-Three Knative services (web board, MCP server over HTTP, metrics consumer) plus Apache Pulsar. Verified on kind with Knative Serving 1.23: 9/9 smoke checks, telemetry flowing MCP → Pulsar → metrics.
+Three Knative services (web board, MCP server over HTTP, metrics consumer) plus Apache Pulsar. Verified on kind (9/9 smoke checks) and on **AWS EKS** with Terraform (16/16 recorded browser scenarios, 8/8 API checks, then full teardown). Laptop and AWS files are kept apart in `deploy/local/` and `deploy/aws/`; see [deploy/aws/README.md](deploy/aws/README.md).
 
 ```bash
 ./deploy/local/kind-up.sh && ./deploy/local/smoke-test.sh   # laptop
 ./deploy/local/teardown.sh                      # bring it all down (--purge, --dry-run)
 kubectl apply -k deploy/k8s                     # any cluster with Knative (images in your registry)
+./deploy/aws/deploy.sh --yes                    # AWS: Terraform EKS + ECR + ALB (+ CloudFront) + NAT
+./deploy/aws/record-tests.sh && ./deploy/aws/teardown.sh --yes
 ```
 
 Guide: [deploy/README.md](deploy/README.md). Architecture by category (functionality, tech stack, components, AI-enabled components, end-to-end testing, telemetry, deployment): [architecture page](https://srilav.github.io/yatra-pulse/resources/architecture.html).

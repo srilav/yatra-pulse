@@ -1,0 +1,10 @@
+Yatra Pulse AWS smoke test · 2026-10-11T17:58:42Z · http://yatra-pulse-alb-1441277353.us-east-1.elb.amazonaws.com
+PASS  Board served at http://yatra-pulse-alb-1441277353.us-east-1.elb.amazonaws.com
+PASS  Architecture page served
+PASS  Ops health through the edge
+PASS  MCP search_board over HTTP(S)
+PASS  MCP check_itinerary finds the 17 Oct clash
+PASS  MCP check_itinerary: bus too slow on 21 Oct
+PASS  Telemetry MCP → Pulsar (EBS) → metrics (3 → 6 tool calls)
+PASS  Prometheus metrics through the edge
+8 passed, 0 failed

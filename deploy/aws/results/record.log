@@ -1,0 +1,70 @@
+▸ Browser scenarios (Selenium) against http://yatra-pulse-alb-1441277353.us-east-1.elb.amazonaws.com/
+PASS  Page loads with all 11 Dasara days
+PASS  Board search (RAG) ranks the right passages
+PASS  Now & next shows events
+PASS  Timeline events link to https sources
+PASS  Concerts filter shows only concerts
+PASS  Add Jamboo Savari to my itinerary
+PASS  Add a day trip to my itinerary
+PASS  Remove a stop from my itinerary
+PASS  Picks change with travel style
+PASS  Traveller form checks entries, then asks to sign in
+PASS  Trip check flags a clash at different venues
+PASS  Adding a clashing event shows a warning
+PASS  Jamboo Savari gate time is flagged
+PASS  Travel distance and time are shown between stops
+PASS  Far day trip is flagged for an auto-rickshaw
+PASS  Book tickets warns about a clash first
+
+16/16 passed against http://yatra-pulse-alb-1441277353.us-east-1.elb.amazonaws.com/. Screenshots in /Users/srilalithavishnubhotla/musafir-mela/screenshots
+Report: deploy/aws/results/selenium.json
+Keeping the browser open for 3 s…
+Recording: deploy/aws/results/key-scenarios.mp4
+
+▸ API scenarios (MCP over the public edge, telemetry through Pulsar)
+Yatra Pulse AWS smoke test · 2026-10-11T17:58:42Z · http://yatra-pulse-alb-1441277353.us-east-1.elb.amazonaws.com
+PASS  Board served at http://yatra-pulse-alb-1441277353.us-east-1.elb.amazonaws.com
+PASS  Architecture page served
+PASS  Ops health through the edge
+PASS  MCP search_board over HTTP(S)
+PASS  MCP check_itinerary finds the 17 Oct clash
+PASS  MCP check_itinerary: bus too slow on 21 Oct
+PASS  Telemetry MCP → Pulsar (EBS) → metrics (3 → 6 tool calls)
+PASS  Prometheus metrics through the edge
+8 passed, 0 failed
+Saved deploy/aws/results/smoke-20261011-232842.txt
+
+▸ Cluster snapshot
+# 2026-10-11T17:58:48Z · context yatra-pulse-aws
+NAME                           STATUS   ROLES    AGE   VERSION               INTERNAL-IP    EXTERNAL-IP   OS-IMAGE                        KERNEL-VERSION                     CONTAINER-RUNTIME
+ip-10-42-10-95.ec2.internal    Ready    <none>   56m   v1.35.8-eks-3b4a6ca   10.42.10.95    <none>        Amazon Linux 2023.12.20260930   6.12.110-135.202.amzn2023.x86_64   containerd://2.2.7+unknown
+ip-10-42-11-161.ec2.internal   Ready    <none>   56m   v1.35.8-eks-3b4a6ca   10.42.11.161   <none>        Amazon Linux 2023.12.20260930   6.12.110-135.202.amzn2023.x86_64   containerd://2.2.7+unknown
+
+NAME                                        URL                                                  LATESTCREATED         LATESTREADY           READY   REASON
+service.serving.knative.dev/yatra-mcp       http://yatra-mcp.yatra-pulse.svc.cluster.local       yatra-mcp-00002       yatra-mcp-00002       True    
+service.serving.knative.dev/yatra-metrics   http://yatra-metrics.yatra-pulse.svc.cluster.local   yatra-metrics-00002   yatra-metrics-00002   True    
+service.serving.knative.dev/yatra-web       http://yatra-web.yatra-pulse.svc.cluster.local       yatra-web-00003       yatra-web-00003       True    
+
+NAME                                                 READY   STATUS    RESTARTS   AGE
+pod/pulsar-0                                         1/1     Running   0          25m
+pod/yatra-gateway-65dbbf54cc-jb7q4                   1/1     Running   0          15m
+pod/yatra-gateway-65dbbf54cc-x4pn4                   1/1     Running   0          14m
+pod/yatra-mcp-00002-deployment-85f758b445-f6jtv      2/2     Running   0          2m36s
+pod/yatra-metrics-00002-deployment-6d7bfbddc-swzwp   2/2     Running   0          15m
+pod/yatra-web-00003-deployment-84f8d75bd4-lswmf      2/2     Running   0          71s
+
+NAME                                  STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+persistentvolumeclaim/data-pulsar-0   Bound    pvc-a2fc4adf-fb51-47b3-ac42-8e1187c73d25   5Gi        RWO            gp3            <unset>                 42m
+
+i-0ffebc4173ccfbf79	healthy
+i-0626a35ba9a610dc6	healthy
+
+Evidence in deploy/aws/results/
+cluster-snapshot.txt
+deploy.log
+key-scenarios.mp4
+record.log
+selenium.json
+smoke-20261011-232614.txt
+smoke-20261011-232842.txt
+exit=0

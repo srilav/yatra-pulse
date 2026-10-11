@@ -16,6 +16,8 @@ spec:
     metadata:
       labels: { app.kubernetes.io/name: pulsar, app.kubernetes.io/part-of: yatra-pulse }
     spec:
+      # Pulsar runs as uid 10000; fsGroup makes a fresh cloud volume (EBS, PD, Azure Disk) writable to it.
+      securityContext: { fsGroup: 10000, fsGroupChangePolicy: OnRootMismatch }
       containers:
         - name: pulsar
           image: apachepulsar/pulsar:4.2.4

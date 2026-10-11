@@ -11,12 +11,14 @@ resource "aws_security_group" "alb" {
   description = "ALB: HTTP from CloudFront only"
   vpc_id      = module.vpc.vpc_id
 
+  # With CloudFront: only CloudFront's origin-facing servers. Without: the ALB is the public entry.
   ingress {
-    description     = "HTTP from CloudFront origin-facing servers"
+    description     = var.enable_cloudfront ? "HTTP from CloudFront origin-facing servers" : "HTTP from the internet (no CloudFront)"
     from_port       = 80
     to_port         = 80
     protocol        = "tcp"
-    prefix_list_ids = [data.aws_ec2_managed_prefix_list.cloudfront.id]
+    prefix_list_ids = var.enable_cloudfront ? [data.aws_ec2_managed_prefix_list.cloudfront.id] : null
+    cidr_blocks     = var.enable_cloudfront ? null : ["0.0.0.0/0"]
   }
 
   egress {
@@ -84,6 +86,7 @@ data "aws_cloudfront_origin_request_policy" "all_viewer_except_host" {
 }
 
 resource "aws_cloudfront_distribution" "edge" {
+  count           = var.enable_cloudfront ? 1 : 0
   enabled         = true
   comment         = "Yatra Pulse"
   is_ipv6_enabled = true

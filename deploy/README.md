@@ -1,5 +1,13 @@
 # Deploying Yatra Pulse on Kubernetes with Knative
 
+| Where | Folder | Start | Remove |
+|---|---|---|---|
+| Laptop (kind) | [`local/`](local/) | `./deploy/local/kind-up.sh` | `./deploy/local/teardown.sh` |
+| AWS (EKS + CloudFront + ALB + NAT + ECR) | [`aws/`](aws/README.md) | `./deploy/aws/deploy.sh --yes` | `./deploy/aws/teardown.sh --yes` |
+| Any other cluster with Knative | [`k8s/`](k8s/) | `kubectl apply -k deploy/k8s` | `kubectl delete -k deploy/k8s` |
+
+Shared by all: images in `docker/`, app manifests in `k8s/`. Each environment keeps its own scripts and test evidence (`local/results/`, `aws/results/`).
+
 Three Knative services plus Apache Pulsar. The same manifests run on a laptop (kind), on-prem (k3s, RKE2, OpenShift, kubeadm) or any cloud Kubernetes (GKE, EKS, AKS).
 
 ```

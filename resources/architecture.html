@@ -265,7 +265,7 @@ kubectl get ksvc -n yatra-pulse</code></pre>
           <tr><td>Laptop / CI</td><td>kind, minikube, k3d</td><td>Serving + Kourier (deploy/local/kind-up.sh)</td><td>Docker Compose Pulsar (kind profile)</td></tr>
           <tr><td>On-prem</td><td>k3s, Rancher RKE2, OpenShift, vanilla kubeadm</td><td>Knative Operator or OpenShift Serverless</td><td>Pulsar Helm chart on local storage</td></tr>
           <tr><td>Google Cloud</td><td>GKE</td><td>Knative Serving (or Cloud Run for Anthos)</td><td>Helm chart or a managed Pulsar service</td></tr>
-          <tr><td>AWS</td><td>EKS</td><td>Knative Serving + Kourier/Istio</td><td>Helm chart on EBS, or managed Pulsar</td></tr>
+          <tr><td>AWS <span class="tag ok">verified</span></td><td>EKS 1.35 via Terraform (deploy/aws)</td><td>Knative 1.23 + Kourier behind an ALB (+ CloudFront once the account is verified); NAT for egress; images in ECR</td><td>StatefulSet on gp3 EBS</td></tr>
           <tr><td>Azure</td><td>AKS</td><td>Knative Serving + Kourier/Istio</td><td>Helm chart on Azure Disk, or managed Pulsar</td></tr>
         </tbody>
       </table></div>
