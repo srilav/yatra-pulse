@@ -41,7 +41,7 @@ cd mcp-server && npm install && npm test   # 8 checks
 
 In this folder, Claude Code picks it up from `.mcp.json`. Elsewhere: `claude mcp add yatra-pulse -- node /path/to/mcp-server/server.js`.
 
-Full details, every component and use case: [SPEC.md](SPEC.md). Visual design: [docs/design.html](docs/design.html).
+Full details, every component and use case: [SPEC.md](SPEC.md). How each feature is built, component by component: [resources/design-discussion.html](resources/design-discussion.html). Visual design: [docs/design.html](docs/design.html).
 
 ## How it runs
 

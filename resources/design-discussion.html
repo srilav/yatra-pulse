@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Yatra Pulse Design Discussion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Mukta:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: long-form engineering doc. Sticky table of contents on wide screens, one column on phones.
+   Same palette and type as the app so the doc reads as part of the product. */
+:root {
+  --bg: #F5F3F8; --surface: #FFFFFF; --ink: #241A33; --muted: #675E7C; --line: #E2DCEC;
+  --gold: #A9690F; --gold-soft: #F7EAD0; --bulb: #F2B544; --kumkum: #B3263E; --live: #1D7F54; --chip: #EEEAF4;
+  --f-display: "Yatra One", "Mukta", Georgia, serif;
+  --f-body: "Mukta", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #140F1F; --surface: #1D1630; --ink: #F1ECF8; --muted: #A99FBE; --line: #312849;
+  --gold: #F2B544; --gold-soft: #3A2C17; --bulb: #FFC857; --kumkum: #F0607A; --live: #4CC38A; --chip: #2A2140; color-scheme: dark;
+} }
+:root[data-theme="dark"] {
+  --bg: #140F1F; --surface: #1D1630; --ink: #F1ECF8; --muted: #A99FBE; --line: #312849;
+  --gold: #F2B544; --gold-soft: #3A2C17; --bulb: #FFC857; --kumkum: #F0607A; --live: #4CC38A; --chip: #2A2140; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 1.02rem; line-height: 1.6; }
+.bulbs { height: 10px; background-image: radial-gradient(circle, var(--bulb) 0 3px, transparent 3.5px); background-size: 18px 10px; }
+.page { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 64px; display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 40px; align-items: start; }
+@media (max-width: 900px) { .page { grid-template-columns: minmax(0, 1fr); } }
+nav.toc { position: sticky; top: calc(16px + env(safe-area-inset-top, 0px)); display: grid; gap: 2px; font-size: .9rem; }
+@media (max-width: 900px) { nav.toc { position: static; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); } }
+nav.toc a { color: var(--muted); text-decoration: none; padding: 3px 8px; border-radius: 6px; }
+nav.toc a:hover, nav.toc a:focus-visible { color: var(--ink); background: var(--chip); outline: none; }
+main { display: grid; gap: 44px; min-width: 0; }
+h1, h2, h3 { margin: 0; text-wrap: balance; line-height: 1.2; }
+h1 { font-family: var(--f-display); font-weight: 400; font-size: clamp(2rem, 5vw, 3rem); }
+h1 span { color: var(--gold); }
+h2 { font-family: var(--f-display); font-weight: 400; font-size: 1.6rem; }
+h3 { font-size: 1.02rem; }
+p { margin: 0; max-width: 72ch; }
+.lede { color: var(--muted); font-size: 1.08rem; }
+.eyebrow { font-size: .74rem; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); font-weight: 700; }
+section { display: grid; gap: 14px; scroll-margin-top: 16px; }
+section > header { display: grid; gap: 4px; padding-top: 18px; border-top: 1px solid var(--line); }
+.num { font-family: var(--f-mono); font-size: .8rem; color: var(--gold); }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.fact { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; display: grid; gap: 4px; min-width: 0; }
+.fact b { font-size: .74rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.fact span { font-size: .93rem; overflow-wrap: anywhere; }
+.parts { display: grid; gap: 12px; }
+.part { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 6px 16px; }
+@media (max-width: 560px) { .part { grid-template-columns: minmax(0, 1fr); } }
+.part > b { color: var(--muted); font-size: .85rem; text-transform: uppercase; letter-spacing: .06em; padding-top: 3px; }
+.part ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+code { font-family: var(--f-mono); font-size: .82em; background: var(--chip); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+pre { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; overflow-x: auto; font-family: var(--f-mono); font-size: .8rem; line-height: 1.55; }
+pre code { background: none; padding: 0; font-size: inherit; }
+.tablewrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+th { text-align: left; font-size: .74rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); padding: 0 10px 8px 0; }
+td { padding: 8px 10px 8px 0; border-top: 1px solid var(--line); vertical-align: top; }
+.decision { border-left: 3px solid var(--gold); padding-left: 14px; display: grid; gap: 4px; }
+.decision b { color: var(--gold); }
+.risk { border-left: 3px solid var(--kumkum); padding-left: 14px; }
+a { color: var(--gold); }
+footer { color: var(--muted); font-size: .9rem; border-top: 1px solid var(--line); padding-top: 14px; }
+</style>
+</head>
+<body>
+<div class="bulbs" aria-hidden="true"></div>
+<div class="page">
+  <nav class="toc" aria-label="Contents">
+    <span class="eyebrow" style="padding:3px 8px">Contents</span>
+    <a href="#arch">Architecture</a>
+    <a href="#time">Time model</a>
+    <a href="#theme">Theme &amp; bulbs</a>
+    <a href="#header">Header &amp; countdown</a>
+    <a href="#now">Now &amp; next</a>
+    <a href="#timeline">Timeline &amp; filters</a>
+    <a href="#picks">Picks &amp; DJ nights</a>
+    <a href="#itinerary">My itinerary</a>
+    <a href="#tripcheck">Trip check</a>
+    <a href="#rag">Board search (RAG)</a>
+    <a href="#ai">Plan with Claude</a>
+    <a href="#community">Traveller events</a>
+    <a href="#booking">How to book</a>
+    <a href="#trips">Day trips &amp; Gaya</a>
+    <a href="#mcp">MCP server</a>
+    <a href="#security">Safety &amp; honesty</a>
+    <a href="#testing">Testing &amp; video</a>
+    <a href="#next">Limits &amp; next steps</a>
+  </nav>
+
+  <main>
+    <header style="display:grid;gap:10px">
+      <div class="eyebrow">Design discussion · how each feature is built</div>
+      <h1>Yatra <span>Pulse</span>: component by component</h1>
+      <p class="lede">For each part of the board: what it's for, the code that implements it, the decisions we made and why, and the edge cases it handles. Function names refer to <code>index.html</code>; the MCP server lives in <code>mcp-server/</code>. The visual reference is the design guide (<code>docs/design.html</code>), and the requirements are in <code>SPEC.md</code>.</p>
+    </header>
+
+    <section id="arch" aria-labelledby="archH">
+      <header><span class="num">00</span><h2 id="archH">Architecture</h2></header>
+      <p>The whole app is one HTML file with inline CSS and plain JavaScript. There is no framework and no build step. It runs as a claude.ai Artifact (which adds the database, identity and Claude features) and also opens straight from disk, where those features switch off gracefully.</p>
+      <div class="facts">
+        <div class="fact"><b>Rendering</b><span><code>render()</code> rebuilds each section with template strings every 60 s and after every change.</span></div>
+        <div class="fact"><b>Events</b><span>One delegated <code>click</code> listener on <code>document</code> handles every <code>[data-add]</code>, <code>[data-rm]</code> and <code>[data-book]</code>.</span></div>
+        <div class="fact"><b>Shared code</b><span>Data, itinerary, trip check and search sit between <code>SHARED-START</code> and <code>SHARED-END</code>; the MCP server runs that exact block.</span></div>
+        <div class="fact"><b>Platform features</b><span><code>db</code> (saved plans, traveller events), <code>user</code> (who's viewing), <code>sample</code> (Claude), each loaded with <code>claude.use()</code> and allowed to be <code>null</code>.</span></div>
+      </div>
+      <p>The script runs in this order:</p>
+      <pre><code>SHARED-START
+  T(), EVENTS, NIGHTLY, DJ, TRIPS, DAYS, formatters      // data + time helpers
+  plan, catalogItem(), setPlan(), renderPlan()           // itinerary
+  VENUES, MODES, resolveStop(), evaluateDay(), toast()   // trip check
+  KNOWLEDGE, boardPassages(), searchBoard()              // RAG
+SHARED-END
+src(), state(), render(), bindChips()                    // page rendering
+event listeners, setInterval(render, 60000)
+async: db + user boot (traveller events, saved plan)
+async: sample boot (Plan with Claude)</code></pre>
+      <div class="decision"><b>Decision: one file, no framework</b><p>The page has to publish as a single artifact, open from GitHub without tooling, and load fast on a phone at a crowded festival. About 20 events and a handful of panels don't need a virtual DOM; a full re-render takes milliseconds. The cost is that re-rendering replaces DOM nodes, so all handlers are delegated and form fields live outside re-rendered areas.</p></div>
+    </section>
+
+    <section id="time" aria-labelledby="timeH">
+      <header><span class="num">01</span><h2 id="timeH">Time model</h2></header>
+      <p>Everything is in India Standard Time, whatever the viewer's own clock says.</p>
+      <div class="parts">
+        <div class="part"><b>Build a time</b><ul><li><code>T(day, "HH:MM")</code> returns <code>new Date("2026-10-DDTHH:MM:00+05:30")</code>, so the offset is fixed in the string.</li></ul></div>
+        <div class="part"><b>Display</b><ul><li><code>fmtT</code>, <code>fmtD</code> are <code>Intl.DateTimeFormat</code> with <code>timeZone: "Asia/Kolkata"</code>. <code>istDay()</code> and <code>istMonth()</code> read the IST calendar day.</li></ul></div>
+        <div class="part"><b>Occurrences</b><ul><li><code>OCC</code> expands data into dated occurrences: each event once, each nightly show once per festival day (11 × 3).</li></ul></div>
+        <div class="part"><b>State</b><ul><li><code>state(o, now)</code>: <em>done</em> after end; <em>live</em> between start and end (or <em>today</em> if the time is TBA); <em>soon</em> within 6 hours; else <em>tba</em> or <em>up</em>.</li></ul></div>
+      </div>
+      <div class="decision"><b>Decision: offsets in the data, not the viewer's time zone</b><p>A traveller planning from London or Bengaluru must see 4:10 pm for Jamboo Savari. Writing <code>+05:30</code> into every time and formatting with Asia/Kolkata avoids any daylight-saving or locale surprises.</p></div>
+    </section>
+
+    <section id="theme" aria-labelledby="themeH">
+      <header><span class="num">02</span><h2 id="themeH">Theme and palace bulbs</h2></header>
+      <div class="parts">
+        <div class="part"><b>Tokens</b><ul><li>Every color is a CSS custom property on <code>:root</code> (bg, surface, ink, muted, line, gold, bulb, kumkum, live, tba). Dark values are redefined under <code>prefers-color-scheme: dark</code> and again under <code>[data-theme="dark"]</code>, so the viewer's theme toggle wins in both directions.</li></ul></div>
+        <div class="part"><b>Bulbs</b><ul><li>A 10px strip whose background is a repeating <code>radial-gradient</code> dot; a two-step <code>@keyframes</code> opacity change makes it twinkle. Disabled under <code>prefers-reduced-motion</code>.</li></ul></div>
+        <div class="part"><b>Type</b><ul><li>Yatra One for display, Mukta for body, JetBrains Mono with <code>tabular-nums</code> for times and prices so columns line up.</li></ul></div>
+      </div>
+      <div class="decision"><b>Decision: semantic colors separate from the accent</b><p>Marigold is the brand accent; green, amber and red are reserved for status (live / to watch / problem). Status is always also said in words or shown with a shape (<code>!</code>, <code>~</code>, <code>↓</code>), so color-blind travellers lose nothing.</p></div>
+    </section>
+
+    <section id="header" aria-labelledby="headerH">
+      <header><span class="num">03</span><h2 id="headerH">Header: festival day and countdown</h2></header>
+      <div class="parts">
+        <div class="part"><b>Day tile</b><ul><li>If today (IST) is 11–21 October 2026, shows <code>day − 10 / 11</code>; before, "Soon"; after, "Done".</li></ul></div>
+        <div class="part"><b>Countdown</b><ul><li><code>T(21, "16:10") − now</code>, shown as days and hours over a day, else hours and minutes; "Today's done" once passed.</li></ul></div>
+        <div class="part"><b>Clock</b><ul><li>The Now &amp; next heading shows the IST time of the last refresh, so it's clear how fresh the view is.</li></ul></div>
+      </div>
+    </section>
+
+    <section id="now" aria-labelledby="nowH">
+      <header><span class="num">04</span><h2 id="nowH">Now &amp; next</h2></header>
+      <div class="parts">
+        <div class="part"><b>Selection</b><ul><li>Take occurrences that haven't ended, sort live first then by start, keep the first occurrence per title (so palace lights don't fill all four cards), take four.</li></ul></div>
+        <div class="part"><b>Card</b><ul><li><code>.ncard</code> with a status pill, IST time range, venue, source link (<code>src()</code>) and add button (<code>addBtn(keyOf(o))</code>). <code>.is-live</code> gives a green border.</li></ul></div>
+        <div class="part"><b>After the festival</b><ul><li>Shows "Dasara 2026 is over" instead of an empty grid.</li></ul></div>
+      </div>
+    </section>
+
+    <section id="timeline" aria-labelledby="tlH">
+      <header><span class="num">05</span><h2 id="tlH">Timeline and filters</h2></header>
+      <div class="parts">
+        <div class="part"><b>Structure</b><ul><li>A nightly band (three items shown once with times), then one <code>.day</code> row per day 11–21. Today gets <code>.today</code>; past days <code>.past</code>.</li></ul></div>
+        <div class="part"><b>Events</b><ul><li>Each <code>.ev[data-cat]</code> shows pill, time or "Time TBA", venue, note, source, a "Book tickets" link where <code>book</code> is set, and the add button.</li></ul></div>
+        <div class="part"><b>Filters</b><ul><li><code>bindChips("f", …)</code> wires the chips; the choice sets <code>filter</code>, re-renders, and is remembered in <code>localStorage["mm-f"]</code>. Filtering compares <code>o.cat</code> (ritual, music, dj, show).</li></ul></div>
+        <div class="part"><b>Empty days</b><ul><li>A filtered day with nothing says so ("Nothing in this category today") rather than disappearing, so the 11-day rhythm stays visible.</li></ul></div>
+      </div>
+    </section>
+
+    <section id="picks" aria-labelledby="picksH">
+      <header><span class="num">06</span><h2 id="picksH">Picks for you and DJ nights</h2></header>
+      <div class="parts">
+        <div class="part"><b>Picks</b><ul><li>Style chips set <code>vibe</code>. Picks are the first three upcoming events whose <code>tags</code> include it (one per title), plus two day trips with the same tag.</li></ul></div>
+        <div class="part"><b>DJ nights</b><ul><li>A curated <code>DJ</code> list with sources, plus a plain note that no Mysuru club nights are announced. Sandalwood Nights and Jasmine Sandlas carry <code>cat: "dj"</code> so the DJ filter finds them in the timeline too.</li></ul></div>
+      </div>
+      <div class="decision"><b>Decision: tags, not a recommender</b><p>Four styles and about 20 items make hand-chosen tags more predictable than any learned ranking, and travellers can see why something was picked.</p></div>
+    </section>
+
+    <section id="itinerary" aria-labelledby="itH">
+      <header><span class="num">07</span><h2 id="itH">My itinerary</h2></header>
+      <div class="parts">
+        <div class="part"><b>Model</b><ul><li><code>plan</code> is an array of <code>{key, day, title, time, place, url}</code>. Keys identify the source item: <code>ev:21:Jamboo Savari</code>, <code>nt:Palace illumination</code>, <code>trip:Melukote</code>, <code>cm:&lt;id&gt;</code>. Items added by Plan with Claude get <code>@day</code> on non-dated keys so the same trip can appear on two days.</li></ul></div>
+        <div class="part"><b>Adding</b><ul><li><code>togglePlan(key)</code> → <code>catalogItem(key)</code> builds the entry from the board data (day trips and nightly shows take the day picker's value) → <code>setPlan()</code> → trip check for that stop → toast.</li></ul></div>
+        <div class="part"><b>Saving</b><ul><li><code>savePlan()</code> always writes <code>localStorage["mm-plan"]</code>, and when signed in also writes <code>data/users/&lt;id&gt;/plan</code> after a 700 ms debounce (one write per burst of taps).</li></ul></div>
+        <div class="part"><b>Loading</b><ul><li>The page shows the browser copy immediately. When the database answers, the first snapshot decides: if the account has a plan, it wins; if not, the browser plan is uploaded. Later snapshots (another device) replace the plan unless they're our own pending write.</li></ul></div>
+        <div class="part"><b>Rendering</b><ul><li><code>renderPlan()</code> runs <code>evaluatePlan()</code> and interleaves trip-check legs between stops, adds day notes, and fills the summary pills.</li></ul></div>
+        <div class="part"><b>Copy and clear</b><ul><li><code>planText()</code> builds plain text for WhatsApp; <code>navigator.clipboard.writeText</code> inside the click, with a "select it by hand" fallback. Clear needs a second tap within 3 s, because artifacts can't show confirm dialogs.</li></ul></div>
+      </div>
+      <div class="decision"><b>Decision: store a snapshot of each stop, resolve details at check time</b><p>Saved items keep title, place and URL so the plan still reads well if the board data changes. Trip check, however, looks the key up again in <code>resolveStop()</code>, so it always uses current times and venues.</p></div>
+    </section>
+
+    <section id="tripcheck" aria-labelledby="tcH">
+      <header><span class="num">08</span><h2 id="tcH">Trip check</h2></header>
+      <p>The evaluator that stops a traveller booking two places at once, or a plan they can't physically follow.</p>
+      <div class="parts">
+        <div class="part"><b>Resolve</b><ul><li><code>resolveStop(entry, mode)</code> returns <code>start</code>, <code>end</code>, <code>mustBy</code> (gate close via <code>arriveBy</code>, else start), venue coordinates from <code>VENUES</code>, and flags: <code>tba</code>, <code>crowd</code>, <code>flexible</code> (nightly shows). Day trips get <code>end = leave + 2 × drive + visit</code> (2 h, or 3 h for trips over 60 km), measured from the palace.</li></ul></div>
+        <div class="part"><b>Distance</b><ul><li><code>roadKm()</code> is haversine distance × 1.4. <code>driveMin()</code> charges the first 15 km at the vehicle's city speed and the rest at highway speed, plus the vehicle's wait.</li></ul></div>
+        <div class="part"><b>Compare</b><ul><li><code>evaluateDay()</code> sorts timed stops by <code>mustBy</code> and compares each neighbour pair: gap = next.mustBy − prev.end; travel = drive + 25 min (crowded venue) or 10. Clash if gap &lt; 0 at different venues (&gt; 0.8 km); "warn" instead if one side is a flexible nightly show, with a "leave by" time; not enough time if gap &lt; travel; tight if gap &lt; travel + 15; otherwise OK with km, minutes and a Google Maps route link.</li></ul></div>
+        <div class="part"><b>Notes</b><ul><li>Per-stop notes: time not announced, no map location (traveller events), auto-rickshaw beyond 40 km, and the Jamboo Savari gate deadline.</li></ul></div>
+        <div class="part"><b>Where it runs</b><ul><li>Itinerary render, <code>checkStop()</code> on add and on "Book tickets", the Plan with Claude draft, and the MCP <code>check_itinerary</code> tool. One function, five callers.</li></ul></div>
+      </div>
+      <pre><code>travel  = cityKm / city + highwayKm / road (h → min) + wait + (crowded ? 25 : 10)
+gap     = next.mustBy − prev.end
+status  = gap &lt; 0 &amp;&amp; differentVenue ? "Clash"
+        : gap &lt; travel               ? "Not enough time"
+        : gap &lt; travel + 15          ? "Tight"
+        :                              "OK"</code></pre>
+      <div class="decision"><b>Decision: local estimates instead of a maps API</b><p>The artifact sandbox blocks network calls to other sites, and a maps API would need keys and cost per request. Approximate coordinates with conservative festival speeds give the right answer for the decisions that matter (Bannimantap vs Uttanahalli in 60 minutes), and every leg links Google Maps for live traffic on the day.</p></div>
+      <div class="risk"><p><b>Known limit:</b> only neighbouring stops are compared, after sorting. Three overlapping stops produce two clash rows, which is enough to flag the day. Coordinates are approximate; drone show and palace-viewing end times are estimates and say so in the SPEC.</p></div>
+    </section>
+
+    <section id="rag" aria-labelledby="ragH">
+      <header><span class="num">09</span><h2 id="ragH">Board search (RAG)</h2></header>
+      <div class="parts">
+        <div class="part"><b>Passages</b><ul><li><code>boardPassages()</code> turns every event, nightly show, DJ night, day trip, approved traveller event and <code>KNOWLEDGE</code> fact into <code>{key, kind, day, title, text, url}</code>. The text spells out the day, time, venue, note, category and tags so they're searchable.</li></ul></div>
+        <div class="part"><b>Tokenizer</b><ul><li>Lower-case, strip accents (NFKD), split on non-alphanumerics, drop stop words, drop a trailing "s" on words over three letters.</li></ul></div>
+        <div class="part"><b>Ranking</b><ul><li><code>searchBoard(query, {day, kinds, k})</code> filters by kind and day (undated passages always pass), then scores with BM25: k1 = 1.4, b = 0.75, idf = ln(1 + (N − df + 0.5)/(df + 0.5)). Ties go to the earlier day.</li></ul></div>
+        <div class="part"><b>Query expansion</b><ul><li><code>STYLE_WORDS</code> adds words for the chosen style, e.g. spiritual → temple, puja, ritual, goddess, spiritual, blessing.</li></ul></div>
+      </div>
+      <div class="decision"><b>Decision: BM25 in the page, not embeddings</b><p>About 40 short passages, full of proper nouns (Sid Sriram, Bannimantap, Gold Card), are exactly where keyword ranking is strong. It runs in under a millisecond with no model download, needs no network (which the sandbox would block anyway), and gives identical results in the page and the MCP server. If the corpus grew to thousands of reviews, a hybrid of BM25 and embeddings would be the next step.</p></div>
+    </section>
+
+    <section id="ai" aria-labelledby="aiH">
+      <header><span class="num">10</span><h2 id="aiH">Plan with Claude</h2></header>
+      <div class="parts">
+        <div class="part"><b>Retrieve</b><ul><li><code>choices()</code> builds a query from style words and the traveller's note, then retrieves up to 4 events per day (events and traveller events), 3 nightly shows, 4 day trips and 3 facts.</li></ul></div>
+        <div class="part"><b>Generate</b><ul><li>One <code>sample.json()</code> call (default model tier, abortable with Stop). The prompt sets rules: only use keys from CHOICES, respect days and times, no two venues at once, tips only from FACTS, and a fixed JSON shape.</li></ul></div>
+        <div class="part"><b>Validate</b><ul><li>Days outside the stay are dropped; stops whose key wasn't retrieved are dropped; at most 6 per day. Free-time suggestions (key <code>null</code>) are shown in italics and never added.</li></ul></div>
+        <div class="part"><b>Check</b><ul><li>The draft goes through <code>evaluateDay()</code> with the chosen vehicle; problems are listed in red above "Add all to my plan".</li></ul></div>
+        <div class="part"><b>Errors</b><ul><li>Codes map to plain messages: cancelled, not_granted (allow it in Permissions), rate_limited (wait a minute), anything else (try again or add stops by hand). No automatic retries.</li></ul></div>
+        <div class="part"><b>Off claude.ai</b><ul><li><code>claude.use("sample")</code> is <code>null</code>, so the button is disabled with an explanation.</li></ul></div>
+      </div>
+      <div class="decision"><b>Decision: retrieve-then-generate, not tool calls</b><p>The platform supports letting Claude call page functions, but each round is another paid request that takes longer. The corpus is small enough to retrieve up front in one step, so the plan arrives in a single call, and the key whitelist guarantees no invented events. The MCP server is where the tool-calling style is used, because desktop clients do multi-step work well.</p></div>
+    </section>
+
+    <section id="community" aria-labelledby="cmH">
+      <header><span class="num">11</span><h2 id="cmH">Traveller events</h2></header>
+      <div class="parts">
+        <div class="part"><b>Storage</b><ul><li><code>tips/&lt;userId&gt;</code> holds one person's submissions as <code>{items: [...]}</code>: private to them and the host. <code>approved/&lt;tipId&gt;</code> holds what the host approved: readable by everyone.</li></ul></div>
+        <div class="part"><b>Access rules</b><ul><li>Root: read <code>view</code>, write <code>admin</code>. <code>tips</code>: read <code>admin</code>, write <code>owner</code>. <code>tips/{self}</code>: read and write <code>interact</code> (Contributor). Viewers can browse but not submit; only the owner can change someone else's status.</li></ul></div>
+        <div class="part"><b>Checks</b><ul><li><code>validate()</code> runs before anything else: name ≥ 4 chars; https only; real hostname; no link shorteners (bit.ly and 9 others); date 11–31 Oct 2026; venue; write-up 40–400 chars; "this is real" ticked; link not already added; at most 5 waiting per person. Only then does it check sign-in.</li></ul></div>
+        <div class="part"><b>Review</b><ul><li>The owner subscribes to the whole <code>tips</code> collection. <code>setStatus()</code> reads the submitter's doc, writes <code>approved/&lt;id&gt;</code> (or deletes it on reject), then updates the status in their list.</li></ul></div>
+        <div class="part"><b>Display</b><ul><li>Names are resolved at render time with <code>user.profiles(ids)</code>; only opaque ids are stored, never names.</li></ul></div>
+      </div>
+      <div class="decision"><b>Decision: host approval instead of automatic checks</b><p>A page can't confirm that an event exists. The form rules raise the bar (full official links, a real description, a declaration) and the human check does the rest. That is why nothing is public until approved.</p></div>
+    </section>
+
+    <section id="booking" aria-labelledby="bookH">
+      <header><span class="num">12</span><h2 id="bookH">How to book</h2></header>
+      <div class="parts">
+        <div class="part"><b>Content</b><ul><li>Static HTML: five numbered steps (check itinerary → official site → pay → collect at Spandhana Counter with ID → on the day), a price table, helpline 1077 and getting-there tips. The same facts are in <code>KNOWLEDGE</code> for search and MCP.</li></ul></div>
+        <div class="part"><b>Book tickets links</b><ul><li>Ticketed events carry <code>book</code>; their link has <code>data-book</code>. The delegated click runs <code>checkStop()</code> and shows the result before the browser opens the official site. It never blocks the link.</li></ul></div>
+        <div class="part"><b>Layout</b><ul><li>Numbered circles come from a CSS counter on <code>.steps</code>; the price table scrolls inside <code>.tablewrap</code> on phones.</li></ul></div>
+      </div>
+      <div class="decision"><b>Decision: never sell, always point to the official seller</b><p>The board shows totals as reported, names TicketGenie as the only authorised seller, and links mysoredasara.gov.in. It never handles payment, which keeps it out of the scam problem it warns about.</p></div>
+    </section>
+
+    <section id="trips" aria-labelledby="tripsH">
+      <header><span class="num">13</span><h2 id="tripsH">Day trips and Gaya</h2></header>
+      <div class="parts">
+        <div class="part"><b>Day trips</b><ul><li><code>TRIPS</code> entries have <code>at: [lat, lng]</code>, distance, tags and a reason to go, sorted by distance. Adding one uses the day picker and an 8:00 am start, which trip check uses for the return time.</li></ul></div>
+        <div class="part"><b>Gaya panel</b><ul><li>Static: Pitru Paksha 2026 ended on 10 October, next around September 2027, the rites and nearby places. Also a <code>KNOWLEDGE</code> passage, so Gaya questions work in search and MCP.</li></ul></div>
+      </div>
+    </section>
+
+    <section id="mcp" aria-labelledby="mcpH">
+      <header><span class="num">14</span><h2 id="mcpH">MCP server</h2></header>
+      <div class="parts">
+        <div class="part"><b>Loading</b><ul><li><code>board.js</code> reads <code>../index.html</code>, slices the SHARED block, and runs it in a Node <code>vm</code> context with a stub <code>document</code>. A trailing expression returns the data and functions.</li></ul></div>
+        <div class="part"><b>Tools</b><ul><li><code>search_board</code> (BM25 passages with URLs), <code>get_day</code>, <code>check_itinerary</code> (calls <code>evaluateDay</code>), <code>booking_guide</code>. Inputs are zod schemas; all tools are read-only.</li></ul></div>
+        <div class="part"><b>Resources and prompt</b><ul><li><code>yatra://schedule</code> (Markdown), <code>yatra://facts</code> (JSON), and <code>plan_trip</code>, which tells Claude to search, draft, check and fix, then cite sources.</li></ul></div>
+        <div class="part"><b>Transport</b><ul><li>stdio, so Claude Code (<code>.mcp.json</code>) and Claude Desktop start it as a local process.</li></ul></div>
+      </div>
+      <div class="decision"><b>Decision: execute the page's code instead of exporting JSON</b><p>A JSON export would copy the data but not the trip-check rules or the ranking, and the copies would drift. Running the shared block keeps one source of truth. The SHARED-START comment warns that nothing in that block may touch the DOM at load time.</p></div>
+    </section>
+
+    <section id="security" aria-labelledby="secH">
+      <header><span class="num">15</span><h2 id="secH">Safety and honesty</h2></header>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Concern</th><th>How it's handled</th></tr></thead>
+        <tbody>
+          <tr><td>Script injection from traveller text</td><td>Every value written into HTML goes through <code>esc()</code>; links render only if they start with <code>https://</code>.</td></tr>
+          <tr><td>Malformed database rows</td><td>Dates are parsed inside <code>try</code>; sorting coerces to strings; unknown keys are skipped.</td></tr>
+          <tr><td>Invented events from AI</td><td>Whitelisted keys only; tips only from retrieved facts; trip check on the draft.</td></tr>
+          <tr><td>Unannounced times</td><td>Shown as "Time TBA", never guessed; trip check marks them "to watch".</td></tr>
+          <tr><td>Fake listings</td><td>Form rules plus mandatory host approval.</td></tr>
+          <tr><td>Scam ticket sellers</td><td>Official site only; "no agents" stated in the booking steps.</td></tr>
+          <tr><td>Private data</td><td>Plans live in a per-person database path; only ids are stored for traveller events.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="testing" aria-labelledby="testH">
+      <header><span class="num">16</span><h2 id="testH">Testing and the video</h2></header>
+      <div class="parts">
+        <div class="part"><b>Browser</b><ul><li><code>tests/run_dashboard.py</code> (Selenium): 16 checks, from page load to trip-check clashes and the booking warning. Each step lingers (<code>--pause</code>) and the window stays open at the end (<code>--hold</code>).</li></ul></div>
+        <div class="part"><b>MCP</b><ul><li><code>mcp-server/test.js</code> connects as a real MCP client over stdio: 8 checks across tools, resources and the prompt.</li></ul></div>
+        <div class="part"><b>Video</b><ul><li><code>video/make_video.py</code> drives the page in headless Chrome at 1.5× scale, runs scripted actions per scene, records frames at 8 fps, narrates with the macOS voice "Rishi", emulates dark mode and a phone with Chrome DevTools commands, and stitches 19 scenes with ffmpeg. It writes the YouTube chapters from the scene lengths.</li></ul></div>
+      </div>
+    </section>
+
+    <section id="next" aria-labelledby="nextH">
+      <header><span class="num">17</span><h2 id="nextH">Limits and next steps</h2></header>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Today</th><th>Possible next step</th></tr></thead>
+        <tbody>
+          <tr><td>Event data refreshed by hand (last 11 Oct)</td><td>A scheduled job that re-checks sources and proposes updates for the host to approve</td></tr>
+          <tr><td>Approximate venue coordinates and speeds</td><td>Verified coordinates; per-hour traffic factors for 21 October</td></tr>
+          <tr><td>Neighbour-pair clash check</td><td>Full interval check across all stops of a day</td></tr>
+          <tr><td>Plan with Claude only on claude.ai</td><td>Offer the MCP prompt as the path for everyone else</td></tr>
+          <tr><td>Saved plans keyed with the old "mm-" prefix in browser storage</td><td>Kept on purpose so existing plans survive the rename</td></tr>
+          <tr><td>Dasara-only</td><td>The data model (events, venues, knowledge) generalises to other festivals</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <footer>Yatra Pulse · design discussion · written 11 October 2026 · code at github.com/srilav/yatra-pulse</footer>
+  </main>
+</div>
+</body>
+</html>
