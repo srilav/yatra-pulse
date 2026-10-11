@@ -53,4 +53,4 @@ jobs:
       - name: Render Kubernetes manifests
         run: |
           kubectl kustomize deploy/k8s > /dev/null
-          kubectl kustomize deploy/kind > /dev/null
+          kubectl kustomize deploy/local/kind > /dev/null

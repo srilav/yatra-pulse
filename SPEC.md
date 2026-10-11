@@ -351,7 +351,7 @@ Then ask, for example: *"I'm in Mysuru 17–18 Oct and love live music. What can
 
 ## 10. Deployment
 
-Knative Serving on any Kubernetes (kind, k3s, RKE2, OpenShift, GKE, EKS, AKS). `deploy/docker/*.Dockerfile` build three non-root images; `deploy/k8s` installs the app (`app/`: namespace, ConfigMap, Knative Services) and a single-node Pulsar (`pulsar/`); `deploy/kind` is the laptop profile. The MCP server runs stateless over Streamable HTTP (`mcp-server/http.js`) with `/healthz` and `/readyz`, so Knative scales it 0–10; the web board scales 0–5; the metrics consumer stays at exactly 1. `deploy/smoke-test.sh` checks a running deployment end to end (9 checks). Details: `deploy/README.md`, `resources/architecture.html`.
+Knative Serving on any Kubernetes (kind, k3s, RKE2, OpenShift, GKE, EKS, AKS). `deploy/docker/*.Dockerfile` build three non-root images; `deploy/k8s` installs the app (`app/`: namespace, ConfigMap, Knative Services) and a single-node Pulsar (`pulsar/`); `deploy/local/kind` is the laptop profile. The MCP server runs stateless over Streamable HTTP (`mcp-server/http.js`) with `/healthz` and `/readyz`, so Knative scales it 0–10; the web board scales 0–5; the metrics consumer stays at exactly 1. `deploy/local/smoke-test.sh` checks a running deployment end to end (9 checks). Details: `deploy/README.md`, `resources/architecture.html`.
 
 ## 11. Quality and testing
 

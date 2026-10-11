@@ -87,8 +87,8 @@ cd mcp-server && TELEMETRY=pulsar npm test       # real tool traffic → yatra-t
 Three Knative services (web board, MCP server over HTTP, metrics consumer) plus Apache Pulsar. Verified on kind with Knative Serving 1.23: 9/9 smoke checks, telemetry flowing MCP → Pulsar → metrics.
 
 ```bash
-./deploy/kind-up.sh && ./deploy/smoke-test.sh   # laptop
-./deploy/teardown-local.sh                      # bring it all down (--purge, --dry-run)
+./deploy/local/kind-up.sh && ./deploy/local/smoke-test.sh   # laptop
+./deploy/local/teardown.sh                      # bring it all down (--purge, --dry-run)
 kubectl apply -k deploy/k8s                     # any cluster with Knative (images in your registry)
 ```
 

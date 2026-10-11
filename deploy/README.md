@@ -23,18 +23,18 @@ nginx        MCP over HTTP ──────►  Pulsar consumer ──► /met
 | `docker/metrics.Dockerfile` | Metrics consumer: Prometheus `/metrics`, `/healthz`, `/stats`, dashboard |
 | `k8s/` | Full install: `app/` (namespace, ConfigMap, Knative Services) + `pulsar/` (StatefulSet) |
 | `k8s/monitoring/` | Optional ServiceMonitor and PrometheusRule (Prometheus Operator) |
-| `kind/` | Laptop profile: `dev.local` images loaded into kind; Pulsar from `ops/docker-compose.yml` |
-| `kind-up.sh` | Local cluster with Knative + Kourier, images loaded, app deployed (kind profile) |
-| `smoke-test.sh` | End-to-end check of a running deployment |
+| `local/kind/` | Laptop profile: `dev.local` images loaded into kind; Pulsar from `ops/docker-compose.yml` |
+| `local/kind-up.sh` | Local cluster with Knative + Kourier, images loaded, app deployed (kind profile) |
+| `local/smoke-test.sh` | End-to-end check of a running deployment |
 
 ## Quick start (local, kind)
 
 ```bash
-./deploy/kind-up.sh       # ~5–8 minutes the first time
-./deploy/smoke-test.sh    # 9 checks
+./deploy/local/kind-up.sh       # ~5–8 minutes the first time
+./deploy/local/smoke-test.sh    # 9 checks
 ```
 
-The kind profile (`deploy/kind`) uses the same app manifests but loads images as `dev.local/...` (a registry Knative doesn't try to resolve) and connects to the Pulsar from `ops/docker-compose.yml`, joined to the kind network as `yatra-pulsar`. Knative alone needs most of a 2 GB Docker VM, so running Pulsar in the same cluster on a laptop usually fails to schedule (we hit exactly that). On a real cluster, use `kubectl apply -k deploy/k8s`, which includes the Pulsar StatefulSet.
+The kind profile (`deploy/local/kind`) uses the same app manifests but loads images as `dev.local/...` (a registry Knative doesn't try to resolve) and connects to the Pulsar from `ops/docker-compose.yml`, joined to the kind network as `yatra-pulsar`. Knative alone needs most of a 2 GB Docker VM, so running Pulsar in the same cluster on a laptop usually fails to schedule (we hit exactly that). On a real cluster, use `kubectl apply -k deploy/k8s`, which includes the Pulsar StatefulSet.
 
 Open the services through Kourier:
 
@@ -44,11 +44,11 @@ curl -H "Host: yatra-web.yatra-pulse.yatra.local"     http://localhost:18080/
 curl -H "Host: yatra-metrics.yatra-pulse.yatra.local" http://localhost:18080/stats
 ```
 
-Bring everything down (consumer, cluster, Pulsar): `./deploy/teardown-local.sh` (`--dry-run` to preview, `--purge` to also delete Pulsar data, images and local output).
+Bring everything down (consumer, cluster, Pulsar): `./deploy/local/teardown.sh` (`--dry-run` to preview, `--purge` to also delete Pulsar data, images and local output).
 
 ## Any other cluster (on-prem or cloud)
 
-1. **Install Knative Serving** with a networking layer: the [Knative Operator](https://knative.dev/docs/install/operator/knative-with-operators/), OpenShift Serverless, or the YAML in `kind-up.sh`.
+1. **Install Knative Serving** with a networking layer: the [Knative Operator](https://knative.dev/docs/install/operator/knative-with-operators/), OpenShift Serverless, or the YAML in `local/kind-up.sh`.
 2. **Push images** to a registry your cluster can pull from:
    ```bash
    REG=registry.example.com/yatra
@@ -63,7 +63,7 @@ Bring everything down (consumer, cluster, Pulsar): `./deploy/teardown-local.sh` 
 
 | Platform | Notes |
 |---|---|
-| kind / minikube / k3d | `kind-up.sh`; images via `kind load` |
+| kind / minikube / k3d | `local/kind-up.sh`; images via `kind load` |
 | k3s / RKE2 / kubeadm (on-prem) | Knative Operator; local-path or Longhorn storage for Pulsar |
 | OpenShift | OpenShift Serverless provides Knative; images run as non-root already |
 | GKE | Knative Serving or Cloud Run for Anthos; standard storage class |
@@ -82,7 +82,7 @@ Bring everything down (consumer, cluster, Pulsar): `./deploy/teardown-local.sh` 
 
 ## Verified
 
-Run on 11 October 2026 on macOS (Docker VM 1.9 GB, 6 CPUs): kind v0.33.0, Knative Serving and Kourier `knative-v1.23.0`, Apache Pulsar 4.2.4 via the kind profile. Output of `deploy/smoke-test.sh`:
+Run on 11 October 2026 on macOS (Docker VM 1.9 GB, 6 CPUs): kind v0.33.0, Knative Serving and Kourier `knative-v1.23.0`, Apache Pulsar 4.2.4 via the kind profile. Output of `deploy/local/smoke-test.sh`:
 
 ```
 PASS  Knative services are Ready

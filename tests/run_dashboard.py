@@ -4,14 +4,19 @@ Usage:
     .venv/bin/python tests/run_dashboard.py            # holds the window for 10 s at the end
     .venv/bin/python tests/run_dashboard.py --hold 30  # hold longer
     .venv/bin/python tests/run_dashboard.py --pause 3  # linger 3 s on each step
+    .venv/bin/python tests/run_dashboard.py --url https://xxxx.cloudfront.net/ \
+        --record deploy/aws/results/key-scenarios.mp4 --report deploy/aws/results/selenium.json
 
-Runs index.html straight from disk. Traveller submissions and "Plan with Claude" need the
+--url tests a deployed board instead of the local file. --record saves a captioned video of every
+step (pass or fail) and --report a JSON summary. By default it runs index.html straight from disk. Traveller submissions and "Plan with Claude" need the
 claude.ai viewer, so here they show their signed-out messages; everything else works.
 """
 
 import argparse
+import json
 import sys
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 
 from selenium import webdriver
@@ -28,7 +33,11 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--hold", type=float, default=10, help="seconds to keep the browser open at the end")
     ap.add_argument("--pause", type=float, default=2, help="seconds to linger on each step")
+    ap.add_argument("--url", default=PAGE, help="board to test (default: local index.html)")
+    ap.add_argument("--record", help="save a captioned MP4 of the run here")
+    ap.add_argument("--report", help="save a JSON summary here")
     args = ap.parse_args()
+    frames, results = [], []
 
     SHOTS.mkdir(exist_ok=True)
     opts = webdriver.ChromeOptions()
@@ -37,13 +46,22 @@ def main() -> int:
     wait = WebDriverWait(driver, 10)
     failures = []
 
+    def snap(caption, ok=True):
+        if args.record:
+            frames.append((driver.get_screenshot_as_png(), caption, ok))
+
     def step(name, fn):
+        started = time.perf_counter()
         try:
             fn()
             print(f"PASS  {name}")
+            results.append({"name": name, "ok": True, "seconds": round(time.perf_counter() - started, 2)})
+            snap(f"PASS  {name}")
         except Exception as exc:  # keep going so one failure doesn't hide the rest
             failures.append(name)
             print(f"FAIL  {name}: {exc}")
+            results.append({"name": name, "ok": False, "error": str(exc)[:300], "seconds": round(time.perf_counter() - started, 2)})
+            snap(f"FAIL  {name}", ok=False)
         time.sleep(args.pause)
 
     def scroll_to(el_id):
@@ -53,7 +71,7 @@ def main() -> int:
         return el
 
     try:
-        driver.get(PAGE)
+        driver.get(args.url)
 
         def loads():
             wait.until(EC.title_is("Yatra Pulse"))
@@ -192,14 +210,58 @@ def main() -> int:
         step("Far day trip is flagged for an auto-rickshaw", auto_too_far)
         step("Book tickets warns about a clash first", book_link_warns)
 
-        total = 16
-        print(f"\n{total - len(failures)}/{total} passed. Screenshots in {SHOTS}")
+        total = len(results)
+        print(f"\n{total - len(failures)}/{total} passed against {args.url}. Screenshots in {SHOTS}")
+        if args.report:
+            Path(args.report).parent.mkdir(parents=True, exist_ok=True)
+            Path(args.report).write_text(json.dumps({"url": args.url, "ran_at": datetime.now(timezone.utc).isoformat(),
+                                                     "passed": total - len(failures), "total": total, "steps": results}, indent=2))
+            print(f"Report: {args.report}")
         print(f"Keeping the browser open for {args.hold:g} s…")
         driver.execute_script("window.scrollTo({top: 0, behavior: 'smooth'})")
         time.sleep(args.hold)
     finally:
         driver.quit()
+        if args.record and frames:
+            write_video(frames, Path(args.record), args.url)
+            print(f"Recording: {args.record}")
     return 1 if failures else 0
+
+
+def write_video(frames, path, url, seconds_per_step=2.5):
+    """Captioned MP4: each step's screenshot with a PASS/FAIL bar, plus a title card."""
+    import io
+    import imageio_ffmpeg
+    import subprocess
+    import tempfile
+    from PIL import Image, ImageDraw, ImageFont
+
+    def font(size):
+        for f in ["/System/Library/Fonts/Supplemental/Arial Bold.ttf", "/System/Library/Fonts/Helvetica.ttc",
+                  "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"]:
+            if Path(f).exists():
+                return ImageFont.truetype(f, size)
+        return ImageFont.load_default()
+
+    W, H = 1280, 800
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory() as tmp:
+        title = Image.new("RGB", (W, H), (20, 15, 31))
+        d = ImageDraw.Draw(title)
+        d.text((60, 300), "Yatra Pulse · key scenarios", font=font(54), fill=(242, 181, 68))
+        d.text((60, 390), url, font=font(26), fill=(241, 236, 248))
+        d.text((60, 440), datetime.now(timezone.utc).strftime("Recorded %d %b %Y %H:%M UTC · Selenium"), font=font(22), fill=(169, 159, 190))
+        title.save(f"{tmp}/00000.png")
+        for i, (png, caption, ok) in enumerate(frames, 1):
+            img = Image.open(io.BytesIO(png)).convert("RGB").resize((W, H - 60))
+            canvas = Image.new("RGB", (W, H), (20, 15, 31))
+            canvas.paste(img, (0, 0))
+            d = ImageDraw.Draw(canvas)
+            d.rectangle([0, H - 60, W, H], fill=(29, 127, 84) if ok else (179, 38, 62))
+            d.text((24, H - 46), f"{i}/{len(frames)}  {caption}", font=font(26), fill=(255, 255, 255))
+            canvas.save(f"{tmp}/{i:05d}.png")
+        subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(), "-y", "-loglevel", "error", "-framerate", str(1 / seconds_per_step),
+                        "-i", f"{tmp}/%05d.png", "-vf", "fps=30,format=yuv420p", "-c:v", "libx264", "-crf", "22", str(path)], check=True)
 
 
 if __name__ == "__main__":

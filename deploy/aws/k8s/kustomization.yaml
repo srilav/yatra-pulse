@@ -1,0 +1,24 @@
+# AWS profile: the shared app + in-cluster Pulsar (on gp3 EBS) + the edge gateway the ALB targets.
+# Images come from ECR; deploy.sh replaces ECR_REGISTRY with the account's registry.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../k8s/app
+  - ../../k8s/pulsar
+  - storageclass.yaml
+  - gateway.yaml
+images:
+  - { name: yatra-pulse/web, newName: ECR_REGISTRY/yatra-pulse/web, newTag: "1.0.0" }
+  - { name: yatra-pulse/mcp, newName: ECR_REGISTRY/yatra-pulse/mcp, newTag: "1.0.0" }
+  - { name: yatra-pulse/metrics, newName: ECR_REGISTRY/yatra-pulse/metrics, newTag: "1.0.0" }
+patches:
+  - target: { kind: StatefulSet, name: pulsar }
+    patch: |-
+      - op: add
+        path: /spec/volumeClaimTemplates/0/spec/storageClassName
+        value: gp3
+  - target: { kind: ConfigMap, name: yatra-config }
+    patch: |-
+      - op: replace
+        path: /data/METRICS_SUBSCRIPTION
+        value: yatra-metrics-aws

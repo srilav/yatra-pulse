@@ -8,7 +8,7 @@
 #   --dry-run   show what would be removed without removing it
 # Safe to run more than once; anything already gone is skipped.
 set -uo pipefail
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")/../.."
 
 PURGE=0; DRY=0
 for a in "$@"; do

@@ -338,7 +338,7 @@ status  = gap &lt; 0 &amp;&amp; differentVenue ? "Clash"
         <div class="part"><b>HTTP MCP</b><ul><li><code>mcp-server/app.js</code> builds the server; <code>server.js</code> runs it over stdio, <code>http.js</code> over Streamable HTTP. Stateless: a fresh server and transport per request, <code>/healthz</code>, <code>/readyz</code>, and SIGTERM drains telemetry before exit.</li></ul></div>
         <div class="part"><b>Images</b><ul><li>nginx-unprivileged for the web board and docs; Node 22 Alpine for MCP and metrics; all non-root.</li></ul></div>
         <div class="part"><b>Services</b><ul><li><code>yatra-web</code> 0–5 pods, <code>yatra-mcp</code> 0–10 (target 50 concurrent, 2 min scale-down delay), <code>yatra-metrics</code> exactly 1. Pulsar as a StatefulSet, or an existing cluster via <code>PULSAR_WS_URL</code>.</li></ul></div>
-        <div class="part"><b>Profiles</b><ul><li><code>deploy/k8s</code> for real clusters; <code>deploy/kind</code> for laptops (<code>dev.local</code> images, Docker Compose Pulsar).</li></ul></div>
+        <div class="part"><b>Profiles</b><ul><li><code>deploy/k8s</code> for real clusters; <code>deploy/local/kind</code> for laptops (<code>dev.local</code> images, Docker Compose Pulsar).</li></ul></div>
         <div class="part"><b>Verified</b><ul><li>kind + Knative 1.23: 9/9 smoke checks including telemetry MCP → Pulsar → metrics; web and MCP scaled to zero after 4 idle minutes; 2.2 s cold start.</li></ul></div>
       </div>
       <div class="decision"><b>Decision: stateless MCP, stateful metrics</b><p>Statelessness lets Knative scale the MCP server from zero to ten and back with no session affinity. The metrics consumer holds its SLO window in memory and must stay subscribed, so it is pinned to one replica rather than given scale-to-zero.</p></div>
@@ -367,7 +367,7 @@ status  = gap &lt; 0 &amp;&amp; differentVenue ? "Clash"
         <div class="part"><b>Browser</b><ul><li><code>tests/run_dashboard.py</code> (Selenium): 16 checks, from page load to trip-check clashes and the booking warning. Each step lingers (<code>--pause</code>) and the window stays open at the end (<code>--hold</code>).</li></ul></div>
         <div class="part"><b>MCP</b><ul><li><code>mcp-server/test.js</code> connects as a real MCP client over stdio: 8 checks across tools, resources and the prompt.</li></ul></div>
         <div class="part"><b>AI quality</b><ul><li><code>eval/run.js</code>: 31 search questions, 10 trip-check scenarios, 4 plan verdicts and a latency gate, in CI on every push.</li></ul></div>
-        <div class="part"><b>Operations</b><ul><li><code>ops/simulate.js</code> game day; <code>deploy/smoke-test.sh</code> checks a live Knative deployment end to end (9 checks).</li></ul></div>
+        <div class="part"><b>Operations</b><ul><li><code>ops/simulate.js</code> game day; <code>deploy/local/smoke-test.sh</code> checks a live Knative deployment end to end (9 checks).</li></ul></div>
         <div class="part"><b>Video</b><ul><li><code>video/make_video.py</code> drives the page in headless Chrome at 1.5× scale, runs scripted actions per scene, records frames at 8 fps, narrates with the macOS voice "Rishi", emulates dark mode and a phone with Chrome DevTools commands, and stitches 19 scenes with ffmpeg. It writes the YouTube chapters from the scene lengths.</li></ul></div>
       </div>
     </section>

@@ -134,7 +134,7 @@ SCENES = [
          cap="Telemetry → Apache Pulsar → metrics, SLOs and alerts"),
     dict(id="knative", card="terminal", chapter="Knative on Kubernetes",
          term=[("kubectl get ksvc -n yatra-pulse", "kubectl --context kind-yatra-pulse get ksvc -n yatra-pulse"),
-               ("./deploy/smoke-test.sh", "./deploy/smoke-test.sh")],
+               ("./deploy/local/smoke-test.sh", "./deploy/local/smoke-test.sh")],
          say="And it deploys on Kubernetes with Knative, on-prem or on any cloud. The web board and M C P server scale to zero when idle and wake on demand, while the metrics consumer stays on. Nine of nine smoke checks pass.",
          cap="Knative on Kubernetes · on-prem or any cloud · scale to zero"),
     dict(id="end", card="end", chapter="Links",

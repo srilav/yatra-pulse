@@ -1,0 +1,83 @@
+# Edge gateway: the ALB sends every request here (NodePort 30080), and nginx routes by path to the
+# Knative services over their cluster-local addresses:
+#   /        → yatra-web       (board, docs)
+#   /mcp     → yatra-mcp       (MCP over Streamable HTTP)
+#   /ops/    → yatra-metrics   (dashboard, /ops/stats, /ops/metrics, /ops/healthz)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: yatra-gateway
+  namespace: yatra-pulse
+data:
+  default.conf: |
+    server {
+      listen 8080;
+      client_max_body_size 256k;
+      proxy_http_version 1.1;
+      proxy_read_timeout 120s;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto https;
+
+      location = /healthz { access_log off; return 200 "ok\n"; }
+
+      location /mcp {
+        proxy_set_header Host yatra-mcp.yatra-pulse.svc.cluster.local;
+        proxy_pass http://yatra-mcp.yatra-pulse.svc.cluster.local;
+      }
+      location = /ops { return 301 /ops/; }
+      location /ops/ {
+        proxy_set_header Host yatra-metrics.yatra-pulse.svc.cluster.local;
+        proxy_pass http://yatra-metrics.yatra-pulse.svc.cluster.local/;
+      }
+      location / {
+        proxy_set_header Host yatra-web.yatra-pulse.svc.cluster.local;
+        proxy_pass http://yatra-web.yatra-pulse.svc.cluster.local;
+      }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yatra-gateway
+  namespace: yatra-pulse
+  labels: { app.kubernetes.io/name: yatra-gateway, app.kubernetes.io/part-of: yatra-pulse }
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app.kubernetes.io/name: yatra-gateway }
+  template:
+    metadata:
+      labels: { app.kubernetes.io/name: yatra-gateway, app.kubernetes.io/part-of: yatra-pulse }
+      annotations: { yatra-pulse/config-version: "1" }
+    spec:
+      containers:
+        - name: nginx
+          image: nginxinc/nginx-unprivileged:1.29.8-alpine
+          ports: [{ containerPort: 8080 }]
+          readinessProbe: { httpGet: { path: /healthz, port: 8080 } }
+          livenessProbe: { httpGet: { path: /healthz, port: 8080 }, periodSeconds: 20 }
+          resources:
+            requests: { cpu: 25m, memory: 32Mi }
+            limits: { memory: 64Mi }
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 101
+            allowPrivilegeEscalation: false
+            capabilities: { drop: ["ALL"] }
+            seccompProfile: { type: RuntimeDefault }
+          volumeMounts:
+            - { name: conf, mountPath: /etc/nginx/conf.d }
+      volumes:
+        - name: conf
+          configMap: { name: yatra-gateway }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: yatra-gateway
+  namespace: yatra-pulse
+spec:
+  type: NodePort
+  selector: { app.kubernetes.io/name: yatra-gateway }
+  ports:
+    - { name: http, port: 80, targetPort: 8080, nodePort: 30080 }

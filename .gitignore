@@ -6,3 +6,6 @@ video/out/
 node_modules/
 eval/results/
 ops/telemetry.jsonl
+deploy/aws/terraform/.terraform/
+deploy/aws/terraform/*.tfstate*
+deploy/aws/terraform/.terraform.lock.hcl.bak

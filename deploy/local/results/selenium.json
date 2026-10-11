@@ -1,0 +1,88 @@
+{
+  "url": "file:///Users/srilalithavishnubhotla/musafir-mela/index.html",
+  "ran_at": "2026-10-11T16:46:03.429789+00:00",
+  "passed": 16,
+  "total": 16,
+  "steps": [
+    {
+      "name": "Page loads with all 11 Dasara days",
+      "ok": true,
+      "seconds": 0.11
+    },
+    {
+      "name": "Board search (RAG) ranks the right passages",
+      "ok": true,
+      "seconds": 0.01
+    },
+    {
+      "name": "Now & next shows events",
+      "ok": true,
+      "seconds": 0.01
+    },
+    {
+      "name": "Timeline events link to https sources",
+      "ok": true,
+      "seconds": 0.09
+    },
+    {
+      "name": "Concerts filter shows only concerts",
+      "ok": true,
+      "seconds": 0.83
+    },
+    {
+      "name": "Add Jamboo Savari to my itinerary",
+      "ok": true,
+      "seconds": 0.81
+    },
+    {
+      "name": "Add a day trip to my itinerary",
+      "ok": true,
+      "seconds": 0.07
+    },
+    {
+      "name": "Remove a stop from my itinerary",
+      "ok": true,
+      "seconds": 0.68
+    },
+    {
+      "name": "Picks change with travel style",
+      "ok": true,
+      "seconds": 0.07
+    },
+    {
+      "name": "Traveller form checks entries, then asks to sign in",
+      "ok": true,
+      "seconds": 1.27
+    },
+    {
+      "name": "Trip check flags a clash at different venues",
+      "ok": true,
+      "seconds": 0.83
+    },
+    {
+      "name": "Adding a clashing event shows a warning",
+      "ok": true,
+      "seconds": 0.02
+    },
+    {
+      "name": "Jamboo Savari gate time is flagged",
+      "ok": true,
+      "seconds": 0.08
+    },
+    {
+      "name": "Travel distance and time are shown between stops",
+      "ok": true,
+      "seconds": 0.07
+    },
+    {
+      "name": "Far day trip is flagged for an auto-rickshaw",
+      "ok": true,
+      "seconds": 0.19
+    },
+    {
+      "name": "Book tickets warns about a clash first",
+      "ok": true,
+      "seconds": 0.11
+    }
+  ]
+}
