@@ -4,6 +4,19 @@ A live festival travel board for **Mysuru Dasara 2026** (11–21 October), built
 
 Live version: https://claude.ai/artifact/1KQUyk25gdmTGtbnHSxgJX
 
+## Video walkthrough
+
+[![Musafir Mela video walkthrough](resources/thumbnail.png)](resources/musafir-mela.mp4)
+
+A 2-minute narrated tour covering the live board, the full schedule, how to book official tickets, the itinerary and day trips: [`resources/musafir-mela.mp4`](resources/musafir-mela.mp4). YouTube title, description, chapters and tags are in [`resources/youtube.txt`](resources/youtube.txt).
+
+To regenerate it (macOS, uses the `say` voice "Rishi"):
+
+```bash
+.venv/bin/pip install imageio-ffmpeg pillow
+.venv/bin/python video/make_video.py
+```
+
 ## What it shows
 
 - **Now & next**: what's live and coming up, computed from the current time in India (IST) and refreshed every minute.
