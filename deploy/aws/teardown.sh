@@ -42,6 +42,8 @@ chk "CloudFront"         "$(aws cloudfront list-distributions --query "Distribut
 chk "NAT gateways"       "$(aws ec2 describe-nat-gateways --region $REGION --filter Name=tag:Project,Values=$NAME Name=state,Values=pending,available,deleting --query 'NatGateways[].NatGatewayId' --output text)"
 chk "Elastic IPs"        "$(aws ec2 describe-addresses --region $REGION --filters Name=tag:Project,Values=$NAME --query 'Addresses[].AllocationId' --output text)"
 chk "EBS volumes (k8s)"  "$(aws ec2 describe-volumes --region $REGION --filters Name=tag-key,Values=kubernetes.io/cluster/$NAME --query 'Volumes[].VolumeId' --output text)"
+chk "EBS volumes (CSI)"  "$(aws ec2 describe-volumes --region $REGION --filters Name=tag-key,Values=ebs.csi.aws.com/cluster Name=tag:kubernetes.io/created-for/pvc/namespace,Values=yatra-pulse --query 'Volumes[].VolumeId' --output text)"
+chk "EBS snapshots"      "$(aws ec2 describe-snapshots --region $REGION --owner-ids self --filters Name=tag-key,Values=kubernetes.io/created-for/pvc/namespace --query 'Snapshots[].SnapshotId' --output text)"
 chk "EC2 instances"      "$(aws ec2 describe-instances --region $REGION --filters Name=tag:eks:cluster-name,Values=$NAME Name=instance-state-name,Values=pending,running,stopping,stopped --query 'Reservations[].Instances[].InstanceId' --output text)"
 chk "VPC"                "$(aws ec2 describe-vpcs --region $REGION --filters Name=tag:Project,Values=$NAME --query 'Vpcs[].VpcId' --output text)"
 chk "ECR repositories"   "$(aws ecr describe-repositories --region $REGION --query "repositories[?starts_with(repositoryName,'$NAME/')].repositoryName" --output text)"
